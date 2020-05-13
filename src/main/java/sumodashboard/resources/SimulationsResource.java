@@ -28,7 +28,6 @@ public class SimulationsResource {
 	@Produces(MediaType.APPLICATION_XML)
 	public List<Simulation> getSimulations() {
 		List<Simulation> simulations = new ArrayList<Simulation>();
-		//String tagsFilter = uriInfo.getQueryParameters().getFirst("tags");
 		
 		for (Simulation bike: SimulationDao.instance.getModel().values()) {			
 			simulations.add(bike);

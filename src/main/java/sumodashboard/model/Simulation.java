@@ -11,15 +11,15 @@ public class Simulation {
 	private String ID;
 	private Date date;
 	private String description;
-	private Object configuration;
-	private ArrayList<Object> states;
+	private Configuration configuration;
+	private ArrayList<State> states;
 	private ArrayList<String> tags;
 	
 	public Simulation() {
 		
 	}
 	
-	public Simulation(String ID, Date date, String description, Object configuration, ArrayList<Object> states, ArrayList<String> tags) {
+	public Simulation(String ID, Date date, String description, Configuration configuration, ArrayList<State> states, ArrayList<String> tags) {
 		super();
 		
 		this.ID = ID;
@@ -42,11 +42,11 @@ public class Simulation {
 		return description;
 	}
 
-	public Object getConfiguration() {
+	public Configuration getConfiguration() {
 		return configuration;
 	}
 
-	public ArrayList<Object> getStates() {
+	public ArrayList<State> getStates() {
 		return states;
 	}
 	
@@ -66,11 +66,11 @@ public class Simulation {
 		this.description = description;
 	}
 
-	public void setConfiguration(Object configuration) {
+	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
 	}
 
-	public void setStates(ArrayList<Object> states) {
+	public void setStates(ArrayList<State> states) {
 		this.states = states;
 	}
 	
