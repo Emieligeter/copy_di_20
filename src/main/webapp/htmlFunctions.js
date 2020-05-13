@@ -2,7 +2,33 @@
  * This file contains all functions regarding the html files.
  */
 
-function getFiles() {
+function loadFiles() {
+	var httpReq = new XMLHttpRequest();
+	  httpReq.onreadystatechange = function() {
+	    if (this.readyState == 4 && this.status == 200) {
+	      updateFiles(this);
+	    }
+	  };
+	  httpReq.open("GET", "cd_catalog.xml", true);
+	  httpReq.send();
+}
+
+function updateFiles(xml) {
+	  var i;
+	  var xmlDoc = xml.responseXML;
+	  var table="<tr><th>Artist</th><th>Title</th></tr>";
+	  var x = xmlDoc.getElementsByTagName("CD");
+	  for (i = 0; i <x.length; i++) {
+	    table += "<tr><td>" +
+	    x[i].getElementsByTagName("ARTIST")[0].childNodes[0].nodeValue +
+	    "</td><td>" +
+	    x[i].getElementsByTagName("TITLE")[0].childNodes[0].nodeValue +
+	    "</td></tr>";
+	  }
+	  document.getElementById("demo").innerHTML = table;
+	}
+
+function getSortedFiles() {
   // Declare variables
   var input, filter, files, li, a, i, txtValue;
   input = document.getElementById('myInput');

@@ -18,23 +18,30 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-4">
-      <h3>Sumo Files</h3>
-      <input type="text" id="myInput" onkeyup="getFiles()" placeholder="Search for files..">
-		<ul id="sumoFiles">
-		  <li><a href="#">SUMO file 1</a></li>
-		  <li><a href="#">SUMO file 2</a></li>
+      <h3>SUMO Files</h3>
+      <input type="text" id="myInput" onkeyup="getSortedFiles()" placeholder="Search for files..">
+		<ul id="sumoFiles" class="list-unstyled list-group">
+		  <li><a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+		  	<div class="d-flex w-100 justify-content-between">
+    	  		<h5 class="mb-1">SUMO file 1</h5>
+       	 	</div>
+    	  <p class="mb-1">Date: 28/05/2020</p>
+    	  <p class="mb-1">Researcher: John Doe</p>
+    	  <small>*Tags*</small>
+    	  </a></li>
+		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 2</a></li>
 		
-		  <li><a href="#">SUMO file 3</a></li>
-		  <li><a href="#">x</a></li>
+		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 3</a></li>
+		  <li><a href="#" class="list-group-item list-group-item-action">x</a></li>
 		
-		  <li><a href="#">SUMO file 5</a></li>
-		  <li><a href="#">SUMO file 6</a></li>
-		  <li><a href="#">SUMO file 7</a></li>
+		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 5</a></li>
+		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 6</a></li>
+		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 7</a></li>
 		</ul>
     </div>
     <div class="col-sm-4">
-      <h3>Column 2</h3>
-      <p>Lorem ipsum dolor..</p>
+      <h3>Edit metadata</h3>
+      <p>...</p>
     </div>
   </div>
 </div>
