@@ -19,22 +19,19 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
-				<INPUT TYPE="Radio" Name="Element" Value="LineGraph"> 
-				<label for="LineGraph">Line Graph</label> 
-				<INPUT TYPE="Radio" Name="Element" Value="ScatterPlot"> 
-				<label for="ScatterPlot">Scatter Plot</label> 
-				<INPUT TYPE="Radio" Name="Element" Value="BarChart"> 
-				<label for="BarChart">Bar Chart</label> 
-				<INPUT TYPE="Radio" Name="Element" Value="PieChart">
-				<label for="PieChart">Pie Chart</label> 
-				<INPUT TYPE="Radio" Name="Element" Value="Title"> 
-				<label for="Title">Title</label>
-				<br> 
-				<INPUT TYPE="submit" value="Add element">
+				<button id="LineGraph">Line Graph</button> 
+				<button id="ScatterPlot">Scatter Plot</button> 
+				<button id="BarChart">Bar Chart</button>
+				<button id="PieChart">Pie Chart</button> 
+				<button id="Title">Title</button> 
+				 
+				<button id="addToReport">Add chart to report</button>
+				<br>
 			</div>
 		</div>
 		<div class="row">
 			<div id="fileSelect" class="col">
+				<button id=toSimList onclick="location.href='simList.html'">Edit Files</button>
 				<p>this is where we have a list of files</p>
 			</div>
 			<div id="chart" class="col">
@@ -65,6 +62,8 @@
 			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
 			integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
 			crossorigin="anonymous"></script>
+		<script type="text/javascript" src="htmlFunctions.js"></script>
+			
 
 		<script>
 			var ctx = document.getElementById('myChart').getContext('2d');
