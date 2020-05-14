@@ -36,7 +36,8 @@ function getSortedFiles() {
   files = document.getElementById("sumoFiles");
   li = files.getElementsByTagName('li');
 
-  // Loop through all list items, and hide those who don't match the search query
+  // Loop through all list items, and hide those who don't match the search
+	// query
   for (i = 0; i < li.length; i++) {
     a = li[i].getElementsByTagName("a")[0];
     txtValue = a.textContent || a.innerText;
@@ -47,3 +48,20 @@ function getSortedFiles() {
     }
   }
 }
+$("#uploadFiles").submit(function(event){
+  	event.preventDefault(); // prevent default action
+  	
+    var files = $('#uploadFiles')[0];
+    var fd = new FormData(files);
+  	$.ajax({
+  		url : 'rest/simulations/upload',
+  		type: 'POST',
+  		data: fd,
+  		contentType: false, 
+  	    processData: false,
+  	    success : function(response){
+  	    	$("#server-results").html(response); 
+  	   }
+    });
+})
+
