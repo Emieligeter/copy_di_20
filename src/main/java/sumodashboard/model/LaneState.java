@@ -1,45 +1,39 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 
 @XmlRootElement
 public class LaneState {
-    private Lane lane;
-    private int ID;
-    private ArrayList<Vehicle> vehicles;
+    private String ID;
+    private Vehicles vehicles;
 
     public LaneState() {
 
     }
 
-    public LaneState(Lane lane, int ID, ArrayList<Vehicle> vehicles) {
-        this.lane = lane;
+    public LaneState(String ID, Vehicles vehicles) {
         this.ID = ID;
         this.vehicles = vehicles;
     }
 
-    public Lane getLane() {
-        return lane;
-    }
-
-    public void setLane(Lane lane) {
-        this.lane = lane;
-    }
-
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    @XmlAttribute
+    public void setID(String ID) {
         this.ID = ID;
     }
 
-    public ArrayList<Vehicle> getVehicles() {
+    public Vehicles getVehicles() {
         return vehicles;
     }
 
-    public void setVehicles(ArrayList<Vehicle> vehicles) {
+    @XmlElement
+    public void setVehicles(Vehicles vehicles) {
         this.vehicles = vehicles;
     }
 }

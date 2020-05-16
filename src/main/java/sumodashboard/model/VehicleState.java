@@ -1,10 +1,11 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class VehicleState extends Vehicle {
-    private VehicleType vehicleType;
+    private String type;
     private double speedFactor;
     private String state;
     private double pos;
@@ -15,9 +16,9 @@ public class VehicleState extends Vehicle {
 
     }
 
-    public VehicleState(int ID, String routeXmlID, int depart, int type_id, Route route, VehicleType vehicleType, double speedFactor, String state, double pos, double speed, double posLat) {
+    public VehicleState(String ID, String routeXmlID, int depart, int type_id, Route route, String type, double speedFactor, String state, double pos, double speed, double posLat) {
         super(ID, routeXmlID, depart, type_id, route);
-        this.vehicleType = vehicleType;
+        this.type = type;
         this.speedFactor = speedFactor;
         this.state = state;
         this.pos = pos;
@@ -25,18 +26,20 @@ public class VehicleState extends Vehicle {
         this.posLat = posLat;
     }
 
-    public VehicleType getVehicleType() {
-        return vehicleType;
+    public String getType() {
+        return type;
     }
 
-    public void setVehicleType(VehicleType vehicleType) {
-        this.vehicleType = vehicleType;
+    @XmlAttribute
+    public void setType(String type) {
+        this.type = type;
     }
 
     public double getSpeedFactor() {
         return speedFactor;
     }
 
+    @XmlAttribute
     public void setSpeedFactor(double speedFactor) {
         this.speedFactor = speedFactor;
     }
@@ -45,6 +48,7 @@ public class VehicleState extends Vehicle {
         return state;
     }
 
+    @XmlAttribute
     public void setState(String state) {
         this.state = state;
     }
@@ -53,6 +57,7 @@ public class VehicleState extends Vehicle {
         return pos;
     }
 
+    @XmlAttribute
     public void setPos(double pos) {
         this.pos = pos;
     }
@@ -61,6 +66,7 @@ public class VehicleState extends Vehicle {
         return speed;
     }
 
+    @XmlAttribute
     public void setSpeed(double speed) {
         this.speed = speed;
     }
@@ -69,6 +75,7 @@ public class VehicleState extends Vehicle {
         return posLat;
     }
 
+    @XmlAttribute
     public void setPosLat(double posLat) {
         this.posLat = posLat;
     }

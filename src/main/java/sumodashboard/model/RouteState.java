@@ -4,17 +4,18 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class VehicleType {
+public class RouteState extends Route {
     private String ID;
-    private String vClass;
+    private int state;
 
-    public VehicleType() {
+    public RouteState() {
 
     }
 
-    public VehicleType(String ID, String vClass) {
+    public RouteState(String edges, String ID, int state) {
+        super(edges);
         this.ID = ID;
-        this.vClass = vClass;
+        this.state = state;
     }
 
     public String getID() {
@@ -26,12 +27,12 @@ public class VehicleType {
         this.ID = ID;
     }
 
-    public String getType() {
-        return vClass;
+    public int getState() {
+        return state;
     }
 
-    @XmlAttribute(name="vClass")
-    public void setType(String vClass) {
-        this.vClass = vClass;
+    @XmlAttribute
+    public void setState(int state) {
+        this.state = state;
     }
 }

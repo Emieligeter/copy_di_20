@@ -1,5 +1,6 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -26,6 +27,7 @@ public class Delay {
         return number;
     }
 
+    @XmlAttribute
     public void setNumber(int number) {
         this.number = number;
     }
@@ -34,6 +36,7 @@ public class Delay {
         return begin;
     }
 
+    @XmlAttribute
     public void setBegin(int begin) {
         this.begin = begin;
     }
@@ -42,6 +45,7 @@ public class Delay {
         return end;
     }
 
+    @XmlAttribute
     public void setEnd(int end) {
         this.end = end;
     }
@@ -50,6 +54,7 @@ public class Delay {
         return depart;
     }
 
+    @XmlAttribute
     public void setDepart(double depart) {
         this.depart = depart;
     }
@@ -58,6 +63,7 @@ public class Delay {
         return time;
     }
 
+    @XmlAttribute
     public void setTime(double time) {
         this.time = time;
     }
