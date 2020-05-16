@@ -29,6 +29,10 @@ public class Simulation {
 		this.states = states;
 		this.tags = tags;
 	}
+	
+	public Simulation(String metadataPath, String netPath, String routesPath, String configPath) {
+		
+	}
 
 	public String getID() {
 		return ID;

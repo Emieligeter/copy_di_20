@@ -73,12 +73,12 @@ public class Junction {
     }
 
     public String getIntLanes() {
-        return incLanes;
+        return intLanes;
     }
 
     @XmlAttribute
     public void setIntLanes(String intLanes) {
-        this.incLanes = intLanes;
+        this.intLanes = intLanes;
     }
 
     public String getShape() {

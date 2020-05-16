@@ -1,36 +1,40 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Vehicle {
-    private int ID;
-    private int depart;
+    private String ID;
+    private double depart;
     private Route route;
 
     public Vehicle() {
 
     }
 
-    public Vehicle(int ID, String routeXmlID, int depart, int type_id, Route route) {
+    public Vehicle(String ID, String routeXmlID, double depart, int type_id, Route route) {
         this.ID = ID;
         this.depart = depart;
         this.route = route;
     }
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    @XmlAttribute
+    public void setID(String ID) {
         this.ID = ID;
     }
 
-    public int getDepart() {
+    public double getDepart() {
         return depart;
     }
 
-    public void setDepart(int depart) {
+    @XmlAttribute
+    public void setDepart(double depart) {
         this.depart = depart;
     }
 
@@ -38,6 +42,7 @@ public class Vehicle {
         return route;
     }
 
+    @XmlElement
     public void setRoute(Route route) {
         this.route = route;
     }

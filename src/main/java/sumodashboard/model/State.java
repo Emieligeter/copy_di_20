@@ -1,13 +1,16 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 
-@XmlRootElement
+@XmlRootElement(name="snapshot")
 public class State {
     private int ID;
-    private double timestep;
+    private double time;
+    private String version;
     private ArrayList<Route> routeStates;
+    private Delay delay;
     private ArrayList<VehicleType> vehicleTypes;
     private ArrayList<VehicleState> vehicleStates;
     private ArrayList<LaneState> laneStates;
@@ -16,9 +19,10 @@ public class State {
 
     }
 
-    public State(int ID, double timestep, ArrayList<Route> routeStates, ArrayList<VehicleType> vehicleTypes, ArrayList<VehicleState> vehicleStates, ArrayList<LaneState> laneStates) {
+    public State(int ID, double time, String version, ArrayList<Route> routeStates, ArrayList<VehicleType> vehicleTypes, ArrayList<VehicleState> vehicleStates, ArrayList<LaneState> laneStates) {
         this.ID = ID;
-        this.timestep = timestep;
+        this.time = time;
+        this.version = version;
         this.routeStates = routeStates;
         this.vehicleTypes = vehicleTypes;
         this.vehicleStates = vehicleStates;
@@ -29,16 +33,27 @@ public class State {
         return ID;
     }
 
+    @XmlAttribute
     public void setID(int ID) {
         this.ID = ID;
     }
 
-    public double getTimestep() {
-        return timestep;
+    public double getTime() {
+        return time;
     }
 
-    public void setTimestep(double timestep) {
-        this.timestep = timestep;
+    @XmlAttribute
+    public void setTime(double time) {
+        this.time = time;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    @XmlAttribute
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public ArrayList<Route> getRouteStates() {
