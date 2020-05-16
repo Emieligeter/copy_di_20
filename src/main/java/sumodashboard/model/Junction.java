@@ -1,7 +1,7 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 
 @XmlRootElement
 public class Junction {
@@ -9,19 +9,21 @@ public class Junction {
     private String type;
     private double x;
     private double y;
-    private ArrayList<Lane> lanes;
-    private ArrayList<Double> shape;
+    private String incLanes;
+    private String intLanes;
+    private String shape;
 
     public Junction() {
 
     }
 
-    public Junction(String ID, String type, double x, double y, ArrayList<Lane> lanes, ArrayList<Double> shape) {
+    public Junction(String ID, String type, double x, double y, String incLanes, String intLanes, String shape) {
         this.ID = ID;
         this.type = type;
         this.x = x;
         this.y = y;
-        this.lanes = lanes;
+        this.incLanes = incLanes;
+        this.intLanes = intLanes;
         this.shape = shape;
     }
 
@@ -29,6 +31,7 @@ public class Junction {
         return ID;
     }
 
+    @XmlAttribute
     public void setID(String ID) {
         this.ID = ID;
     }
@@ -37,6 +40,7 @@ public class Junction {
         return type;
     }
 
+    @XmlAttribute
     public void setType(String type) {
         this.type = type;
     }
@@ -45,6 +49,7 @@ public class Junction {
         return x;
     }
 
+    @XmlAttribute
     public void setX(double x) {
         this.x = x;
     }
@@ -53,23 +58,35 @@ public class Junction {
         return y;
     }
 
+    @XmlAttribute
     public void setY(double y) {
         this.y = y;
     }
 
-    public ArrayList<Lane> getLanes() {
-        return lanes;
+    public String getIncLanes() {
+        return incLanes;
     }
 
-    public void setLanes(ArrayList<Lane> lanes) {
-        this.lanes = lanes;
+    @XmlAttribute
+    public void setIncLanes(String incLanes) {
+        this.incLanes = incLanes;
     }
 
-    public ArrayList<Double> getShape() {
+    public String getIntLanes() {
+        return incLanes;
+    }
+
+    @XmlAttribute
+    public void setIntLanes(String intLanes) {
+        this.incLanes = intLanes;
+    }
+
+    public String getShape() {
         return shape;
     }
 
-    public void setShape(ArrayList<Double> shape) {
+    @XmlAttribute
+    public void setShape(String shape) {
         this.shape = shape;
     }
 }

@@ -1,9 +1,11 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 
-@XmlRootElement
+@XmlRootElement(name="net")
 public class Net {
     private int ID;
     private String version;
@@ -41,6 +43,7 @@ public class Net {
         return version;
     }
 
+    @XmlAttribute
     public void setVersion(String version) {
         this.version = version;
     }
@@ -49,6 +52,7 @@ public class Net {
         return junctionCornerDetail;
     }
 
+    @XmlAttribute
     public void setJunctionCornerDetail(int junctionCornerDetail) {
         this.junctionCornerDetail = junctionCornerDetail;
     }
@@ -57,6 +61,7 @@ public class Net {
         return limitTurnSpeed;
     }
 
+    @XmlAttribute
     public void setLimitTurnSpeed(double limitTurnSpeed) {
         this.limitTurnSpeed = limitTurnSpeed;
     }
@@ -65,6 +70,7 @@ public class Net {
         return location;
     }
 
+    @XmlElement
     public void setLocation(Location location) {
         this.location = location;
     }
@@ -73,6 +79,7 @@ public class Net {
         return edges;
     }
 
+    @XmlElement(name = "edge", type = Edge.class)
     public void setEdges(ArrayList<Edge> edges) {
         this.edges = edges;
     }
@@ -81,6 +88,7 @@ public class Net {
         return junctions;
     }
 
+    @XmlElement(name = "junction", type = Junction.class)
     public void setJunctions(ArrayList<Junction> junctions) {
         this.junctions = junctions;
     }
@@ -89,6 +97,7 @@ public class Net {
         return connections;
     }
 
+    @XmlElement(name = "connection", type = Connection.class)
     public void setConnections(ArrayList<Connection> connections) {
         this.connections = connections;
     }

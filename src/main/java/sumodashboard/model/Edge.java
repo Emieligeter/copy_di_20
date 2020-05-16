@@ -1,9 +1,9 @@
 package sumodashboard.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 
-@XmlRootElement
+@XmlRootElement(name = "edge")
 public class Edge {
     private String ID;
     private String function;
@@ -34,6 +34,7 @@ public class Edge {
         return ID;
     }
 
+    @XmlAttribute
     public void setID(String ID) {
         this.ID = ID;
     }
@@ -42,6 +43,7 @@ public class Edge {
         return function;
     }
 
+    @XmlAttribute
     public void setFunction(String function) {
         this.function = function;
     }
@@ -50,6 +52,7 @@ public class Edge {
         return lanes;
     }
 
+    @XmlElement(name = "lane", type = Lane.class)
     public void setLanes(ArrayList<Lane> lanes) {
         this.lanes = lanes;
     }
@@ -58,6 +61,7 @@ public class Edge {
         return fromJunction;
     }
 
+    @XmlAttribute
     public void setFromJunction(String fromJunction) {
         this.fromJunction = fromJunction;
     }
@@ -66,6 +70,7 @@ public class Edge {
         return toJunction;
     }
 
+    @XmlAttribute
     public void setToJunction(String toJunction) {
         this.toJunction = toJunction;
     }
@@ -74,6 +79,7 @@ public class Edge {
         return priority;
     }
 
+    @XmlAttribute
     public void setPriority(int priority) {
         this.priority = priority;
     }

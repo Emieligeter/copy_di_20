@@ -1,5 +1,6 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -24,6 +25,7 @@ public class Location {
         return netOffset;
     }
 
+    @XmlAttribute
     public void setNetOffset(String netOffset) {
         this.netOffset = netOffset;
     }
@@ -32,6 +34,7 @@ public class Location {
         return convBoundary;
     }
 
+    @XmlAttribute
     public void setConvBoundary(String convBoundary) {
         this.convBoundary = convBoundary;
     }
@@ -40,6 +43,7 @@ public class Location {
         return origBoundary;
     }
 
+    @XmlAttribute
     public void setOrigBoundary(String origBoundary) {
         this.origBoundary = origBoundary;
     }
@@ -48,6 +52,7 @@ public class Location {
         return projParameter;
     }
 
+    @XmlAttribute
     public void setProjParameter(String projParameter) {
         this.projParameter = projParameter;
     }

@@ -1,21 +1,24 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 
-@XmlRootElement
+@XmlRootElement(name = "lane")
 public class Lane {
     private String ID;
     private int index;
     private double speed;
     private double length;
-    private ArrayList<Integer> shape;
+    private String shape;
 
     public Lane() {
 
     }
 
-    public Lane(String ID, double speed, double length, ArrayList<Integer> shape) {
+    public Lane(String ID, double speed, double length, String shape) {
         this.ID = ID;
         this.speed = speed;
         this.length = length;
@@ -26,6 +29,7 @@ public class Lane {
         return ID;
     }
 
+    @XmlAttribute
     public void setID(String ID) {
         this.ID = ID;
     }
@@ -34,6 +38,7 @@ public class Lane {
         return speed;
     }
 
+    @XmlAttribute
     public void setSpeed(double speed) {
         this.speed = speed;
     }
@@ -42,15 +47,17 @@ public class Lane {
         return length;
     }
 
+    @XmlAttribute
     public void setLength(double length) {
         this.length = length;
     }
 
-    public ArrayList<Integer> getShape() {
+    public String getShape() {
         return shape;
     }
 
-    public void setShape(ArrayList<Integer> shape) {
+    @XmlAttribute
+    public void setShape(String shape) {
         this.shape = shape;
     }
 }

@@ -1,93 +1,101 @@
 package sumodashboard.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Connection {
-    private Edge fromEdge;
-    private Edge toEdge;
-    private Lane fromLane;
-    private Lane toLane;
-    private Junction viaJunction;
-    private char dir;
-    private char state;
+    private String from;
+    private String to;
+    private String fromLane;
+    private String toLane;
+    private String via;
+    private String dir;
+    private String state;
 
     public Connection() {
 
     }
 
-    public Connection(Edge fromEdge, Edge toEdge, Lane fromLane, Lane toLane, char dir, char state) {
-        this.fromEdge = fromEdge;
-        this.toEdge = toEdge;
+    public Connection(String from, String to, String fromLane, String toLane, String dir, String state) {
+        this.from = from;
+        this.to = to;
         this.fromLane = fromLane;
         this.toLane = toLane;
         this.dir = dir;
         this.state = state;
     }
 
-    public Connection(Edge fromEdge, Edge toEdge, Lane fromLane, Lane toLane, Junction viaJunction, char dir, char state) {
-        this.fromEdge = fromEdge;
-        this.toEdge = toEdge;
+    public Connection(String from, String to, String fromLane, String toLane, String via, String dir, String state) {
+        this.from = from;
+        this.to = to;
         this.fromLane = fromLane;
         this.toLane = toLane;
-        this.viaJunction = viaJunction;
+        this.via = via;
         this.dir = dir;
         this.state = state;
     }
 
-    public Edge getFromEdge() {
-        return fromEdge;
+    public String getFrom() {
+        return from;
     }
 
-    public void setFromEdge(Edge fromEdge) {
-        this.fromEdge = fromEdge;
+    @XmlAttribute
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    public Edge getToEdge() {
-        return toEdge;
+    public String getTo() {
+        return to;
     }
 
-    public void setToEdge(Edge toEdge) {
-        this.toEdge = toEdge;
+    @XmlAttribute
+    public void setTo(String to) {
+        this.to = to;
     }
 
-    public Lane getFromLane() {
+    public String getFromLane() {
         return fromLane;
     }
 
-    public void setFromLane(Lane fromLane) {
+    @XmlAttribute
+    public void setFromLane(String fromLane) {
         this.fromLane = fromLane;
     }
 
-    public Lane getToLane() {
+    public String getToLane() {
         return toLane;
     }
 
-    public void setToLane(Lane toLane) {
+    @XmlAttribute
+    public void setToLane(String toLane) {
         this.toLane = toLane;
     }
 
-    public Junction getViaJunction() {
-        return viaJunction;
+    public String getVia() {
+        return via;
     }
 
-    public void setViaJunction(Junction viaJunction) {
-        this.viaJunction = viaJunction;
+    @XmlAttribute
+    public void setVia(String via) {
+        this.via = via;
     }
 
-    public char getDir() {
+    public String getDir() {
         return dir;
     }
 
-    public void setDir(char dir) {
+    @XmlAttribute
+    public void setDir(String dir) {
         this.dir = dir;
     }
 
-    public char getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(char state) {
+    @XmlAttribute
+    public void setState(String state) {
         this.state = state;
     }
 }
