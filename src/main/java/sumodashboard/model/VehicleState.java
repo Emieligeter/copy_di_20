@@ -3,33 +3,34 @@ package sumodashboard.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class VehicleState {
-    private Vehicle vehicle;
+public class VehicleState extends Vehicle {
+    private VehicleType vehicleType;
     private double speedFactor;
     private String state;
     private double pos;
     private double speed;
-    private double postlat;
+    private double posLat;
 
     public VehicleState() {
 
     }
 
-    public VehicleState(Vehicle vehicle, double speedFactor, String state, double pos, double speed, double postlat) {
-        this.vehicle = vehicle;
+    public VehicleState(int ID, String routeXmlID, int depart, int type_id, Route route, VehicleType vehicleType, double speedFactor, String state, double pos, double speed, double posLat) {
+        super(ID, routeXmlID, depart, type_id, route);
+        this.vehicleType = vehicleType;
         this.speedFactor = speedFactor;
         this.state = state;
         this.pos = pos;
         this.speed = speed;
-        this.postlat = postlat;
+        this.posLat = posLat;
     }
 
-    public Vehicle getVehicle() {
-        return vehicle;
+    public VehicleType getVehicleType() {
+        return vehicleType;
     }
 
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
     }
 
     public double getSpeedFactor() {
@@ -64,11 +65,11 @@ public class VehicleState {
         this.speed = speed;
     }
 
-    public double getPostlat() {
-        return postlat;
+    public double getPosLat() {
+        return posLat;
     }
 
-    public void setPostlat(double postlat) {
-        this.postlat = postlat;
+    public void setPosLat(double posLat) {
+        this.posLat = posLat;
     }
 }

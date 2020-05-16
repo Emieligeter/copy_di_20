@@ -1,45 +1,36 @@
 package sumodashboard.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 
 @XmlRootElement
 public class State {
-    private int md_key;
-    private String data;
+    private int ID;
     private double timestep;
-    private VehicleState vehicleState;
-    private RouteState routeState;
-    private LaneState laneState;
+    private ArrayList<Route> routeStates;
+    private ArrayList<VehicleType> vehicleTypes;
+    private ArrayList<VehicleState> vehicleStates;
+    private ArrayList<LaneState> laneStates;
 
     public State() {
 
     }
 
-    public State(int md_key, String data, double timestep, VehicleState vehicleState, RouteState routeState, LaneState laneState) {
-        super();
-
-        this.md_key = md_key;
-        this.data = data;
+    public State(int ID, double timestep, ArrayList<Route> routeStates, ArrayList<VehicleType> vehicleTypes, ArrayList<VehicleState> vehicleStates, ArrayList<LaneState> laneStates) {
+        this.ID = ID;
         this.timestep = timestep;
-        this.vehicleState = vehicleState;
-        this.routeState = routeState;
-        this.laneState = laneState;
+        this.routeStates = routeStates;
+        this.vehicleTypes = vehicleTypes;
+        this.vehicleStates = vehicleStates;
+        this.laneStates = laneStates;
     }
 
-    public int getMd_key() {
-        return md_key;
+    public int getID() {
+        return ID;
     }
 
-    public void setMd_key(int md_key) {
-        this.md_key = md_key;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public double getTimestep() {
@@ -50,27 +41,35 @@ public class State {
         this.timestep = timestep;
     }
 
-    public VehicleState getVehicleState() {
-        return vehicleState;
+    public ArrayList<Route> getRouteStates() {
+        return routeStates;
     }
 
-    public void setVehicleState(VehicleState vehicleState) {
-        this.vehicleState = vehicleState;
+    public void setRouteStates(ArrayList<Route> routeStates) {
+        this.routeStates = routeStates;
     }
 
-    public RouteState getRouteState() {
-        return routeState;
+    public ArrayList<VehicleType> getVehicleTypes() {
+        return vehicleTypes;
     }
 
-    public void setRouteState(RouteState routeState) {
-        this.routeState = routeState;
+    public void setVehicleTypes(ArrayList<VehicleType> vehicleTypes) {
+        this.vehicleTypes = vehicleTypes;
     }
 
-    public LaneState getLaneState() {
-        return laneState;
+    public ArrayList<VehicleState> getVehicleStates() {
+        return vehicleStates;
     }
 
-    public void setLaneState(LaneState laneState) {
-        this.laneState = laneState;
+    public void setVehicleStates(ArrayList<VehicleState> vehicleStates) {
+        this.vehicleStates = vehicleStates;
+    }
+
+    public ArrayList<LaneState> getLaneStates() {
+        return laneStates;
+    }
+
+    public void setLaneStates(ArrayList<LaneState> laneStates) {
+        this.laneStates = laneStates;
     }
 }

@@ -9,13 +9,13 @@ public class Configuration {
     private double end;
     private double step;
     private Net net;
-    private RoutesXml routesXml;
+    private Routes routes;
 
     public Configuration() {
 
     }
 
-    public Configuration(String ID, double begin, double end, double step, Net net, RoutesXml routesXml) {
+    public Configuration(String ID, double begin, double end, double step, Net net, Routes routes) {
         super();
 
         this.ID = ID;
@@ -23,7 +23,7 @@ public class Configuration {
         this.end = end;
         this.step = step;
         this.net = net;
-        this.routesXml = routesXml;
+        this.routes = routes;
     }
 
     public String getID() {
@@ -66,11 +66,11 @@ public class Configuration {
         this.net = net;
     }
 
-    public RoutesXml getRoutesXml() {
-        return routesXml;
+    public Routes getRoutes() {
+        return routes;
     }
 
-    public void setRoutesXml(RoutesXml routesXml) {
-        this.routesXml = routesXml;
+    public void setRoutes(Routes routes) {
+        this.routes = routes;
     }
 }

@@ -5,59 +5,31 @@ import java.util.ArrayList;
 
 @XmlRootElement
 public class Routes {
-    private String ID;
-    private ArrayList<Edge> edges;
-    private ArrayList<Connection> connections;
-    private ArrayList<Junction> junctions;
+    private int ID;
+    private ArrayList<Vehicle> vehicles;
 
     public Routes() {
 
     }
 
-    public Routes(String ID, ArrayList<Edge> edges, ArrayList<Connection> connections, ArrayList<Junction> junctions) {
+    public Routes(int ID, ArrayList<Vehicle> vehicles) {
         this.ID = ID;
-        this.edges = edges;
-        this.connections = connections;
-        this.junctions = junctions;
+        this.vehicles = vehicles;
     }
 
-    public String getRoutesID() {
+    public int getID() {
         return ID;
     }
 
-    public void setRoutesID(String ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
 
-    public ArrayList<Edge> getEdges() {
-        return edges;
+    public ArrayList<Vehicle> getVehicles() {
+        return vehicles;
     }
 
-    public void setEdges(ArrayList<Edge> edges) {
-        this.edges = edges;
-    }
-
-    public String getID() {
-        return ID;
-    }
-
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-
-    public ArrayList<Connection> getConnections() {
-        return connections;
-    }
-
-    public void setConnections(ArrayList<Connection> connections) {
-        this.connections = connections;
-    }
-
-    public ArrayList<Junction> getJunctions() {
-        return junctions;
-    }
-
-    public void setJunctions(ArrayList<Junction> junctions) {
-        this.junctions = junctions;
+    public void setVehicles(ArrayList<Vehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 }

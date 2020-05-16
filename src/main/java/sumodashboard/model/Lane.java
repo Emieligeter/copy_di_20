@@ -6,6 +6,7 @@ import java.util.ArrayList;
 @XmlRootElement
 public class Lane {
     private String ID;
+    private int index;
     private double speed;
     private double length;
     private ArrayList<Integer> shape;

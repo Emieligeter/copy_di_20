@@ -16,6 +16,15 @@ public class Connection {
 
     }
 
+    public Connection(Edge fromEdge, Edge toEdge, Lane fromLane, Lane toLane, char dir, char state) {
+        this.fromEdge = fromEdge;
+        this.toEdge = toEdge;
+        this.fromLane = fromLane;
+        this.toLane = toLane;
+        this.dir = dir;
+        this.state = state;
+    }
+
     public Connection(Edge fromEdge, Edge toEdge, Lane fromLane, Lane toLane, Junction viaJunction, char dir, char state) {
         this.fromEdge = fromEdge;
         this.toEdge = toEdge;

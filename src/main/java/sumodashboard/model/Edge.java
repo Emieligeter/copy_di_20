@@ -5,28 +5,45 @@ import java.util.ArrayList;
 
 @XmlRootElement
 public class Edge {
-    private String edge;
+    private String ID;
+    private String function;
     private ArrayList<Lane> lanes;
-    private Junction fromJunction;
-    private Junction toJunction;
+    private String fromJunction;
+    private String toJunction;
+    private int priority;
 
     public Edge() {
 
     }
 
-    public Edge(String edge, ArrayList<Lane> lanes, Junction fromJunction, Junction toJunction) {
-        this.edge = edge;
+    public Edge(String ID, String function, ArrayList<Lane> lanes) {
+        this.ID = ID;
+        this.function = function;
+        this.lanes = lanes;
+    }
+
+    public Edge(String ID, ArrayList<Lane> lanes, String fromJunction, String toJunction, int priority) {
+        this.ID = ID;
         this.lanes = lanes;
         this.fromJunction = fromJunction;
         this.toJunction = toJunction;
+        this.priority = priority;
     }
 
-    public String getEdge() {
-        return edge;
+    public String getID() {
+        return ID;
     }
 
-    public void setEdge(String edge) {
-        this.edge = edge;
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        this.function = function;
     }
 
     public ArrayList<Lane> getLanes() {
@@ -37,19 +54,27 @@ public class Edge {
         this.lanes = lanes;
     }
 
-    public Junction getFromJunction() {
+    public String getFromJunction() {
         return fromJunction;
     }
 
-    public void setFromJunction(Junction fromJunction) {
+    public void setFromJunction(String fromJunction) {
         this.fromJunction = fromJunction;
     }
 
-    public Junction getToJunction() {
+    public String getToJunction() {
         return toJunction;
     }
 
-    public void setToJunction(Junction toJunction) {
+    public void setToJunction(String toJunction) {
         this.toJunction = toJunction;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }
