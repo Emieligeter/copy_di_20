@@ -5,7 +5,7 @@
 <title>SUMO Dashboard</title>
 <meta charset="UTF-8">
 <meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 <!-- Bootstrap CSS -->
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -63,10 +63,16 @@
 			integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
 			crossorigin="anonymous"></script>
 		<script type="text/javascript" src="htmlFunctions.js"></script>
+		<script type="text/javascript" src="chartFunctions.js"></script>
+		
 		
 		
 		
 		<script>
+		function getCtx() {
+			return document.getElementById('myChart').getContext('2d');
+		}
+		
 		function chartToReport() {
 			console.log("lets add this chart to the report.")
 			var chart = copyCanvas(document.getElementById('myChart'));
@@ -83,6 +89,7 @@
 			return newThing;
 		}
 		
+		var chart;
 		var chartType = "line";
 		function setChartType(type) {
 			chartType = type;
@@ -92,8 +99,11 @@
 		
 		function updateChart() {
 			console.log("We're going to update the chart to type " + chartType);
-			var ctx = document.getElementById('myChart').getContext('2d');
-			var chart = new Chart(ctx, {
+			if (this.chart!==undefined){this.chart.destroy();}
+			var canvas = document.getElementById('myChart');
+			var ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			chart = new Chart(ctx, {
 				// The type of chart we want to create
 				type : chartType,
 
