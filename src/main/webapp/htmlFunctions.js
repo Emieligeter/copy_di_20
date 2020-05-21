@@ -2,42 +2,54 @@
  * This file contains all functions regarding the html files.
  */
 
+//TODO connect sql queries
 function loadFiles() {
-	var httpReq = new XMLHttpRequest();
-	  httpReq.onreadystatechange = function() {
-	    if (this.readyState == 4 && this.status == 200) {
-	      updateFiles(this);
-	    }
-	  };
-	  httpReq.open("GET", "cd_catalog.xml", true);
-	  httpReq.send();
+	/*var httpReq = new XMLHttpRequest();
+	var sumoFiles = document.getElementById("sumoFiles");
+	httpReq.onreadystatechange = function() {
+	  if (this.readyState == 4 && this.status == 200) {
+		  var liElem = document.createElement("li");
+			var name = "Loaded SUMO File";
+			var date = "28/05/2020";
+			var researcher = "John Doe";
+			var tags = "wow, some tags";
+		    liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
+			  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
+			  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
+		   	 	"</div>\n" +
+			  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
+			  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
+			  "<small>" + tags + "</small>\n" +
+			  "</a>";
+		    sumoFiles.appendChild(liElem);
+	  }
+	};
+	httpReq.open("GET", "cd_catalog.xml", true);
+	httpReq.send();*/	
+	var liElem = document.createElement("li");
+	var name = "Loaded SUMO File";
+	var date = "28/05/2020";
+	var researcher = "John Doe";
+	var tags = "traffic, car, numbers, data";
+    liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
+	  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
+	  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
+   	 	"</div>\n" +
+	  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
+	  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
+	  "<small>" + tags + "</small>\n" +
+	  "</a>";
+    sumoFiles.appendChild(liElem);
 }
 
-function updateFiles(xml) {
-	  var i;
-	  var xmlDoc = xml.responseXML;
-	  var table="<tr><th>Artist</th><th>Title</th></tr>";
-	  var x = xmlDoc.getElementsByTagName("CD");
-	  for (i = 0; i <x.length; i++) {
-	    table += "<tr><td>" +
-	    x[i].getElementsByTagName("ARTIST")[0].childNodes[0].nodeValue +
-	    "</td><td>" +
-	    x[i].getElementsByTagName("TITLE")[0].childNodes[0].nodeValue +
-	    "</td></tr>";
-	  }
-	  document.getElementById("demo").innerHTML = table;
-	}
-
-function getSortedFiles() {
+function getFilteredFiles() {
   // Declare variables
   var input, filter, files, li, a, i, txtValue;
   input = document.getElementById('fileSearch');
   filter = input.value.toUpperCase();
   files = document.getElementById("sumoFiles");
   li = files.getElementsByTagName('li');
-
-  // Loop through all list items, and hide those who don't match the search
-	// query
+  // Loop through all list items, and hide those who don't match the search query
   for (i = 0; i < li.length; i++) {
     a = li[i].getElementsByTagName("a")[0];
     txtValue = a.textContent || a.innerText;
@@ -48,6 +60,11 @@ function getSortedFiles() {
     }
   }
 }
+
+$("#sumoFiles").click(function(){
+	  alert("You have clicked a file");
+	});
+
 $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
   	
