@@ -31,7 +31,7 @@ function updateFiles(xml) {
 function getSortedFiles() {
   // Declare variables
   var input, filter, files, li, a, i, txtValue;
-  input = document.getElementById('myInput');
+  input = document.getElementById('fileSearch');
   filter = input.value.toUpperCase();
   files = document.getElementById("sumoFiles");
   li = files.getElementsByTagName('li');

@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="styles.css">
 
     <title>File Modification</title>
   </head>
@@ -19,7 +20,7 @@
   <div class="row">
     <div class="col-sm-4">
       <h3>SUMO Files</h3>
-      <input type="text" id="myInput" onkeyup="getSortedFiles()" placeholder="Search for files..">
+      <input type="text" id="fileSearch" onkeyup="getSortedFiles()" placeholder="Search for files..">
 		<ul id="sumoFiles" class="list-unstyled list-group">
 		  <li><a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
 		  	<div class="d-flex w-100 justify-content-between">
@@ -38,7 +39,7 @@
 		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 6</a></li>
 		  <li><a href="#" class="list-group-item list-group-item-action">SUMO file 7</a></li>
 		</ul>
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+		<button type="button" class="stdForm btn btn-primary" data-toggle="modal" data-target="#exampleModal">
   			Upload file...
 		</button>
 
@@ -80,9 +81,33 @@
 		</div>
 			
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <h3>Edit metadata</h3>
-      <p>...</p>
+      <form id="modifyMetadata">
+	      <div class="stdForm">
+	      	<h5>Title:</h5>
+	      	<input type="text" id="newTitle">
+	      	<h5>Date:</h5>
+	      	<input type="date" id="newDate">
+	      	<h5>Researcher:</h5>
+	      	<input type="text" id="newResearcher">
+	      </div>
+      	
+      	<h5>Tags:</h5>
+      	<div class="card">
+      		<div class="card-body">
+      			<input type="checkbox" id="tag1" name="tags" value="tag1">
+      			<label for="tag1"> Tag 1</label><br>
+      			<input type="checkbox" id="tag2" name="tags" value="tag2">
+      			<label for="tag2"> Tag 2</label><br>
+				<input type="text" id="newTag">
+      			<button type="button" class="btn btn-secondary" id="addTag">Add</button>
+      		</div>
+      	</div>
+      	<br>
+      	<button type="button" class="btn btn-success" id="submitMetadata">Submit</button>
+      	<button type="button" class="btn btn-danger" id="resetMetadataForm">Cancel</button>
+      </form>
     </div>
   </div>
 </div>

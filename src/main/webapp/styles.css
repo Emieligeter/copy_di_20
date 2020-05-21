@@ -1,6 +1,5 @@
 
-//Style for simulation list
-#myInput {
+#fileSearch {
   background-image: url('/css/searchicon.png'); /* Add a search icon to input */
   background-position: 10px 12px; /* Position the search icon */
   background-repeat: no-repeat; /* Do not repeat the icon image */
@@ -16,6 +15,7 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+  margin-bottom: 15px;
 }
 
 #sumoFiles li a {
@@ -28,4 +28,25 @@
   color: black; /* Add a black text color */
   display: block; /* Make it into a block element to fill the whole list */
   list-style-type: none;
+}
+
+.stdForm input {
+	width: 100%;
+	margin: 10px;
+}
+
+.stdForm p {
+  margin-bottom: 0px;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.stdForm button {
+	margin-top: 20px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.stdForm .card {
+  margin-top: 200px;
 }
