@@ -13,6 +13,13 @@ function loadFiles() {
 	  httpReq.send();
 }
 
+$("#sumoFiles").click(function(){
+	  alert("You have clicked a file ");
+	  //$(metadata).load(URL,data,callback);
+	});
+
+
+
 function updateFiles(xml) {
 	  var i;
 	  var xmlDoc = xml.responseXML;
@@ -28,7 +35,7 @@ function updateFiles(xml) {
 	  document.getElementById("demo").innerHTML = table;
 	}
 
-function getSortedFiles() {
+function getFilteredFiles() {
   // Declare variables
   var input, filter, files, li, a, i, txtValue;
   input = document.getElementById('myInput');
@@ -48,6 +55,7 @@ function getSortedFiles() {
     }
   }
 }
+
 $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
   	
