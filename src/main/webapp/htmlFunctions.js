@@ -30,7 +30,7 @@ function loadFiles() {
 	var name = "Loaded SUMO File";
 	var date = "28/05/2020";
 	var researcher = "John Doe";
-	var tags = "wow, some tags";
+	var tags = "traffic, car, numbers, data";
     liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
 	  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
 	  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
@@ -42,30 +42,28 @@ function loadFiles() {
     sumoFiles.appendChild(liElem);
 }
 
+function getFilteredFiles() {
+	  // Declare variables
+	  var input, filter, files, li, a, i, txtValue;
+	  input = document.getElementById('myInput');
+	  filter = input.value.toUpperCase();
+	  files = document.getElementById("sumoFiles");
+	  li = files.getElementsByTagName('li');
+	  // Loop through all list items, and hide those who don't match the search query
+	  for (i = 0; i < li.length; i++) {
+	    a = li[i].getElementsByTagName("a")[0];
+	    txtValue = a.textContent || a.innerText;
+	    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+	      li[i].style.display = "";
+	    } else {
+	      li[i].style.display = "none";
+	    }
+	  }
+	}
+
 $("#sumoFiles").click(function(){
 	  alert("You have clicked a file");
-	  //$(metadata).load(URL,data,callback);
 	});
-
-function getFilteredFiles() {
-  // Declare variables
-  var input, filter, files, li, a, i, txtValue;
-  input = document.getElementById('myInput');
-  filter = input.value.toUpperCase();
-  files = document.getElementById("sumoFiles");
-  li = files.getElementsByTagName('li');
-
-  // Loop through all list items, and hide those who don't match the search query
-  for (i = 0; i < li.length; i++) {
-    a = li[i].getElementsByTagName("a")[0];
-    txtValue = a.textContent || a.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
-}
 
 $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
