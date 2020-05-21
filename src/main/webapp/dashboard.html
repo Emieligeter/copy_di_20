@@ -5,7 +5,7 @@
 <title>SUMO Dashboard</title>
 <meta charset="UTF-8">
 <meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 <!-- Bootstrap CSS -->
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -19,13 +19,13 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
-				<button id="LineGraph">Line Graph</button> 
-				<button id="ScatterPlot">Scatter Plot</button> 
-				<button id="BarChart">Bar Chart</button>
-				<button id="PieChart">Pie Chart</button> 
+				<button id="LineGraph" onclick="setChartType('line')">Line Graph</button> 
+				<button id="ScatterPlot" onclick="setChartType('scatter')">Scatter Plot</button> 
+				<button id="BarChart" onclick="setChartType('bar')">Bar Chart</button>
+				<button id="PieChart" onclick="setChartType('pie')">Pie Chart</button> 
 				<button id="Title">Title</button> 
 				 
-				<button id="addToReport">Add chart to report</button>
+				<button id="addToReport" onclick="chartToReport()">Add chart to report</button>
 				<br>
 			</div>
 		</div>
@@ -43,7 +43,7 @@
 		</div>
 		<div class="row">
 			<div id="report" class="col">
-				<p>here goes the report with a lot of info and beautiful graphs and I'm just adding some extra text here to see how it looks.</p>
+			<h3>Preliminary report</h3>
 			</div>
 		</div>
 	</div>
@@ -63,13 +63,49 @@
 			integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
 			crossorigin="anonymous"></script>
 		<script type="text/javascript" src="htmlFunctions.js"></script>
-			
-
+		<script type="text/javascript" src="chartFunctions.js"></script>
+		
+		
+		
+		
 		<script>
-			var ctx = document.getElementById('myChart').getContext('2d');
-			var chart = new Chart(ctx, {
+		function getCtx() {
+			return document.getElementById('myChart').getContext('2d');
+		}
+		
+		function chartToReport() {
+			console.log("lets add this chart to the report.")
+			var chart = copyCanvas(document.getElementById('myChart'));
+			document.getElementById('report').appendChild(chart);
+			console.log("done.")
+		}
+		
+		function copyCanvas(original) {
+			var newThing = document.createElement('canvas');
+			var cxt = newThing.getContext('2d');
+			newThing.width = original.width;
+			newThing.height = original.height;
+			cxt.drawImage(original, 0, 0);
+			return newThing;
+		}
+		
+		var chart;
+		var chartType = "line";
+		function setChartType(type) {
+			chartType = type;
+			console.log("Set chartType to " + type + chartType);
+			updateChart();
+		}
+		
+		function updateChart() {
+			console.log("We're going to update the chart to type " + chartType);
+			if (this.chart!==undefined){this.chart.destroy();}
+			var canvas = document.getElementById('myChart');
+			var ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			chart = new Chart(ctx, {
 				// The type of chart we want to create
-				type : 'line',
+				type : chartType,
 
 				// The data for our dataset
 				data : {
@@ -77,14 +113,29 @@
 							"June", "July" ],
 					datasets : [ {
 						label : "My First dataset",
-						backgroundColor : 'rgb(99, 99, 132)',
+						backgroundColor : getColors(7),
 						borderColor : 'rgb(99, 99, 132)',
 						data : [ 0, 10, 5, 2, 20, 30, 45 ],
+						
 					} ]
 				},
 
 				// Configuration options go here
 				options : {}
 			});
+			console.log("done.");
+		}
+		
+		/*https://stackoverflow.com/questions/28828915/how-set-color-family-to-pie-chart-in-chart-js*/
+		function getColors(length){
+		    let pallet = ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"];
+		    let colors = [];
+
+		    for(let i = 0; i < length; i++) {
+		      colors.push(pallet[i % pallet.length]);
+		    }
+
+		    return colors;
+		  }
 		</script>
 </body>
