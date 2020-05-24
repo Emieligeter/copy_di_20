@@ -19,7 +19,7 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
-				<button id="LineGraph" onclick="setChartType('line')">Line Graph</button> 
+				<button id="LineGraph" onclick="lineGraphClicked">Line Graph</button> 
 				<button id="ScatterPlot" onclick="setChartType('scatter')">Scatter Plot</button> 
 				<button id="BarChart" onclick="setChartType('bar')">Bar Chart</button>
 				<button id="PieChart" onclick="setChartType('pie')">Pie Chart</button> 
@@ -31,14 +31,35 @@
 		</div>
 		<div class="row">
 			<div id="fileSelect" class="col">
-				<button id=toSimList onclick="location.href='simList.html'">Edit Files</button>
+				<button id=toSimList onclick="location.href='simList.html'">Edit
+					Files</button>
 				<p>this is where we have a list of files</p>
 			</div>
 			<div id="chart" class="col">
 				<canvas id="myChart"></canvas>
 			</div>
 			<div id="varSelect" class="col">
-				<p>we select variables here</p>
+				<select id="first-choice" name="plotChoice" class="form-control" onchange="changeSecondChoice()" required>
+					<option selected value="base">Please choose a plot</option>
+					<option value="Edge appearance frequency">Edge appearance frequency</option>
+					<option value="Number of lane transiting vehicles">Number of lane transiting vehicles</option>
+					<option value="Average route length">Average route length</option>
+					<option value="Route length">Route length</option>
+					<option value="Speed">Speed</option>
+					<option value="Speed factor">Speed factor</option>
+					<option value="Average route length">Average route length</option>
+					<option value="Average vehicle speed">Average vehicle speed</option>
+					<option value="Average vehicle speed factor">Average vehicle speed factor</option>
+					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
+					<option value="Number of transferred vehicles">Number of transferred vehicles</option>
+					<option value="Number of running vehicles">Number of running vehicles</option>
+					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
+					<option value="Number of running vehicles">Number of running vehicles</option>
+					
+				</select> <br> 
+				<select id="second-choice" name="detailChoice" class="form-control">
+					<option>Please choose from above</option>
+				</select>
 			</div>
 		</div>
 		<div class="row">
@@ -137,5 +158,29 @@
 
 		    return colors;
 		  }
+		
+		var dropDownOptions = {};
+		dropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
+		dropDownOptions['Number of lane transiting vehicles'] = ['Lane 1', 'Lane 2', 'Lane 3'];
+		dropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+		dropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+		dropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+
+		function changeSecondChoice() {
+		    var fst = document.getElementById("first-choice");
+		    var sec = document.getElementById("second-choice");
+		    var chosen = fst.options[fst.selectedIndex].value;
+		    while (sec.options.length) {
+		        sec.remove(0);
+		    }
+		    var options = dropDownOptions[chosen];
+		    if (options) {
+		        var i;
+		        for (i = 0; i < options.length; i++) {
+		            var option = new Option(options[i], i);
+		            sec.options.add(option);
+		        }
+		    }
+		} 
 		</script>
 </body>
