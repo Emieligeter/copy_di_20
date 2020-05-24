@@ -19,19 +19,18 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
-				<button id="LineGraph" onclick="setChartType('line')">Line Graph</button> 
-				<button id="ScatterPlot" onclick="setChartType('scatter')">Scatter Plot</button> 
-				<button id="BarChart" onclick="setChartType('bar')">Bar Chart</button>
-				<button id="PieChart" onclick="setChartType('pie')">Pie Chart</button> 
+				<button id="LineGraph" class="btn btn-outline-primary" onclick="setChartType('line')">Line Graph</button> 
+				<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
+				<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
+				<button id="PieChart" class="btn btn-outline-primary" onclick="setChartType('pie')">Pie Chart</button> 
 				 
-				<button id="addToReport" onclick="chartToReport()">Add chart to report</button>
+				<button id="addToReport" class="btn btn-success" onclick="chartToReport()">Add chart to report</button>
 				<br>
 			</div>
 		</div>
 		<div class="row">
 			<div id="fileSelect" class="col">
-				<button id=toSimList onclick="location.href='simList.html'">Edit
-					Files</button>
+				<button id=toSimList class="btn btn-secondary" onclick="location.href='simList.html'">Edit Files</button>
 				<p>this is where we have a list of files</p>
 			</div>
 			<div id="chart" class="col">
@@ -39,29 +38,54 @@
 			</div>
 			<div id="varSelect" class="col">
 				<div id="fstChoice">
-					<select id="first-choice" name="plotChoice" class="form-control" onchange="changeSecondChoice()" required>
-						<option selected value="base">Please choose a plot</option>
-						<option value="Edge appearance frequency">Edge appearance frequency</option>
-						<option value="Number of lane transiting vehicles">Number of lane transiting vehicles</option>
-						<option value="Average route length">Average route length</option>
-						<option value="Route length">Route length</option>
-						<option value="Speed">Speed</option>
-						<option value="Speed factor">Speed factor</option>
-						<option value="Average route length">Average route length</option>
-						<option value="Average vehicle speed">Average vehicle speed</option>
-						<option value="Average vehicle speed factor">Average vehicle speed factor</option>
-						<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
-						<option value="Number of transferred vehicles">Number of transferred vehicles</option>
-						<option value="Number of running vehicles">Number of running vehicles</option>
-						<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
-						<option value="Number of running vehicles">Number of running vehicles</option>
-					</select>
+				<label class="row"  for="first-choice">Choose a plot:</label>
+				<select id="first-choice" name="plotChoice" class="form-control row" onchange="changeSecondChoice()" required>
+					<option selected value="base">Please choose a plot</option>
+					<option value="Edge appearance frequency">Edge appearance frequency</option>
+					<option value="Number of lane transiting vehicles">Number of lane transiting vehicles</option>
+					<option value="Average route length">Average route length</option>
+					<option value="Route length">Route length</option>
+					<option value="Speed">Speed</option>
+					<option value="Speed factor">Speed factor</option>
+					<option value="Average route length">Average route length</option>
+					<option value="Average vehicle speed">Average vehicle speed</option>
+					<option value="Average vehicle speed factor">Average vehicle speed factor</option>
+					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
+					<option value="Number of transferred vehicles">Number of transferred vehicles</option>
+					<option value="Number of running vehicles">Number of running vehicles</option>
+					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
+					<option value="Number of running vehicles">Number of running vehicles</option>
+				</select>
 				</div>
-				<div id="optionalSecChoice">
+				<div id="optionalSecChoice" class="row">
 				</div>
-				<div id="editChart">
-					<label for="setTitleLable">Change title</label>
-    				<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1" onkeyup="setTitle(event)">	
+				<div id="editChartStyle">
+					<label class="row"  for="editChart">Edit chart:</label>
+					<form class="row" name="editChart" id="editChart" data-toggle="buttons">
+		     				
+	     				<label class="btn btn-primary active form-check-label">
+	       				<input class="form-check-input" type="radio" checked autocomplete="off" style="opacity: 0" name="editChart" value="title"> Title
+	     				</label>
+	
+	     				<label class="btn btn-primary form-check-label">
+	      					<input class="form-check-input" type="radio" autocomplete="off" style="opacity: 0" name="editChart" value="y-axis"> Y-axis
+	     				</label>
+	
+	     				<label class="btn btn-primary form-check-label">
+	       				<input class="form-check-input" type="radio" autocomplete="off" style="opacity: 0" name="editChart" value="x-axis"> X-axis
+	     				</label>
+	     				
+	     				<label class="btn btn-primary form-check-label">
+	       				<input class="form-check-input" type="radio" autocomplete="off" style="opacity: 0" name="editChart" value="color"> Color
+	     				</label>
+	     				
+	     				</form>
+	     			</div>
+	     			<div id="enterData" class="row">
+	   					<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1">
+						<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Submit</button>		   			
+						<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Remove</button>		   			
+					</div>	   			
 				</div>
 			</div>
 		</div>
@@ -137,6 +161,7 @@
 							"June", "July" ],
 					datasets : [ {
 						label : "My First dataset",
+						fill : false,
 						backgroundColor : getColors(7),
 						borderColor : 'rgb(99, 99, 132)',
 						data : [ 0, 10, 5, 2, 20, 30, 45 ],
@@ -162,14 +187,46 @@
 		    return colors;
 		  }
 		
-		function setTitle(event){
-			if (event.keyCode === 13) {
+		function editChartStyle(type){
+			var checked = document.querySelector('input[name="editChart"]:checked').value;
+			switch(checked) {
+			case 'title':
+				if (type === "remove") {
+					chart.options.title.display = false;
+				} else if (type === "change"){
 				var newTitle = document.getElementById("setTitleInput").value;
-				chart.options.title.display = true;
 				chart.options.title.text = newTitle;
-				chart.update();
+				chart.options.title.display = true;
+				}
+				break;
+			case 'y-axis':
+				if (type === "remove") {
+					chart.options.scales.yAxes[0].scaleLabel.display = false;
+				} else if (type === "change"){
+				var newTitle = document.getElementById("setTitleInput").value;
+				chart.options.scales.yAxes[0].scaleLabel.labelString = newTitle;
+				chart.options.scales.yAxes[0].scaleLabel.display = true;
+				}
+				break;
+			case 'x-axis':
+				if (type === "remove") {
+					chart.options.scales.xAxes[0].scaleLabel.display = false;
+				} else if (type === "change"){
+				var newTitle = document.getElementById("setTitleInput").value;
+				chart.options.scales.xAxes[0].scaleLabel.labelString = newTitle;
+				chart.options.scales.xAxes[0].scaleLabel.display = true;
+				}
+				break;
+			case 'color':
+				if (type === "change"){
+				var newColor = document.getElementById("setTitleInput").value;
+				chart.data.datasets[0].borderColor = newColor;
+				chart.data.datasets[0].backgroundColor = newColor;
+				}
+				break;
 			}
-		}
+			chart.update();
+			}
 		
 		var dropDownOptions = {};
 		dropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
