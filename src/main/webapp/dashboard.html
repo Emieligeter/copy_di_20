@@ -19,11 +19,10 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
-				<button id="LineGraph" onclick="lineGraphClicked">Line Graph</button> 
+				<button id="LineGraph" onclick="setChartType('line')">Line Graph</button> 
 				<button id="ScatterPlot" onclick="setChartType('scatter')">Scatter Plot</button> 
 				<button id="BarChart" onclick="setChartType('bar')">Bar Chart</button>
 				<button id="PieChart" onclick="setChartType('pie')">Pie Chart</button> 
-				<button id="Title">Title</button> 
 				 
 				<button id="addToReport" onclick="chartToReport()">Add chart to report</button>
 				<br>
@@ -39,27 +38,31 @@
 				<canvas id="myChart"></canvas>
 			</div>
 			<div id="varSelect" class="col">
-				<select id="first-choice" name="plotChoice" class="form-control" onchange="changeSecondChoice()" required>
-					<option selected value="base">Please choose a plot</option>
-					<option value="Edge appearance frequency">Edge appearance frequency</option>
-					<option value="Number of lane transiting vehicles">Number of lane transiting vehicles</option>
-					<option value="Average route length">Average route length</option>
-					<option value="Route length">Route length</option>
-					<option value="Speed">Speed</option>
-					<option value="Speed factor">Speed factor</option>
-					<option value="Average route length">Average route length</option>
-					<option value="Average vehicle speed">Average vehicle speed</option>
-					<option value="Average vehicle speed factor">Average vehicle speed factor</option>
-					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
-					<option value="Number of transferred vehicles">Number of transferred vehicles</option>
-					<option value="Number of running vehicles">Number of running vehicles</option>
-					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
-					<option value="Number of running vehicles">Number of running vehicles</option>
-					
-				</select> <br> 
-				<select id="second-choice" name="detailChoice" class="form-control">
-					<option>Please choose from above</option>
-				</select>
+				<div id="fstChoice">
+					<select id="first-choice" name="plotChoice" class="form-control" onchange="changeSecondChoice()" required>
+						<option selected value="base">Please choose a plot</option>
+						<option value="Edge appearance frequency">Edge appearance frequency</option>
+						<option value="Number of lane transiting vehicles">Number of lane transiting vehicles</option>
+						<option value="Average route length">Average route length</option>
+						<option value="Route length">Route length</option>
+						<option value="Speed">Speed</option>
+						<option value="Speed factor">Speed factor</option>
+						<option value="Average route length">Average route length</option>
+						<option value="Average vehicle speed">Average vehicle speed</option>
+						<option value="Average vehicle speed factor">Average vehicle speed factor</option>
+						<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
+						<option value="Number of transferred vehicles">Number of transferred vehicles</option>
+						<option value="Number of running vehicles">Number of running vehicles</option>
+						<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
+						<option value="Number of running vehicles">Number of running vehicles</option>
+					</select>
+				</div>
+				<div id="optionalSecChoice">
+				</div>
+				<div id="editChart">
+					<label for="setTitleLable">Change title</label>
+    				<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1" onkeyup="setTitle(event)">	
+				</div>
 			</div>
 		</div>
 		<div class="row">
@@ -159,6 +162,15 @@
 		    return colors;
 		  }
 		
+		function setTitle(event){
+			if (event.keyCode === 13) {
+				var newTitle = document.getElementById("setTitleInput").value;
+				chart.options.title.display = true;
+				chart.options.title.text = newTitle;
+				chart.update();
+			}
+		}
+		
 		var dropDownOptions = {};
 		dropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
 		dropDownOptions['Number of lane transiting vehicles'] = ['Lane 1', 'Lane 2', 'Lane 3'];
@@ -169,6 +181,10 @@
 		function changeSecondChoice() {
 		    var fst = document.getElementById("first-choice");
 		    var sec = document.getElementById("second-choice");
+		    if (sec == null) {
+		    	document.getElementById("optionalSecChoice").innerHTML = "<select id=\"second-choice\" name=\"detailChoice\" class=\"form-control\"></select>";
+		    	sec = document.getElementById("second-choice");
+		    	}
 		    var chosen = fst.options[fst.selectedIndex].value;
 		    while (sec.options.length) {
 		        sec.remove(0);
@@ -180,6 +196,8 @@
 		            var option = new Option(options[i], i);
 		            sec.options.add(option);
 		        }
+		    } else {
+		    	document.getElementById("optionalSecChoice").innerHTML = "";
 		    }
 		} 
 		</script>
