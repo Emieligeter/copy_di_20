@@ -1,10 +1,18 @@
 package sumodashboard.model;
 
 
+import java.io.File;
+import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Scanner;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.junit.platform.commons.util.StringUtils;
 
 @XmlRootElement
 public class Simulation {
