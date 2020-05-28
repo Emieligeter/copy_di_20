@@ -37,7 +37,17 @@ function loadFiles() {
 	  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
 	  "<small>" + tags + "</small>\n" +
 	  "</a>";
+	var liElemTwo = document.createElement("li");
+    liElemTwo.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
+	  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
+	  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
+   	 	"</div>\n" +
+	  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
+	  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
+	  "<small>" + tags + "</small>\n" +
+	  "</a>";
     sumoFiles.appendChild(liElem);
+    sumoFiles.appendChild(liElemTwo);
 }
 
 function getFilteredFiles() {
@@ -58,39 +68,7 @@ function getFilteredFiles() {
   }
 }
 
-$("#sumoFiles").ready(function() {
-    $('sumoFiles').click(function() {
-    	// Select all list items 
-        var files = $("sumoFiles"); 
-        // Remove 'active' tag for all list items 
-        for (let i = 0; i < files.length; i++) { 
-            files[i].classList.remove("active"); 
-        } 
-        // Add 'active' tag for currently selected item 
-        this.classList.add("active"); 
-    });
-});
+$(document).on('click', 'ul li a', function() {
+	$(this).addClass('active').parent().siblings().children().removeClass('active');	
+})
 
-/*$("#sumoFiles").click(function(){
-	  alert("You have clicked a file");
-	//Get the container element
-	  var sumoList = document.getElementById("sumoFiles");
-
-	  // Get all buttons with class="btn" inside the container
-	  var files = sumoList.getElementsByTagName("li");
-
-	  // Loop through the buttons and add the active class to the current/clicked button
-	  for (var i = 0; i < files.length; i++) {
-	    files[i].addEventListener("click", function() {
-	      var current = document.getElementsByClassName("active");
-
-	      // If there's no active class
-	      if (current.length > 0) {
-	        current[0].className = current[0].className.replace(" active", "");
-	      }
-
-	      // Add the active class to the current/clicked button
-	      this.className += " active";
-	    });
-	  }
-	});*/
