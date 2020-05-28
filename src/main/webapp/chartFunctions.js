@@ -18,14 +18,7 @@ var data = {
 	} ]
 };
 
-function pieChart(ctx) {
-	if (this.chart !== undefined){this.chart.destroy();}
-	chart = new Chart(ctx, {
-	    type: 'pie',
-	    data: data,
-	    options: {}
-})
-}
+
 
 function getCtx() {
 	document.getElementById('myChart').getContext('2d');
@@ -34,6 +27,7 @@ function getCtx() {
 
 function setChartType(type) {
 	chartType = type;
+	changeFirstChoice(type);
 	console.log("Set chartType to " + type + chartType);
 	updateChart();
 }
