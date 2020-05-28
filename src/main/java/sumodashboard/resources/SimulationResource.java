@@ -32,16 +32,16 @@ public class SimulationResource {
 		this.request = request;
 		this.ID = ID;
 	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_XML)
-	public Simulation getSimulation() {
-		Simulation simulation = SimulationDao.instance.getModel().get(ID);
-		if (simulation == null) {
-			throw new RuntimeException("Simulation " + ID + " not found.");
-		}
-		return simulation;
-	}
+//	
+//	@GET
+//	@Produces(MediaType.APPLICATION_XML)
+//	public Simulation getSimulation() {
+//		Simulation simulation = SimulationDao.instance.getModel().get(ID);
+//		if (simulation == null) {
+//			throw new RuntimeException("Simulation " + ID + " not found.");
+//		}
+//		return simulation;
+//	}
 	
 	@GET
 	@Path("/avgspeedtime")
@@ -55,6 +55,7 @@ public class SimulationResource {
 				endResult.add(new GraphPoint((double) resultSet.getObject("timestep"), 
 						(double) resultSet.getObject("avg")));
 			}
+			System.out.println(endResult.toString());
 			return endResult;
 
 		} catch (SQLException e) {

@@ -46,20 +46,21 @@ public enum SimulationDao {
 	
 	public ResultSet getSimulations() throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT metadata.*" + 
+				"SELECT metadata.* " +
 				"FROM metadata");
-		
+
 		ResultSet res = simQuery.executeQuery();
-		
-		return res;		
+
+		return res;
 	}
 	
 	public ResultSet getAvgSpeedTime(String simulation_id) throws SQLException {
-		PreparedStatement dataQuery = connection.prepareStatement("SELECT state.timestep, AVG(vehicle_state.speed)" + 
-				"FROM vehicle_state, state" + 
-				"WHERE vehicle_state.state_id = state.state_id" + 
-				"GROUP BY state.timestep" + 
-				"ORDER BY state.timestep"); 
+		PreparedStatement dataQuery = connection.prepareStatement("" + 
+				"SELECT state.timestep, AVG(vehicle_state.speed) " +
+				"FROM vehicle_state, state " +
+				"WHERE vehicle_state.state_id = state.state_id " +
+				"GROUP BY state.timestep " +
+				"ORDER BY state.timestep ");
 		
 		ResultSet resultSet = dataQuery.executeQuery();
 		return resultSet;
