@@ -19,7 +19,7 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
-			<button id="LogOut" class="btn btn-danger" onclick="getCtx()">Log Out</button> 
+			<button id="LogOut" class="btn btn-danger">Log Out</button> 
 				<button id="LineGraph" class="btn btn-outline-primary" onclick="setChartType('line')">Line Graph</button> 
 				<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
 				<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
@@ -41,21 +41,7 @@
 				<div id="fstChoice">
 				<label class="row"  for="first-choice">Choose a plot:</label>
 				<select id="first-choice" name="plotChoice" class="form-control row" onchange="changeSecondChoice()" required>
-					<option selected value="base">Please choose a plot</option>
-					<option value="Edge appearance frequency">Edge appearance frequency</option>
-					<option value="Number of lane transiting vehicles">Number of lane transiting vehicles</option>
-					<option value="Average route length">Average route length</option>
-					<option value="Route length">Route length</option>
-					<option value="Speed">Speed</option>
-					<option value="Speed factor">Speed factor</option>
-					<option value="Average route length">Average route length</option>
-					<option value="Average vehicle speed">Average vehicle speed</option>
-					<option value="Average vehicle speed factor">Average vehicle speed factor</option>
-					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
-					<option value="Number of transferred vehicles">Number of transferred vehicles</option>
-					<option value="Number of running vehicles">Number of running vehicles</option>
-					<option value="Cumulative number of arrived vehicles">Cumulative number of arrived vehicles</option>
-					<option value="Number of running vehicles">Number of running vehicles</option>
+					<option selected value="base">Please choose a chart type</option>
 				</select>
 				</div>
 				<div id="optionalSecChoice" class="row">
@@ -111,17 +97,15 @@
 			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
 			integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
 			crossorigin="anonymous"></script>
-		<script type="text/javascript" src="htmlFunctions.js"></script>
 		<script type="text/javascript" src="chartFunctions.js"></script>
 		<script type="text/javascript" src="selectVariablesFunctions.js"></script>
 		<script type="text/javascript" src="reportFunctions.js"></script>
 		
-		
-		
-		
-		
+				
 		
 		<script>
-		window.onload=loadDropDownOptions();
+		window.onload=loadFstDropDownOptions();
+		window.onload=loadSecDropDownOptions();
+
 		</script>
 </body>

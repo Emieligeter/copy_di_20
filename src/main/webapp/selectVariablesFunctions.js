@@ -39,15 +39,30 @@ function editChartStyle(type){
 	chart.update();
 }
 
-var dropDownOptions = {};
+var fstDropDownOptions = {};
+var secDropDownOptions = {};
 
-function loadDropDownOptions(){
-	dropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
-	dropDownOptions['Number of lane transiting vehicles'] = ['Lane 1', 'Lane 2', 'Lane 3'];
-	dropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	dropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	dropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	console.log("loadDropDownOptions successfull")
+function loadFstDropDownOptions(){
+	fstDropDownOptions['line'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
+	fstDropDownOptions['pie'] = ['Route length', 'Edge appearance frequency'];
+	console.log("firstdropdown options are loaded");
+}
+
+function loadSecDropDownOptions(){
+	secDropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
+	secDropDownOptions['Number of lane transiting vehicles'] = ['Lane 1', 'Lane 2', 'Lane 3'];
+	secDropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	secDropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	secDropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	console.log("secondDropDownOptions are loaded");
+}
+
+function changeFirstChoice(chartType) {
+	var menu = document.getElementById("first-choice");
+	var newOptions = fstDropDownOptions[chartType];
+	console.log("this one: " + newOptions + chartType);
+	editDropDown(menu, newOptions);
+	console.log("first choice was changed");
 }
 
 function changeSecondChoice() {
@@ -58,17 +73,25 @@ function changeSecondChoice() {
     	sec = document.getElementById("second-choice");
     	}
     var chosen = fst.options[fst.selectedIndex].value;
-    while (sec.options.length) {
-        sec.remove(0);
+    console.log("chosen: " + chosen);
+    var newOptions = secDropDownOptions[chosen];
+    editDropDown(sec, newOptions);
+    console.log("now this one: " + sec + newOptions);
+    console.log("second choice was changed");
+} 
+
+function editDropDown(menu, newOptions) {
+	while (menu.options.length) {
+        menu.remove(0);
     }
-    var options = dropDownOptions[chosen];
-    if (options) {
+    if (newOptions) {
         var i;
-        for (i = 0; i < options.length; i++) {
-            var option = new Option(options[i], i);
-            sec.options.add(option);
+        for (i = 0; i < newOptions.length; i++) {
+            var option = new Option(newOptions[i], newOptions[i]);
+            menu.options.add(option);
         }
     } else {
     	document.getElementById("optionalSecChoice").innerHTML = "";
     }
-} 
+    console.log("drop down was edited");
+}
