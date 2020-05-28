@@ -2,9 +2,16 @@ package sumodashboard.resources;
 
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.json.Json;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -35,15 +42,34 @@ public class SimulationsResource {
 	Request request;
 
 	@GET
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public List<Simulation> getSimulations() {
-		List<Simulation> simulations = new ArrayList<Simulation>();
-
-		for (Simulation bike : SimulationDao.instance.getModel().values()) {
-			simulations.add(bike);
+//		List<Simulation> simulations = new ArrayList<Simulation>();
+//
+//		for (Simulation bike : SimulationDao.instance.getModel().values()) {
+//			simulations.add(bike);
+//		}
+//
+//		return simulations;
+		
+		try {
+			ResultSet rs = SimulationDao.instance.getSimulations();
+			
+			List<Simulation> simulations = new ArrayList<>();
+			
+			while (rs.next()) {
+				String ID = (String)rs.getObject("id");
+				Date date = (Date)rs.getObject("reg_date");
+				String description = (String)rs.getObject("description");
+				Simulation entry = new Simulation(ID, date, description, null, null, null);
+				simulations.add(entry);
+			}
+			
+			return simulations;
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
-		return simulations;
+		return null;
 	}
 
 	@POST
