@@ -1,8 +1,6 @@
 /**
- * This file contains all functions regarding the html files.
+ * This file contains all javascript functions regarding the list of SUMO files.
  */
-
-//TODO connect sql queries
 function loadFiles() {
 	/*var httpReq = new XMLHttpRequest();
 	var sumoFiles = document.getElementById("sumoFiles");
@@ -23,9 +21,9 @@ function loadFiles() {
 			  "</a>";
 		    sumoFiles.appendChild(liElem);
 	  }
-	};
-	httpReq.open("GET", "cd_catalog.xml", true);
-	httpReq.send();*/	
+	}
+	httpReq.open("GET", "rest/simulation/simulationid", true);
+	httpReq.send();*/
 	var liElem = document.createElement("li");
 	var name = "Loaded SUMO File";
 	var date = "28/05/2020";
@@ -43,7 +41,6 @@ function loadFiles() {
 }
 
 function getFilteredFiles() {
-  // Declare variables
   var input, filter, files, li, a, i, txtValue;
   input = document.getElementById('fileSearch');
   filter = input.value.toUpperCase();
@@ -61,24 +58,39 @@ function getFilteredFiles() {
   }
 }
 
-$("#sumoFiles").click(function(){
-	  alert("You have clicked a file");
-	});
-
-$("#uploadFiles").submit(function(event){
-  	event.preventDefault(); // prevent default action
-  	
-    var files = $('#uploadFiles')[0];
-    var fd = new FormData(files);
-  	$.ajax({
-  		url : 'rest/simulations/upload',
-  		type: 'POST',
-  		data: fd,
-  		contentType: false, 
-  	    processData: false,
-  	    success : function(response){
-  	    	$("#server-results").html(response); 
-  	   }
+$("#sumoFiles").ready(function() {
+    $('sumoFiles').click(function() {
+    	// Select all list items 
+        var files = $("sumoFiles"); 
+        // Remove 'active' tag for all list items 
+        for (let i = 0; i < files.length; i++) { 
+            files[i].classList.remove("active"); 
+        } 
+        // Add 'active' tag for currently selected item 
+        this.classList.add("active"); 
     });
-})
+});
 
+/*$("#sumoFiles").click(function(){
+	  alert("You have clicked a file");
+	//Get the container element
+	  var sumoList = document.getElementById("sumoFiles");
+
+	  // Get all buttons with class="btn" inside the container
+	  var files = sumoList.getElementsByTagName("li");
+
+	  // Loop through the buttons and add the active class to the current/clicked button
+	  for (var i = 0; i < files.length; i++) {
+	    files[i].addEventListener("click", function() {
+	      var current = document.getElementsByClassName("active");
+
+	      // If there's no active class
+	      if (current.length > 0) {
+	        current[0].className = current[0].className.replace(" active", "");
+	      }
+
+	      // Add the active class to the current/clicked button
+	      this.className += " active";
+	    });
+	  }
+	});*/
