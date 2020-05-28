@@ -44,14 +44,6 @@ public class SimulationsResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Simulation> getSimulations() {
-//		List<Simulation> simulations = new ArrayList<Simulation>();
-//
-//		for (Simulation bike : SimulationDao.instance.getModel().values()) {
-//			simulations.add(bike);
-//		}
-//
-//		return simulations;
-		
 		try {
 			ResultSet rs = SimulationDao.instance.getSimulations();
 			
