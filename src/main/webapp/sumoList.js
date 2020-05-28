@@ -2,52 +2,33 @@
  * This file contains all javascript functions regarding the list of SUMO files.
  */
 function loadFiles() {
-	/*var httpReq = new XMLHttpRequest();
+	var httpReq = new XMLHttpRequest();
 	var sumoFiles = document.getElementById("sumoFiles");
 	httpReq.onreadystatechange = function() {
 	  if (this.readyState == 4 && this.status == 200) {
-		  var liElem = document.createElement("li");
-			var name = "Loaded SUMO File";
-			var date = "28/05/2020";
-			var researcher = "John Doe";
-			var tags = "wow, some tags";
-		    liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
-			  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
-			  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
-		   	 	"</div>\n" +
+		  var response = this.responseText;
+		  var res = JSON.parse(response);
+		  console.log(res);
+		  for (var i = 0; i < res.length; i++) {
+			  var liElem = document.createElement("li");
+			  var name = res[i].ID;
+			  var date = res[i].date;
+			  var researcher = "John Doe";
+			  var tags = "Traffic, Vehicles";
+			  liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
+			  "<div class=\"d-flex w-100 justify-content-between\">\n" +
+			  "<h5 class=\"mb-1\">" + name + "</h5>\n" +
+			  "</div>\n" +
 			  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
 			  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
 			  "<small>" + tags + "</small>\n" +
 			  "</a>";
-		    sumoFiles.appendChild(liElem);
+			  sumoFiles.appendChild(liElem);
+		  }
 	  }
 	}
-	httpReq.open("GET", "rest/simulation/simulationid", true);
-	httpReq.send();*/
-	var liElem = document.createElement("li");
-	var name = "Loaded SUMO File";
-	var date = "28/05/2020";
-	var researcher = "John Doe";
-	var tags = "traffic, car, numbers, data";
-    liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
-	  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
-	  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
-   	 	"</div>\n" +
-	  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
-	  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
-	  "<small>" + tags + "</small>\n" +
-	  "</a>";
-	var liElemTwo = document.createElement("li");
-    liElemTwo.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
-	  	"<div class=\"d-flex w-100 justify-content-between\">\n" +
-	  		"<h5 class=\"mb-1\">" + name + "</h5>\n" +
-   	 	"</div>\n" +
-	  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
-	  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
-	  "<small>" + tags + "</small>\n" +
-	  "</a>";
-    sumoFiles.appendChild(liElem);
-    sumoFiles.appendChild(liElemTwo);
+	httpReq.open("GET", "/sumo-dashboard/rest/simulations", true);
+	httpReq.send();
 }
 
 function getFilteredFiles() {
