@@ -19,6 +19,7 @@
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
+			<button id="LogOut" class="btn btn-danger" onclick="getCtx()">Log Out</button> 
 				<button id="LineGraph" class="btn btn-outline-primary" onclick="setChartType('line')">Line Graph</button> 
 				<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
 				<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
@@ -112,150 +113,15 @@
 			crossorigin="anonymous"></script>
 		<script type="text/javascript" src="htmlFunctions.js"></script>
 		<script type="text/javascript" src="chartFunctions.js"></script>
+		<script type="text/javascript" src="selectVariablesFunctions.js"></script>
+		<script type="text/javascript" src="reportFunctions.js"></script>
+		
+		
 		
 		
 		
 		
 		<script>
-		function getCtx() {
-			return document.getElementById('myChart').getContext('2d');
-		}
-		
-		function chartToReport() {
-			console.log("lets add this chart to the report.")
-			var chart = copyCanvas(document.getElementById('myChart'));
-			document.getElementById('report').appendChild(chart);
-			console.log("done.")
-		}
-		
-		function copyCanvas(original) {
-			var newThing = document.createElement('canvas');
-			var cxt = newThing.getContext('2d');
-			newThing.width = original.width;
-			newThing.height = original.height;
-			cxt.drawImage(original, 0, 0);
-			return newThing;
-		}
-		
-		var chart;
-		var chartType = "line";
-		function setChartType(type) {
-			chartType = type;
-			console.log("Set chartType to " + type + chartType);
-			updateChart();
-		}
-		
-		function updateChart() {
-			console.log("We're going to update the chart to type " + chartType);
-			if (this.chart!==undefined){this.chart.destroy();}
-			var canvas = document.getElementById('myChart');
-			var ctx = canvas.getContext('2d');
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			chart = new Chart(ctx, {
-				// The type of chart we want to create
-				type : chartType,
-
-				// The data for our dataset
-				data : {
-					labels : [ "January", "February", "March", "April", "May",
-							"June", "July" ],
-					datasets : [ {
-						label : "My First dataset",
-						fill : false,
-						backgroundColor : getColors(7),
-						borderColor : 'rgb(99, 99, 132)',
-						data : [ 0, 10, 5, 2, 20, 30, 45 ],
-						
-					} ]
-				},
-
-				// Configuration options go here
-				options : {}
-			});
-			console.log("done.");
-		}
-		
-		/*https://stackoverflow.com/questions/28828915/how-set-color-family-to-pie-chart-in-chart-js*/
-		function getColors(length){
-		    let pallet = ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"];
-		    let colors = [];
-
-		    for(let i = 0; i < length; i++) {
-		      colors.push(pallet[i % pallet.length]);
-		    }
-
-		    return colors;
-		  }
-		
-		function editChartStyle(type){
-			var checked = document.querySelector('input[name="editChart"]:checked').value;
-			switch(checked) {
-			case 'title':
-				if (type === "remove") {
-					chart.options.title.display = false;
-				} else if (type === "change"){
-				var newTitle = document.getElementById("setTitleInput").value;
-				chart.options.title.text = newTitle;
-				chart.options.title.display = true;
-				}
-				break;
-			case 'y-axis':
-				if (type === "remove") {
-					chart.options.scales.yAxes[0].scaleLabel.display = false;
-				} else if (type === "change"){
-				var newTitle = document.getElementById("setTitleInput").value;
-				chart.options.scales.yAxes[0].scaleLabel.labelString = newTitle;
-				chart.options.scales.yAxes[0].scaleLabel.display = true;
-				}
-				break;
-			case 'x-axis':
-				if (type === "remove") {
-					chart.options.scales.xAxes[0].scaleLabel.display = false;
-				} else if (type === "change"){
-				var newTitle = document.getElementById("setTitleInput").value;
-				chart.options.scales.xAxes[0].scaleLabel.labelString = newTitle;
-				chart.options.scales.xAxes[0].scaleLabel.display = true;
-				}
-				break;
-			case 'color':
-				if (type === "change"){
-				var newColor = document.getElementById("setTitleInput").value;
-				chart.data.datasets[0].borderColor = newColor;
-				chart.data.datasets[0].backgroundColor = newColor;
-				}
-				break;
-			}
-			chart.update();
-			}
-		
-		var dropDownOptions = {};
-		dropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
-		dropDownOptions['Number of lane transiting vehicles'] = ['Lane 1', 'Lane 2', 'Lane 3'];
-		dropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-		dropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-		dropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-
-		function changeSecondChoice() {
-		    var fst = document.getElementById("first-choice");
-		    var sec = document.getElementById("second-choice");
-		    if (sec == null) {
-		    	document.getElementById("optionalSecChoice").innerHTML = "<select id=\"second-choice\" name=\"detailChoice\" class=\"form-control\"></select>";
-		    	sec = document.getElementById("second-choice");
-		    	}
-		    var chosen = fst.options[fst.selectedIndex].value;
-		    while (sec.options.length) {
-		        sec.remove(0);
-		    }
-		    var options = dropDownOptions[chosen];
-		    if (options) {
-		        var i;
-		        for (i = 0; i < options.length; i++) {
-		            var option = new Option(options[i], i);
-		            sec.options.add(option);
-		        }
-		    } else {
-		    	document.getElementById("optionalSecChoice").innerHTML = "";
-		    }
-		} 
+		window.onload=loadDropDownOptions();
 		</script>
 </body>
