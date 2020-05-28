@@ -6,29 +6,30 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.w3c.dom.Document;
 
+import sumodashboard.dao.ParseXML;
+import sumodashboard.model.Configuration;
+import sumodashboard.model.Net;
+import sumodashboard.model.Routes;
 import sumodashboard.model.Simulation;
+import sumodashboard.model.State;
 
 public class FileReadService {
+
+	public static final String tmpFolder = System.getProperty("java.io.tmpdir");
 
 	public FileReadService() {
 	}
 
 	public void readInputStream(InputStream stream, FormDataBodyPart bodyPart, List<String> fileList) throws Exception {
+
 		if (fileList.size() == 1 && fileList.get(0).contains(".zip")) {
 			handleZip(convertToZipStream(stream));
 		} else {
@@ -39,91 +40,133 @@ public class FileReadService {
 	}
 
 	public void handleZip(ZipInputStream zipStream) throws Exception {
-		Path cachePath = Paths.get("/home/emiel/My Files/Studie/Project/Zips");
 		List<File> files = new ArrayList<File>();
+		List<File> stateFiles = new ArrayList<File>();
 
 		ZipEntry entry;
 
 		while ((entry = zipStream.getNextEntry()) != null) {
-			System.out.println("Unzipping: " + entry.getName());
 
-			int size;
-			byte[] buffer = new byte[2048];
+			// Get the file names
+			String longFileName = entry.getName();
+			String[] splitFileFolder = (longFileName.split("/"));
+			String fileName = splitFileFolder[splitFileFolder.length - 1];
 
-			String[] fileNames = entry.getName().split("/");
-			String fileLocation = cachePath.toString() + '/' + fileNames[fileNames.length - 1];
+			// Set file location
+			String fileLocation = tmpFolder + '/' + fileName;
 
-			FileOutputStream fos = new FileOutputStream(fileLocation);
-			BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
-
-			while ((size = zipStream.read(buffer, 0, buffer.length)) != -1) {
-				bos.write(buffer, 0, size);
+			// convert stream to files and store in array
+			if (fileName.equals("state.zip")) {
+				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
+				stateFiles = convertStateFiles(zipStream, fileLocation);
+			} else {
+				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
+				files.add(convertStreamToFile(zipStream, fileLocation));
 			}
-			files.add(new File(fileLocation));
-
-			bos.flush();
-			bos.close();
 		}
 		zipStream.close();
-		convertFilesToSumoSimulation(files);
+		convertFilesToSumoSimulation(files, stateFiles);
 	}
 
 	// TODO Combine methods above and below
 	public void handleFiles(InputStream stream, FormDataBodyPart bodyParts) throws Exception {
-		Path cachePath = Paths.get("/home/emiel/My Files/Studie/Project/Files");
 		List<File> files = new ArrayList<File>();
+		List<File> stateFiles = new ArrayList<File>();
 
 		for (BodyPart part : bodyParts.getParent().getBodyParts()) {
-			String[] fileNames = part.getContentDisposition().getFileName().split("/");
-			String fileName = fileNames[fileNames.length - 1];
+			InputStream inputStream = part.getEntityAs(InputStream.class);
+
+			// Get the file names
+			String longFileName = part.getContentDisposition().getFileName();
+			String[] splitFileFolder = longFileName.split("/");
+			String fileName = splitFileFolder[splitFileFolder.length - 1];
+
+			// Set file location
+			String fileLocation = tmpFolder + '/' + fileName;
+
+			// Convert stream to files and store in array
 			if (!fileName.equals("")) {
-				System.out.println("Converting: " + fileName);
-
-				InputStream is = part.getEntityAs(InputStream.class);
-
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-				DocumentBuilder builder = factory.newDocumentBuilder();
-
-				int size;
-				byte[] buffer = new byte[2048];
-
-				String fileLocation = cachePath.toString() + '/' + fileName;
-
-				FileOutputStream fos = new FileOutputStream(fileLocation);
-				BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
-
-				while ((size = is.read(buffer, 0, buffer.length)) != -1) {
-					bos.write(buffer, 0, size);
-
+				if (fileName.equals("state.zip")) {
+					System.out.println("Converting: " + fileName + " to: " + fileLocation);
+					stateFiles = convertStateFiles(inputStream, fileLocation);
+				} else {
+					System.out.println("Converting: " + fileName + " to: " + fileLocation);
+					files.add(convertStreamToFile(inputStream, fileLocation));
 				}
-				files.add(new File(fileLocation));
-				bos.flush();
-				bos.close();
-				is.close();
 			}
 		}
+
 		stream.close();
-		convertFilesToSumoSimulation(files);
+		convertFilesToSumoSimulation(files, stateFiles);
 	}
-
-	private void convertFilesToSumoSimulation(List<File> files) {
-		Simulation sim = new Simulation();
-
-		files.forEach(f -> System.out.println("converted: " + f.getName()));
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(files.get(1));
-			System.out.println(doc.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
+	
+	
+	private void convertFilesToSumoSimulation(List<File> files, List<File> stateFiles) throws Exception {
+		//Create empty classes
+		Simulation simulation = new Simulation();
+		List<State> states = new ArrayList<>();
+		Configuration config = null;
+		Routes routes = null;
+		Net net = null;
+		
+		//Fill class with data from files
+		for (File f : files) {
+			switch (f.getName()) {
+			case "routes.rou.xml":
+				routes = ParseXML.parseRoutesFile(f);
+				break;
+			case "net.net.xml":
+				net = ParseXML.parseNetFile(f);
+				break;
+			case "simulation.sumocfg":
+				config = ParseXML.parseConfigFile(f);
+				break;
+			case "metadata.txt":
+				simulation = ParseXML.parseMetadata(f, simulation);
+				break;
+			}
 		}
+		for (File sf : stateFiles) {
+			states.add(ParseXML.parseStateFile(sf));
+		}
+
+		//Delete files after use
+		files.forEach(f -> f.delete());
+		stateFiles.forEach(sf -> sf.delete());
 
 	}
 
 	public void checkFileList(List<String> fileList) throws IOException {
 		// TODO Checks on correctness of files
+	}
+
+	private File convertStreamToFile(InputStream is, String fileNameLocation) throws Exception {
+		int size;
+		byte[] buffer = new byte[2048];
+		FileOutputStream fos = new FileOutputStream(fileNameLocation);
+		BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
+		while ((size = is.read(buffer, 0, buffer.length)) != -1) {
+			bos.write(buffer, 0, size);
+		}
+		bos.flush();
+		bos.close();
+		return new File(fileNameLocation);
+	}
+
+	private List<File> convertStateFiles(InputStream is, String fileLocation) throws Exception {
+		List<File> stateFiles = new ArrayList<File>();
+		ZipInputStream stateZip = new ZipInputStream(is);
+		ZipEntry entry;
+
+		while ((entry = stateZip.getNextEntry()) != null) {
+			String longFileName = entry.getName();
+			String[] splitFileFolder = (longFileName.split("/"));
+			String fileName = splitFileFolder[splitFileFolder.length - 1];
+			// System.out.println("Unzipping: " + fileName);
+
+			stateFiles.add(convertStreamToFile(stateZip, fileName));
+		}
+		return stateFiles;
 	}
 
 	public ZipInputStream convertToZipStream(InputStream stream) throws IOException {
