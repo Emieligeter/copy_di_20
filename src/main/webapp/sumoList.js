@@ -2,7 +2,6 @@
  * This file contains all javascript functions regarding the list of SUMO files.
  */
 function loadFiles() {
-	alert("loading files");
 	var httpReq = new XMLHttpRequest();
 	var sumoFiles = document.getElementById("sumoFiles");
 	httpReq.onreadystatechange = function() {

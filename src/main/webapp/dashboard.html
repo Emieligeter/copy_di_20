@@ -36,7 +36,7 @@
 					<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			</div>
 			<div id="chart" class="col">
-				<canvas id="myChart"></canvas>
+				<canvas id="myChart" height="400px"></canvas>
 			</div>
 			<div id="varSelect" class="col">
 				<div id="fstChoice">
@@ -84,7 +84,11 @@
 		</div>
 	</div>
 
+		<script>
+		window.onload=loadFstDropDownOptions();
+		window.onload=loadSecDropDownOptions();
 
+		</script>
 		<script
 			src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -104,9 +108,5 @@
 		<script type="text/javascript" src="sumoList.js"></script>		
 				
 		
-		<script>
-		window.onload=loadFstDropDownOptions();
-		window.onload=loadSecDropDownOptions();
-
-		</script>
+		
 </body>

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.json.Json;
 import javax.ws.rs.Consumes;
@@ -53,7 +54,7 @@ public class SimulationsResource {
 				String ID = (String)rs.getObject("id");
 				Date date = (Date)rs.getObject("reg_date");
 				String description = (String)rs.getObject("description");
-				Simulation entry = new Simulation(ID, date, description, null, null, null);
+				Simulation entry = new Simulation(ID, null, date, description, null, null, null);
 				simulations.add(entry);
 			}
 			
@@ -64,6 +65,7 @@ public class SimulationsResource {
 		return null;
 	}
 
+	
 	@POST
 	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_XML)
@@ -81,8 +83,7 @@ public class SimulationsResource {
 			ContentDisposition meta = part.getContentDisposition();
 			if(meta.getFileName().length() > 3) fileList.add('\n' + meta.getFileName());
 		}
-		FileReadService fileReadService = new FileReadService();
-		fileReadService.readInputStream(inputStream, bodyPart, fileList);
+		FileReadService.readInputStream(inputStream, bodyPart, fileList);
 		return Response.ok("File uploaded successfully : " + fileList.toString()).build();
 	}
 	
