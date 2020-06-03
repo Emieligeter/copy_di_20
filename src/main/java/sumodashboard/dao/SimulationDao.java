@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
 
 import javax.xml.bind.JAXBException;
@@ -71,16 +72,27 @@ public enum SimulationDao {
 	}
 	
 	//
-	public ResultSet getAvgSpeedTime(String simulation_id) throws SQLException {
+	public List<GraphPoint> getAvgSpeedTime(int simulation_id) throws SQLException {
+		//TODO fix query
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT state.timestep, AVG(vehicle_state.speed) " +
-				"FROM vehicle_state, state " +
-				"WHERE vehicle_state.state_id = state.state_id " +
-				"GROUP BY state.timestep " +
-				"ORDER BY state.timestep ");
+				"SELECT timestamp, unnest(xpath('/snapshot/vehicle/@speed', state))::text::float " +
+				"FROM states " +
+				"WHERE simID = ? " +
+				"ORDER BY timestamp");
+		dataQuery.setInt(1, simulation_id);
 		
 		ResultSet resultSet = dataQuery.executeQuery();
-		return resultSet;
+		
+		List<GraphPoint> graphPoints = new ArrayList<>();
+
+		while (resultSet.next()) {
+			double timestamp = (double)resultSet.getObject("timestamp");
+			double avgSpeed = (double)resultSet.getObject("unnest");
+			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
+			graphPoints.add(point);
+		}
+
+		return graphPoints;
 	}
 	
 	/* Query for storing in db as tables
