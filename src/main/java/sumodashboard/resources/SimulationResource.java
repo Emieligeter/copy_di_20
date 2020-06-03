@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import sumodashboard.dao.SimulationDao;
@@ -32,7 +33,8 @@ public class SimulationResource {
 		this.request = request;
 		this.ID = ID;
 	}
-//	
+	
+	//TODO
 //	@GET
 //	@Produces(MediaType.APPLICATION_XML)
 //	public Simulation getSimulation() {
@@ -46,32 +48,36 @@ public class SimulationResource {
 	@GET
 	@Path("/avgspeedtime")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<GraphPoint> getAvgSpeedTime() {
+	public Response getAvgSpeedTime() {
+		int numericID;
 		try {
-			ResultSet resultSet = SimulationDao.instance.getAvgSpeedTime(ID);
-			List<GraphPoint> endResult = new ArrayList<>();
-
-			while (resultSet.next()) {
-				endResult.add(new GraphPoint((double) resultSet.getObject("timestep"), 
-						(double) resultSet.getObject("avg")));
-			}
-			System.out.println(endResult.toString());
-			return endResult;
+			numericID = Integer.parseInt(ID);
+		} catch (NumberFormatException e) {
+			return Response.status(400).entity("Invalid ID, not a number.").build();
+		}
+		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgSpeedTime(numericID);
+			
+			Response response = Response.status(200).entity(graphPoints).build();
+			return response;
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
+			Response response = Response.status(500).entity(errorMsg).build();
+			return response;
 		}
-		return null;
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	public void updateSimulation(Simulation simulation) {
-		SimulationDao.instance.getModel().put(simulation.getID(), simulation);
+		//SimulationDao.instance.getModel().put(simulation.getID(), simulation);
 	}
 	
 	@DELETE
 	public void deleteSimulation() {
-		SimulationDao.instance.getModel().remove(ID);
+		//TODO
+		//SimulationDao.instance.getModel().remove(ID);
 	}
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
 
 import javax.xml.bind.JAXBException;
@@ -32,6 +33,7 @@ public enum SimulationDao {
 	
 	private Map<String, Simulation> contentProvider = new HashMap<String, Simulation>();
 	
+	//Constructor sets up the connection to the database
 	private SimulationDao() {
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -42,6 +44,7 @@ public enum SimulationDao {
 		startDBConnection();
 	}
 	
+	//Start the connection to the database
 	private void startDBConnection() {
 		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
 		final String username = "dab_di19202b_333";
@@ -50,31 +53,54 @@ public enum SimulationDao {
 		try {
 			connection = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
-			System.err.print("SQL Exception when starting connection to database: ");
+			System.err.println("SQL Exception when starting connection to database:");
 			System.err.println(e.getLocalizedMessage());
 		}
 	}
 	
-	public ResultSet getSimulations() throws SQLException {
+	//Get a List with all simulation metadata in the database
+	public List<Simulation> getSimulations() throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT metadata.* " +
-				"FROM metadata");
+				"SELECT simid, name, date, description " +
+				"FROM simulations");
 
-		ResultSet res = simQuery.executeQuery();
-
-		return res;
+		ResultSet rs = simQuery.executeQuery();
+		
+		List<Simulation> simulations = new ArrayList<>();
+		while (rs.next()) {
+			int ID = (Integer)rs.getObject("simid");
+			String name = (String)rs.getObject("name");
+			Date date = (Date)rs.getObject("date");
+			String description = (String)rs.getObject("description");
+			Simulation entry = new Simulation(ID, name, date, description, null, null, null);
+			simulations.add(entry);
+		}
+		
+		return simulations;		
 	}
 	
-	public ResultSet getAvgSpeedTime(String simulation_id) throws SQLException {
+	//
+	public List<GraphPoint> getAvgSpeedTime(int simulation_id) throws SQLException {
+		//TODO fix query
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT state.timestep, AVG(vehicle_state.speed) " +
-				"FROM vehicle_state, state " +
-				"WHERE vehicle_state.state_id = state.state_id " +
-				"GROUP BY state.timestep " +
-				"ORDER BY state.timestep ");
+				"SELECT timestamp, unnest(xpath('/snapshot/vehicle/@speed', state))::text::float " +
+				"FROM states " +
+				"WHERE simID = ? " +
+				"ORDER BY timestamp");
+		dataQuery.setInt(1, simulation_id);
 		
 		ResultSet resultSet = dataQuery.executeQuery();
-		return resultSet;
+		
+		List<GraphPoint> graphPoints = new ArrayList<>();
+
+		while (resultSet.next()) {
+			double timestamp = (double)resultSet.getObject("timestamp");
+			double avgSpeed = (double)resultSet.getObject("unnest");
+			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
+			graphPoints.add(point);
+		}
+
+		return graphPoints;
 	}
 	
 	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {

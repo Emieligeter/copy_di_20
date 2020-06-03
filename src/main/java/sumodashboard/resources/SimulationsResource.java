@@ -44,25 +44,17 @@ public class SimulationsResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Simulation> getSimulations() {
-		try {
-			ResultSet rs = SimulationDao.instance.getSimulations();
+	public Response getSimulations() {
+		try {			
+			List<Simulation> simulations = SimulationDao.instance.getSimulations();
 			
-			List<Simulation> simulations = new ArrayList<>();
-			
-			while (rs.next()) {
-				String ID = (String)rs.getObject("id");
-				Date date = (Date)rs.getObject("reg_date");
-				String description = (String)rs.getObject("description");
-				Simulation entry = new Simulation(ID, null, date, description, null, null, null);
-				simulations.add(entry);
-			}
-			
-			return simulations;
+			Response response = Response.status(200).entity(simulations).build();
+			return response;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			String errorMsg = "SQL Exception when trying to get simulations:\n" + e.getLocalizedMessage();
+			Response response = Response.status(500).entity(errorMsg).build();
+			return response;
 		}
-		return null;
 	}
 
 	
@@ -70,7 +62,7 @@ public class SimulationsResource {
 	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_XML)
 	public void createSimulation(Simulation simulation) {
-		SimulationDao.instance.getModel().put(simulation.getID(), simulation);
+		//SimulationDao.instance.getModel().put(simulation.getID(), simulation);
 	}
 
 	@POST
