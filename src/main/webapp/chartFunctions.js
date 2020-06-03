@@ -5,18 +5,15 @@
 
 var chart;
 var chartType = "line";
-var data = {
-		labels : [ "January", "February", "March", "April", "May",
-			"June", "July" ],
-	datasets : [ {
-		label : "My First dataset",
-		fill : false,
-		backgroundColor : getColors(7),
-		borderColor : getColors(7),
-		data : [ 0, 10, 5, 2, 20, 30, 45 ],
-		
-	} ]
-};
+var data = [{
+    x: 10,
+    y: 20
+}, {
+    x: 15,
+    y: 10
+}, {x: 0, y: 30}, {x:30, y: 5}
+
+];
 
 
 
@@ -45,10 +42,18 @@ function updateChart() {
 		type : chartType,
 
 		// The data for our dataset
-		data : data,
+		data : {
+			  datasets: [{
+				    label: 'Average speed',
+				    fill: false,
+				    data: getAvgSpeedTime(),
+				  }]
+				},
 
 		// Configuration options go here
-		options : {}
+		options : {//	elements: { line: { tension: 0 }}}
+			
+		}
 	});
 	console.log("done.");
 }
