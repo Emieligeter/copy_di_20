@@ -24,6 +24,7 @@ public enum SimulationDao {
 	
 	private Map<String, Simulation> contentProvider = new HashMap<String, Simulation>();
 	
+	//Constructor sets up the connection to the database
 	private SimulationDao() {
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -34,6 +35,7 @@ public enum SimulationDao {
 		startDBConnection();
 	}
 	
+	//Start the connection to the database
 	private void startDBConnection() {
 		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
 		final String username = "dab_di19202b_333";
@@ -42,21 +44,33 @@ public enum SimulationDao {
 		try {
 			connection = DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
-			System.err.print("SQL Exception when starting connection to database: ");
+			System.err.println("SQL Exception when starting connection to database:");
 			System.err.println(e.getLocalizedMessage());
 		}
 	}
 	
-	public ResultSet getSimulations() throws SQLException {
+	//Get a List with all simulation metadata in the database
+	public List<Simulation> getSimulations() throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT metadata.* " +
-				"FROM metadata");
+				"SELECT simid, name, date, description " +
+				"FROM simulations");
 
-		ResultSet res = simQuery.executeQuery();
-
-		return res;
+		ResultSet rs = simQuery.executeQuery();
+		
+		List<Simulation> simulations = new ArrayList<>();
+		while (rs.next()) {
+			int ID = (Integer)rs.getObject("simid");
+			String name = (String)rs.getObject("name");
+			Date date = (Date)rs.getObject("date");
+			String description = (String)rs.getObject("description");
+			Simulation entry = new Simulation(ID, name, date, description, null, null, null);
+			simulations.add(entry);
+		}
+		
+		return simulations;		
 	}
 	
+	//
 	public ResultSet getAvgSpeedTime(String simulation_id) throws SQLException {
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
 				"SELECT state.timestep, AVG(vehicle_state.speed) " +

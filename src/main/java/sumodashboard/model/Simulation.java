@@ -17,7 +17,7 @@ import org.junit.platform.commons.util.StringUtils;
 
 @XmlRootElement
 public class Simulation {
-	private String ID;
+	private int ID;
 	private String name;
 	private Date date;
 	private String description;
@@ -29,7 +29,7 @@ public class Simulation {
 		
 	}
 	
-	public Simulation(String ID, String name, Date date, String description, Configuration configuration, ArrayList<State> states, ArrayList<String> tags) {
+	public Simulation(int ID, String name, Date date, String description, Configuration configuration, ArrayList<State> states, ArrayList<String> tags) {
 		super();
 		this.ID = ID;
 		this.name = name;
@@ -44,7 +44,7 @@ public class Simulation {
 		
 	}
 
-	public String getID() {
+	public int getID() {
 		return ID;
 	}
 	
@@ -72,7 +72,7 @@ public class Simulation {
 		return tags;
 	}
 
-	public void setID(String ID) {
+	public void setID(int ID) {
 		this.ID = ID;
 	}
 	
