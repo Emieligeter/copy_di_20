@@ -13,9 +13,10 @@ function getAvgSpeedTime() {
 			console.log("ready state changed to " + this.readyState + " status " + this.status);
 			if (this.readyState == 4 && this.status == 200) {
 				console.log("response received");
-				var response = this.responseText
+				var response = this.responseText;
 				myObj = JSON.parse(response);
-				
+				console.log("dit is gewoon een string");
+				console.log("myObj " + myObj.toString());
 				var result = "[";
 					for (var i = 0; i < myObj.length; i++) {
 						result += "{ x: " + myObj[i].xValue + ", " + myObj[i].yValue + " }, ";
