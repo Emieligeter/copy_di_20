@@ -15,7 +15,7 @@
 	href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css" />
 </head>
 
-<body>
+<body onload="loadFiles()">
 	<div class="container">
 		<div class="row">
 			<div id=elementButtons class="col">
@@ -31,11 +31,12 @@
 		</div>
 		<div class="row">
 			<div id="fileSelect" class="col">
-				<button id=toSimList class="btn btn-secondary" onclick="location.href='simList.html'">Edit Files</button>
-				<p>this is where we have a list of files</p>
+				<button id=toSimList class="btn btn-secondary" onclick="location.href='modPage.html'">Edit Files</button>
+				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
+					<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			</div>
 			<div id="chart" class="col">
-				<canvas id="myChart"></canvas>
+				<canvas id="myChart" height="400px"></canvas>
 			</div>
 			<div id="varSelect" class="col">
 				<div id="fstChoice">
@@ -83,7 +84,11 @@
 		</div>
 	</div>
 
+		<script>
+		window.onload=loadFstDropDownOptions();
+		window.onload=loadSecDropDownOptions();
 
+		</script>
 		<script
 			src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -100,14 +105,14 @@
 		<script type="text/javascript" src="chartFunctions.js"></script>
 		<script type="text/javascript" src="selectVariablesFunctions.js"></script>
 		<script type="text/javascript" src="reportFunctions.js"></script>
+<<<<<<< HEAD
 		<script type="text/javascript" src="dataRequests.js"></script>
 		
 		
+=======
+		<script type="text/javascript" src="sumoList.js"></script>		
+>>>>>>> d5fb48bd85afd8f8dedb193231a9aa142365488c
 				
 		
-		<script>
-		window.onload=loadFstDropDownOptions();
-		window.onload=loadSecDropDownOptions();
-
-		</script>
+		
 </body>

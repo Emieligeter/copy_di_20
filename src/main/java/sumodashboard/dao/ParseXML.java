@@ -39,10 +39,10 @@ public class ParseXML {
 		Scanner reader =  new Scanner(file);	
 		while (reader.hasNextLine()) {
 	        String line = reader.nextLine();
-	        sim.setID(line.contains("Name: ") ? line.split(": ")[1] : null);
-	        sim.setDate(line.contains("Date: ") ?  new SimpleDateFormat("MMMMM dd, yyyy").parse(line.split(": ")[1]) : null);
-	        sim.setTags(line.contains("Tags: ") ? new ArrayList<String>(Arrays.asList(line.split("\\s*:\\s*")[1].split("\\s*;\\s*"))) : null);
-	        sim.setDescription(line.contains("Description: ") ? line.split("\\s*:\\s*")[1] : null);	   
+	        if(line.contains("Name: "))  sim.setName(line.split(": ")[1]);
+	        if(line.contains("Date: ")) sim.setDate(new SimpleDateFormat("MMMMM dd, yyyy").parse(line.split(": ")[1]));
+	        if(line.contains("Tags: ")) sim.setTags(new ArrayList<String>(Arrays.asList(line.split("\\s*:\\s*")[1].split("\\s*;\\s*"))));
+	        if(line.contains("Description: ")) sim.setDescription(line.split("\\s*:\\s*")[1]);	   
 	      }
 		reader.close();
 		return sim;

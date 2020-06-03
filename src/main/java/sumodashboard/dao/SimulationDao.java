@@ -1,13 +1,16 @@
 package sumodashboard.dao;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import sumodashboard.model.Simulation;
@@ -65,6 +68,20 @@ public enum SimulationDao {
 		ResultSet resultSet = dataQuery.executeQuery();
 		return resultSet;
 	}
+	
+	/* Query for storing in db as tables
+	public void setMetaData(String id, String name, Date date, String description, ArrayList<String> tags) throws SQLException {
+		PreparedStatement dataQuery = connection.prepareStatement(""
+				+ "INSERT INTO metadata VALUES "
+				+ "(?, ?::date, ?, ?, ?)");
+		String[] tagsies = (String[]) tags.toArray();
+		dataQuery.setString(1, id);
+		dataQuery.setString(2, date.toString());
+		dataQuery.setString(3, description);
+		dataQuery.setString(4, name);
+		dataQuery.setArray(5, tagsies);
+		System.out.println("YEEHAW");
+	} */
 	
 	public Map<String, Simulation> getModel() {
 		return contentProvider;

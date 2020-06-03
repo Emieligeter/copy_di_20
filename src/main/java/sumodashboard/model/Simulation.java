@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,6 +18,7 @@ import org.junit.platform.commons.util.StringUtils;
 @XmlRootElement
 public class Simulation {
 	private String ID;
+	private String name;
 	private Date date;
 	private String description;
 	private Configuration configuration;
@@ -27,10 +29,10 @@ public class Simulation {
 		
 	}
 	
-	public Simulation(String ID, Date date, String description, Configuration configuration, ArrayList<State> states, ArrayList<String> tags) {
+	public Simulation(String ID, String name, Date date, String description, Configuration configuration, ArrayList<State> states, ArrayList<String> tags) {
 		super();
-		
 		this.ID = ID;
+		this.name = name;
 		this.date = date;
 		this.description = description;
 		this.configuration = configuration;
@@ -44,6 +46,10 @@ public class Simulation {
 
 	public String getID() {
 		return ID;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	public Date getDate() {
@@ -68,6 +74,10 @@ public class Simulation {
 
 	public void setID(String ID) {
 		this.ID = ID;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setDate(Date date) {
