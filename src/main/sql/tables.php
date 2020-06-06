@@ -41,7 +41,7 @@ $sql = "CREATE TABLE configuration (
 md_key VARCHAR (30) REFERENCES MetaData(id),
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 begin FLOAT NOT NULL,
-end FLOAT NOT NULL,
+finish FLOAT NOT NULL,
 step FLOAT NOT NULL,
 )";
 
@@ -91,7 +91,7 @@ if ($conn->query($sql) === TRUE) {
 $sql = "CREATE TABLE vehicle (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 type_id INT UNSIGNED AUTO_INCREMENT REFERENCES vehicle_type(id),
-routes_xml_id INT UNSIGNED AUTO_INCREMENT REFERENCES routes_xml(id)
+routes_xml_id INT UNSIGNED AUTO_INCREMENT REFERENCES routes_xml(id),
 depart INT NOT NULL,
 )";
 
@@ -104,7 +104,7 @@ if ($conn->query($sql) === TRUE) {
 $sql = "CREATE TABLE vehicle_state (
 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 vehicle_id INT UNSIGNED AUTO_INCREMENT REFERENCES vehicle(id),
-state_id INT UNSIGNED AUTO_INCREMENT REFERENCES state(id),
+state_id VARCHAR UNSIGNED AUTO_INCREMENT REFERENCES state(state_id),
 speed_factor FLOAT NOT NULL, 
 state VARCHAR (20) NOT NULL,
 pos FLOAT NOT NULL,
@@ -131,7 +131,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 $sql = "CREATE TABLE route_state (
-state_id INT UNSIGNED AUTO_INCREMENT REFERENCES state(id),
+state_id VARCHAR UNSIGNED AUTO_INCREMENT REFERENCES state(id),
 routes_id VARCHAR NOT NULL REFERENCES routes(id),
 )";
 
@@ -171,7 +171,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 $sql = "CREATE TABLE lane_state (
-state_id INT UNSIGNED AUTO_INCREMENT REFERENCES state(id),
+state_id VARCHAR UNSIGNED AUTO_INCREMENT REFERENCES state(state_id),
 lane_id VARCHAR NOT NULL REFERENCES lane(id),
 vehicle_id INT UNSIGNED AUTO_INCREMENT REFERENCES vehicle(id),
 )";

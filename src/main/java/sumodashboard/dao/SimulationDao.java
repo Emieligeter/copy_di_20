@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
@@ -177,7 +179,13 @@ public enum SimulationDao {
 	}
 	
 	
-	
+	//Generates a random ID of size 'length', never starting with a 0 
+		public int generateId(int length) {
+			UUID uuid = UUID.randomUUID();
+			String str = uuid.toString().substring(0, length-1);
+			str = String.valueOf((new Random()).nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((new Random()).nextInt(9) +1));
+			return Integer.parseInt(str);
+		}
 	
 	
 	
