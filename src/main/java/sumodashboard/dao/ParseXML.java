@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import sumodashboard.model.Configuration;
+import sumodashboard.model.MetaData;
 import sumodashboard.model.Net;
 import sumodashboard.model.Routes;
 import sumodashboard.model.Simulation;
@@ -35,17 +36,18 @@ public class ParseXML {
         return net;
     }
     
-    public static Simulation parseMetadata(File file, Simulation sim) throws FileNotFoundException, ParseException {
+    public static MetaData parseMetadata(File file) throws FileNotFoundException, ParseException {
 		Scanner reader =  new Scanner(file);	
+		MetaData meta = new MetaData();
 		while (reader.hasNextLine()) {
 	        String line = reader.nextLine();
-	        if(line.contains("Name: "))  sim.setName(line.split(": ")[1]);
-	        if(line.contains("Date: ")) sim.setDate(new SimpleDateFormat("MMMMM dd, yyyy").parse(line.split(": ")[1]));
-	        if(line.contains("Tags: ")) sim.setTags(new ArrayList<String>(Arrays.asList(line.split("\\s*:\\s*")[1].split("\\s*;\\s*"))));
-	        if(line.contains("Description: ")) sim.setDescription(line.split("\\s*:\\s*")[1]);	   
+	        if(line.contains("Name: "))  meta.setName(line.split(": ")[1]);
+	        if(line.contains("Date: ")) meta.setDate(new SimpleDateFormat("MMMMM dd, yyyy").parse(line.split(": ")[1]));
+	        if(line.contains("Tags: ")) meta.setTags(new ArrayList<String>(Arrays.asList(line.split("\\s*:\\s*")[1].split("\\s*;\\s*"))));
+	        if(line.contains("Description: ")) meta.setDescription(line.split("\\s*:\\s*")[1]);	   
 	      }
 		reader.close();
-		return sim;
+		return meta;
 
     }
     //Takes the routes.rou.xml file and creates a Routes object.

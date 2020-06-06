@@ -7,12 +7,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 import sumodashboard.dao.ParseXML;
@@ -21,6 +24,7 @@ import sumodashboard.model.Net;
 import sumodashboard.model.Routes;
 import sumodashboard.model.Simulation;
 import sumodashboard.model.State;
+import sumodashboard.model.SumoFilesDTO;
 
 public class FileReadService {
 
@@ -29,20 +33,20 @@ public class FileReadService {
 	public FileReadService() {
 	}
 
-	public static void readInputStream(InputStream stream, FormDataBodyPart bodyPart, List<String> fileList) throws Exception {
-
+	public static SumoFilesDTO readInputStream(InputStream stream, FormDataBodyPart bodyPart ) throws Exception {
+		List<String> fileList = getFileList(bodyPart);
+		
 		if (fileList.size() == 1 && fileList.get(0).contains(".zip")) {
-			handleZip(convertToZipStream(stream));
+			return handleZip(convertToZipStream(stream));
 		} else {
-			checkFileList(fileList);
-			handleFiles(stream, bodyPart);
+			checkFileList(fileList);		
+			return handleFiles(stream, bodyPart);
 		}
-		stream.close();
 	}
 
-	private static void handleZip(ZipInputStream zipStream) throws Exception {
-		List<File> files = new ArrayList<File>();
-		List<File> stateFiles = new ArrayList<File>();
+	private static SumoFilesDTO handleZip(ZipInputStream zipStream) throws Exception {
+		HashMap<String, File> files = new HashMap<String, File>();
+		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
 
 		ZipEntry entry;
 
@@ -62,17 +66,21 @@ public class FileReadService {
 				stateFiles = convertStateFiles(zipStream, fileLocation);
 			} else {
 				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
-				files.add(convertStreamToFile(zipStream, fileLocation));
+				files.put(fileName, convertStreamToFile(zipStream, fileLocation));
 			}
 		}
 		zipStream.close();
-		convertFilesToSumoSimulation(files, stateFiles);
+		
+
+		return new SumoFilesDTO(files, stateFiles);
+		//SimulationStoreService.storeSimulation(files, stateFiles);
+		
 	}
 
-	private static void handleFiles(InputStream stream, FormDataBodyPart bodyParts) throws Exception {
-		List<File> files = new ArrayList<File>();
-		List<File> stateFiles = new ArrayList<File>();
-
+	private static SumoFilesDTO handleFiles(InputStream stream, FormDataBodyPart bodyParts) throws Exception {
+		HashMap<String, File> files = new HashMap<String, File>();
+		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
+		
 		for (BodyPart part : bodyParts.getParent().getBodyParts()) {
 			InputStream inputStream = part.getEntityAs(InputStream.class);
 
@@ -91,59 +99,16 @@ public class FileReadService {
 					stateFiles = convertStateFiles(inputStream, fileLocation);
 				} else {
 					System.out.println("Converting: " + fileName + " to: " + fileLocation);
-					files.add(convertStreamToFile(inputStream, fileLocation));
+					files.put(fileName, convertStreamToFile(inputStream, fileLocation));
 				}
 			}
 		}
 
 		stream.close();
 
-		convertFilesToSumoSimulation(files, stateFiles);
+		return new SumoFilesDTO(files, stateFiles);
 	}
 	
-	
-	private static void convertFilesToSumoSimulation(List<File> files, List<File> stateFiles) throws Exception {
-		//Create empty classes
-		Simulation simulation = new Simulation();
-		ArrayList<State> states = new ArrayList<>();
-		Configuration config = null;
-		Routes routes = null;
-		Net net = null;
-		
-		//Give the simulation a random ID
-		simulation.setID(UUID.randomUUID().toString().substring(0,8)); 
-		//Fill class with data from files
-		for (File f : files) {
-			switch (f.getName()) {
-			case "routes.rou.xml":
-				routes = ParseXML.parseRoutesFile(f);
-				break;
-			case "net.net.xml":
-				net = ParseXML.parseNetFile(f);
-				break;
-			case "simulation.sumocfg":
-				config = ParseXML.parseConfigFile(f);
-				break;
-			case "metadata.txt":
-				simulation = ParseXML.parseMetadata(f, simulation);
-				break;
-			}
-		}
-		for (File sf : stateFiles) {
-			states.add(ParseXML.parseStateFile(sf));
-		}
-		//Set states and config
-		simulation.setStates(states);
-		simulation.setConfiguration(config);
-		
-		//Store simulation in the database
-		SimulationStoreService.storeSimulation(simulation);
-		
-		//Delete files after use
-		files.forEach(f -> f.delete());
-		stateFiles.forEach(sf -> sf.delete());
-
-	}
 
 	public static void checkFileList(List<String> fileList) throws IOException {
 		// TODO Checks on correctness of files
@@ -162,8 +127,8 @@ public class FileReadService {
 		return new File(fileNameLocation);
 	}
 
-	private static List<File> convertStateFiles(InputStream is, String fileLocation) throws Exception {
-		List<File> stateFiles = new ArrayList<File>();
+	private static TreeMap<Integer, File> convertStateFiles(InputStream is, String fileLocation) throws Exception {
+		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
 		ZipInputStream stateZip = new ZipInputStream(is);
 		ZipEntry entry;
 
@@ -171,13 +136,24 @@ public class FileReadService {
 			String longFileName = entry.getName();
 			String[] splitFileFolder = (longFileName.split("/"));
 			String fileName = splitFileFolder[splitFileFolder.length - 1];
-			// System.out.println("Unzipping: " + fileName);
-
-			stateFiles.add(convertStreamToFile(stateZip, fileName));
+			//System.out.println("Unzipping: " + fileName);			
+			
+			String fileNumbers = fileName.replaceAll("[^0-9.]", "");
+			String[] splitTimeStamp = fileNumbers.split("\\.");
+			int timeStamp = Integer.parseInt(splitTimeStamp[0]);
+			stateFiles.put(timeStamp, convertStreamToFile(stateZip, fileName));
 		}
 		return stateFiles;
 	}
-
+	
+	public static List<String> getFileList(BodyPart bodyPart){
+		List<String> fileList = new ArrayList<String>();
+		for (BodyPart part : bodyPart.getParent().getBodyParts()) {
+			ContentDisposition meta = part.getContentDisposition();
+			if(meta.getFileName().length() > 3) fileList.add('\n' + meta.getFileName());
+		}
+		return fileList;
+	}
 	public static ZipInputStream convertToZipStream(InputStream stream) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(stream);
 		ZipInputStream zipStream = new ZipInputStream(bis);
