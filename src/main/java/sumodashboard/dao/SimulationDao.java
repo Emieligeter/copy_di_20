@@ -41,6 +41,8 @@ public enum SimulationDao {
 	
 	private Map<String, Simulation> contentProvider = new HashMap<String, Simulation>();
 	
+	public Random random = new Random();
+	
 	//Constructor sets up the connection to the database
 	private SimulationDao() {
 		try {
@@ -191,7 +193,7 @@ public enum SimulationDao {
 		public int generateId(int length) {
 			UUID uuid = UUID.randomUUID();
 			String str = uuid.toString().substring(0, length-1);
-			str = String.valueOf((new Random()).nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((new Random()).nextInt(9) +1));
+			str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
 			System.out.println("generated id = " + Integer.parseInt(str));
 			return Integer.parseInt(str);
 		}
