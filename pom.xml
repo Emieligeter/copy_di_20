@@ -132,6 +132,38 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.3</version>
 		</dependency>
+<<<<<<< HEAD
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>2.31</version>
+        </dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>2.31</version>
+		</dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codeartisans</groupId>
+			<artifactId>org.json</artifactId>
+			<version>20161124</version>
+		</dependency>
+=======
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -140,6 +172,7 @@
 			<scope>provided</scope>
 		</dependency>
 
+>>>>>>> 4ed8f424c1e7d309f4931770081f9e4df923eb2f
 
 	</dependencies>
 </project>
