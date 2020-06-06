@@ -5,15 +5,6 @@
 
 var chart;
 var chartType = "line";
-var data = [{
-    x: 10,
-    y: 20
-}, {
-    x: 15,
-    y: 10
-}, {x: 0, y: 30}, {x:30, y: 5}
-
-];
 
 
 
@@ -42,20 +33,23 @@ function updateChart() {
 		type : chartType,
 
 		// The data for our dataset
-		data : {
-			  datasets: [{
-				    label: 'Average speed',
-				    fill: false,
-				    data: getAvgSpeedTime(),
-				  }]
-				},
-
+		data : {},
 		// Configuration options go here
 		options : {//	elements: { line: { tension: 0 }}}
 			
 		}
 	});
+	getAvgSpeedTime();
 	console.log("done.");
+}
+
+function insertData(data) {
+	chart.data.datasets = [{
+				    label: 'Average speed',
+				    fill: false,
+				    data: data,
+				  }];
+	chart.update();
 }
 
 /*https://stackoverflow.com/questions/28828915/how-set-color-family-to-pie-chart-in-chart-js*/

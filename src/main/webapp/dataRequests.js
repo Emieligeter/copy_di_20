@@ -8,22 +8,22 @@ function getAvgSpeedTime() {
 	    console.log('ok for getavgspeedtime');
 		xhr.send();
 		console.log("request was sent");
-		
 		xhr.onreadystatechange = function() {
 			console.log("ready state changed to " + this.readyState + " status " + this.status);
 			if (this.readyState == 4 && this.status == 200) {
-				console.log("response received");
+				console.log("response is received");
 				var response = this.responseText;
+				console.log("dit is de response " + response);
 				myObj = JSON.parse(response);
 				console.log("dit is gewoon een string");
 				console.log("myObj " + myObj.toString());
 				var result = "[";
 					for (var i = 0; i < myObj.length; i++) {
-						result += "{ x: " + myObj[i].xValue + ", " + myObj[i].yValue + " }, ";
+						result += "{ x: " + myObj[i].XValue + ", y: " + myObj[i].YValue + " }, ";
 					}
 				result += "]";
 			console.log("CHECK THIS OUT: " + result);
-			return result;
+			insertData(result);
 			}
 		}
 		console.log("end of getavgspeedtime");
