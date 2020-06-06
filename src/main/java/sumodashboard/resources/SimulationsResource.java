@@ -86,7 +86,7 @@ public class SimulationsResource {
 		SimulationDao SimDao = SimulationDao.instance;
 		
 		//Generate a random id, if it exists generate a new one
-		int simId;
+		int simId = 0;
 		do {simId = SimDao.generateId(5);
 		}while(SimDao.doesSimIdExist(simId)) ;
 		 
