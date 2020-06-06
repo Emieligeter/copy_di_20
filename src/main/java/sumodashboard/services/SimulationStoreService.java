@@ -20,12 +20,15 @@ import sumodashboard.dao.ParseXML;
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.model.MetaData;
 import sumodashboard.model.Simulation;
+import sumodashboard.model.SumoFilesDTO;
 
+@Deprecated
 public class SimulationStoreService {
 
-	public static void storeSimulation(HashMap<String, File> files, TreeMap<Integer, File> states) throws Exception {
+	public static void storeSimulation(SumoFilesDTO dto) throws Exception {
 		// Generate random ID
-		
+		HashMap<String, File> files = dto.getFiles();
+		TreeMap<Integer, File> stateFiles = dto.getStateFiles();
 		
 		//parse metadata into object
 		MetaData meta = ParseXML.parseMetadata(files.get("metadata.txt"));
@@ -44,7 +47,7 @@ public class SimulationStoreService {
 				files.get("simulation.sumocfg"));
 
 		//Store all state files in 'states' table
-		for (Map.Entry<Integer, File> sf : states.entrySet()) {
+		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
 			Integer timeStamp = sf.getKey();
 			File file = sf.getValue();
 			SimulationDao.instance.storeState(simId, timeStamp, file);
@@ -62,7 +65,7 @@ public class SimulationStoreService {
 		
 		// Delete files after use
 		files.forEach((key, file) -> file.delete());
-		states.forEach((key, file) -> file.delete());
+		stateFiles.forEach((key, file) -> file.delete());
 	}
 
 	public static void storeRoutes(File file, String simID) {

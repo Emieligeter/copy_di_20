@@ -1,5 +1,6 @@
 package sumodashboard.resources;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.json.Json;
@@ -31,8 +33,11 @@ import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import sumodashboard.dao.ParseXML;
 import sumodashboard.dao.SimulationDao;
+import sumodashboard.model.MetaData;
 import sumodashboard.model.Simulation;
+import sumodashboard.model.SumoFilesDTO;
 import sumodashboard.services.FileReadService;
 
 @Path("/simulations")
@@ -70,13 +75,52 @@ public class SimulationsResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadZippedFile(@FormDataParam("uploadFile") InputStream inputStream,
 			@FormDataParam("uploadFile") FormDataBodyPart bodyPart) throws Exception {
-		List<String> fileList = new ArrayList<String>();
-		for (BodyPart part : bodyPart.getParent().getBodyParts()) {
-			ContentDisposition meta = part.getContentDisposition();
-			if(meta.getFileName().length() > 3) fileList.add('\n' + meta.getFileName());
+
+		//Read the inputstream and make a DTO object
+		SumoFilesDTO dto = FileReadService.readInputStream(inputStream, bodyPart);
+		inputStream.close();
+
+		HashMap<String, File> files = dto.getFiles();
+		TreeMap<Integer, File> stateFiles = dto.getStateFiles();
+		MetaData meta = ParseXML.parseMetadata(files.get("metadata.txt")); //parse metadata into object
+		SimulationDao SimDao = SimulationDao.instance;
+		
+		//Generate a random id, if it exists generate a new one
+		int simId;
+		do {simId = SimDao.generateId(5);
+		}while(SimDao.doesSimIdExist(simId)) ;
+		 
+		//Store a simulation in 'simulation' table
+		SimDao.storeSimulation(
+				simId, meta.getName(), 
+				meta.getDescription(), 
+				meta.getDate(),
+				files.get("net.net.xml"), 
+				files.get("routes.rou.xml"), 
+				files.get("simulation.sumocfg"));
+
+		//Store all state files in 'states' table
+		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
+			Integer timeStamp = sf.getKey();
+			File file = sf.getValue();
+			SimDao.storeState(simId, timeStamp, file);
 		}
-		FileReadService.readInputStream(inputStream, bodyPart, fileList);
-		return Response.ok("File uploaded successfully : " + fileList.toString()).build();
+		
+		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
+		for(String tag : meta.getTags()) {
+			Integer tagId = SimDao.getTagId(tag);
+			if(tagId == null) {
+				tagId = SimDao.generateId(4);
+				SimDao.storeTag(tagId, tag);				
+			} 
+			SimDao.storeSimTag(tagId, simId);
+		}
+		
+		// Delete files after use
+		files.forEach((key, file) -> file.delete());
+		stateFiles.forEach((key, file) -> file.delete());
+		
+		return Response.ok("Files uploaded successfully").build();
 	}
 	
 	@Path("id/{simulation}")
