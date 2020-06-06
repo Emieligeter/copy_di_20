@@ -13,6 +13,7 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" type="text/css"
 	href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css" />
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body onload="loadFiles()">
@@ -31,7 +32,7 @@
 		</div>
 		<div class="row">
 			<div id="fileSelect" class="col">
-				<button id=toSimList class="btn btn-secondary" onclick="location.href='modPage.html'">Edit Files</button>
+				<button id=toSimList class="btn btn-info" onclick="location.href='modPage.html'">Edit Files</button>
 				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
 					<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			</div>

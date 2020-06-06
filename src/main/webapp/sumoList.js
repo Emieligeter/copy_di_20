@@ -14,7 +14,7 @@ function loadFiles() {
 			  var name = res[i].ID;
 			  var date = res[i].date;
 			  var researcher = "undefined";
-			  var tags = "undefined";
+			  var tags = res[i].tags;
 			  liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
 			  "<div class=\"d-flex w-100 justify-content-between\">\n" +
 			  "<h5 class=\"mb-1\">" + name + "</h5>\n" +
