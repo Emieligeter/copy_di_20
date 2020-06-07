@@ -118,7 +118,6 @@ public class SimulationsResource {
 				System.out.println("generated tagId: " + tagId);
 				SimDao.storeTag(tagId, tag);
 			} 
-			Thread.sleep(1000);
 			SimDao.storeSimTag(tagId, simId);
 		}
 		

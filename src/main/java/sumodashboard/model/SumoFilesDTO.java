@@ -12,8 +12,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SumoFilesDTO {
-	private HashMap<String, File> files = new HashMap<String, File>();
-	private TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
+	private HashMap<String, File> files;
+	private TreeMap<Integer, File> stateFiles;
 
 
 	public SumoFilesDTO(HashMap<String, File> files2, TreeMap<Integer, File> stateFiles2) {
