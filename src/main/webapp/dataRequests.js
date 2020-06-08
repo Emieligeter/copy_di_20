@@ -15,15 +15,16 @@ function getAvgSpeedTime() {
 				var response = this.responseText;
 				console.log("dit is de response " + response);
 				myObj = JSON.parse(response);
-				console.log("dit is gewoon een string");
-				console.log("myObj " + myObj.toString());
 				var result = "[";
 					for (var i = 0; i < myObj.length; i++) {
-						result += "{ x: " + myObj[i].XValue + ", y: " + myObj[i].YValue + " }, ";
+						result += "{ \"x\": " + myObj[i].XValue + ", \"y\": " + myObj[i].YValue + " }";
+						if (i < myObj.length -1) {
+							result += ", ";
+						}
 					}
 				result += "]";
 			console.log("CHECK THIS OUT: " + result);
-			insertData(result);
+			changeData(result); //TODO This might not be the best place to call this method
 			}
 		}
 		console.log("end of getavgspeedtime");

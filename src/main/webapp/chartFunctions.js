@@ -1,22 +1,23 @@
 /**
  * 
  */
-//src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"
 
 var chart;
 var chartType = "line";
+var data;
 
-
-
-function getCtx() {
-	document.getElementById('myChart').getContext('2d');
-	console.log("successfull");
-};
 
 function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
 	console.log("Set chartType to " + type + chartType);
+	updateChart();
+	getAvgSpeedTime();
+}
+
+function setData(newdata) {
+	data = JSON.parse(newdata);
+	//console.log("data is set to: " + data);
 	updateChart();
 }
 
@@ -33,35 +34,32 @@ function updateChart() {
 		type : chartType,
 
 		// The data for our dataset
-		data : {},
+		data : {
+			datasets: [{
+				data: [],
+				fill: false
+			}]
+			},
 		// Configuration options go here
-		options : {//	elements: { line: { tension: 0 }}}
-			
+		options : {	
+			scales: {
+				xAxes: [{
+					type: 'linear',
+					display: true,
+					scaleLabel: {
+						display: true
+					}
+				}]
+			}
 		}
+			
+		//}
 	});
-	getAvgSpeedTime();
 	console.log("done.");
 }
 
-function insertData(data) {
-	chart.data.datasets = [{
-				    label: 'Average speed',
-				    fill: false,
-				    data: data,
-				  }];
+function changeData(data) {
+	//chart.data.datasets[0].data.pop();
+	chart.data.datasets[0].data = JSON.parse(data);
 	chart.update();
-}
-
-/*https://stackoverflow.com/questions/28828915/how-set-color-family-to-pie-chart-in-chart-js*/
-function getColors(length) {
-	let pallet = [ "#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF",
-			"#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b",
-			"#F012BE", "#3D9970", "#111111", "#AAAAAA" ];
-	let colors = [];
-
-	for (let i = 0; i < length; i++) {
-		colors.push(pallet[i % pallet.length]);
-	}
-
-	return colors;
 }
