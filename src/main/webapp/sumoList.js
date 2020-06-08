@@ -11,7 +11,8 @@ function loadFiles() {
 		  console.log(res);
 		  for (var i = 0; i < res.length; i++) {
 			  var liElem = document.createElement("li");
-			  var name = res[i].ID;
+			  liElem.id = res[i].ID;
+			  var name = res[i].name;
 			  var date = res[i].date;
 			  var researcher = "undefined";
 			  var tags = res[i].tags;
@@ -50,6 +51,10 @@ function getFilteredFiles() {
 }
 
 $(document).on('click', 'ul li a', function() {
-	$(this).addClass('active').parent().siblings().children().removeClass('active');	
+	$(this).addClass('active').parent().siblings().children().removeClass('active');
+	var url = "/sumo-dashboard/rest/simulations/id/" + this.id;
+	$.get(url, function(data, status){
+	    alert("Data: " + data.toString() + "\nStatus: " + status);
+	  });
 })
 
