@@ -28,6 +28,33 @@
   list-style-type: none;
 }
 
+.list-group {
+    max-height: 300px;
+    overflow-y:scroll;
+}
+
+@media (min-width: 576px) {
+	.jumbotron {
+	    padding: 2rem 2rem;
+	}
+}
+
+.jumbotron {
+    padding: 2rem 2rem;
+    margin-bottom: 0rem;
+    background-color: #e9ecef;
+    border-radius: .3rem;
+}
+
+#LogOut {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#toSimList {
+	margin-bottom: 10px;
+}
+
 .stdForm input {
 	width: 100%;
 	margin: 10px;
