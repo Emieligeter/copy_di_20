@@ -95,7 +95,10 @@ public enum SimulationDao {
 		
 		ResultSet rs = simQuery.executeQuery();
 		
-		rs.next();
+		if (!rs.next()) {
+			return null;
+		}
+		
 		int ID = rs.getInt("simid");
 		String name = rs.getString("name");
 		Date date = rs.getDate("date");
@@ -106,6 +109,19 @@ public enum SimulationDao {
 		Simulation result = new Simulation(ID, name, date, description, net, routes, config);
 		
 		return result;
+	}
+	
+	//Remove one simulation by id
+	//Returns true when the simulation was removed, false if it's not found
+	public boolean removeSimulation(int simulation_id) throws SQLException {
+		PreparedStatement remQuery = connection.prepareStatement("" +
+				"DELETE FROM project.simulations " +
+				"WHERE simid = ?");
+		remQuery.setInt(1, simulation_id);
+		
+		int deleted = remQuery.executeUpdate();
+		
+		return (deleted > 0);
 	}
 	
 	//

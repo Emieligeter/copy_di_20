@@ -46,8 +46,15 @@ public class SimulationResource {
 		
 		try {
 			Simulation simulation = SimulationDao.instance.getSimulation(numericID);
+			Response response;
 			
-			Response response = Response.status(200).entity(simulation).build();
+			if (simulation == null) {
+				response = Response.status(400).entity("Invalid ID, does not exist").build();
+			}
+			else {
+				response = Response.status(200).entity(simulation).build();
+			}
+			
 			return response;
 		} catch (SQLException e) {
 			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
@@ -87,8 +94,29 @@ public class SimulationResource {
 	}
 	
 	@DELETE
-	public void deleteSimulation() {
-		//TODO
-		//SimulationDao.instance.getModel().remove(ID);
+	public Response deleteSimulation() {
+		int numericID;
+		try {
+			numericID = Integer.parseInt(ID);
+		} catch (NumberFormatException e) {
+			return Response.status(400).entity("Invalid ID, not a number.").build();
+		}
+		
+		try {
+			Response response;
+			
+			if (SimulationDao.instance.removeSimulation(numericID)) {
+				response = Response.status(200).build();
+			}
+			else {
+				response = Response.status(400).entity("Invalid ID, not found.").build();
+			}
+			
+			return response;
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
+			Response response = Response.status(500).entity(errorMsg).build();
+			return response;
+		}
 	}
 }
