@@ -124,13 +124,17 @@ public enum SimulationDao {
 		return (deleted > 0);
 	}
 	
-	//
+	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
 	public List<GraphPoint> getAvgSpeedTime(int simulation_id) throws SQLException {
-		//TODO fix query
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT timestamp, unnest(xpath('/snapshot/vehicle/@speed', state))::text::float " +
-				"FROM project.states " +
-				"WHERE simID = ? " +
+				"SELECT vehicle.timestamp, avg(vehicle.speed::float) as avgVehicleSpeed " + 
+				"FROM (" +
+					"SELECT timestamp, json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed' AS speed " +
+					"FROM project.states " +
+					"WHERE simid = ? " +
+					"LIMIT 10000" +
+				") vehicle " +
+				"GROUP BY timestamp " +
 				"ORDER BY timestamp");
 		dataQuery.setInt(1, simulation_id);
 		
@@ -140,7 +144,7 @@ public enum SimulationDao {
 
 		while (resultSet.next()) {
 			double timestamp = resultSet.getDouble("timestamp");
-			double avgSpeed = resultSet.getDouble("unnest");
+			double avgSpeed = resultSet.getDouble("avgVehicleSpeed");
 			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
 			graphPoints.add(point);
 		}
