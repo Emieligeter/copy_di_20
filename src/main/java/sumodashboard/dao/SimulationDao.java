@@ -39,10 +39,6 @@ public enum SimulationDao {
 	
 	private Connection connection;
 	
-	private Map<String, Simulation> contentProvider = new HashMap<String, Simulation>();
-	
-	public Random random = new Random();
-	
 	//Constructor sets up the connection to the database
 	private SimulationDao() {
 		try {
@@ -78,15 +74,38 @@ public enum SimulationDao {
 		
 		List<Simulation> simulations = new ArrayList<>();
 		while (rs.next()) {
-			int ID = (Integer)rs.getObject("simid");
-			String name = (String)rs.getObject("name");
-			Date date = (Date)rs.getObject("date");
-			String description = (String)rs.getObject("description");
-			Simulation entry = new Simulation(ID, name, date, description, null, null, null);
+			int ID = rs.getInt("simid");
+			String name = rs.getString("name");
+			Date date = rs.getDate("date");
+			String description = rs.getString("description");
+			Simulation entry = new Simulation(ID, name, date, description);
 			simulations.add(entry);
 		}
 		
 		return simulations;		
+	}
+	
+	//Get one simulation by id
+	public Simulation getSimulation(int simulation_id) throws SQLException {
+		PreparedStatement simQuery = connection.prepareStatement("" +
+				"SELECT simid, name, date, description, net, routes, config " + 
+				"FROM project.simulations " +
+				"WHERE simid = ?");
+		simQuery.setInt(1, simulation_id);
+		
+		ResultSet rs = simQuery.executeQuery();
+		
+		rs.next();
+		int ID = rs.getInt("simid");
+		String name = rs.getString("name");
+		Date date = rs.getDate("date");
+		String description = rs.getString("description");
+		String net = rs.getString("net");
+		String routes = rs.getString("routes");
+		String config = rs.getString("config");
+		Simulation result = new Simulation(ID, name, date, description, net, routes, config);
+		
+		return result;
 	}
 	
 	//
@@ -104,8 +123,8 @@ public enum SimulationDao {
 		List<GraphPoint> graphPoints = new ArrayList<>();
 
 		while (resultSet.next()) {
-			double timestamp = (double)resultSet.getObject("timestamp");
-			double avgSpeed = (double)resultSet.getObject("unnest");
+			double timestamp = resultSet.getDouble("timestamp");
+			double avgSpeed = resultSet.getDouble("unnest");
 			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
 			graphPoints.add(point);
 		}
@@ -190,19 +209,15 @@ public enum SimulationDao {
 	
 	
 	//Generates a random ID of size 'length', never starting with a 0 
-		public int generateId(int length) {
-			UUID uuid = UUID.randomUUID();
-			String str = uuid.toString().substring(0, length-1);
-			str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
-			System.out.println("generated id = " + Integer.parseInt(str));
-			return Integer.parseInt(str);
-		}
-	
-	
-	
-	public Map<String, Simulation> getModel() {
-		return contentProvider;
+	public int generateId(int length) {
+		Random random = new Random();
+		UUID uuid = UUID.randomUUID();
+		String str = uuid.toString().substring(0, length-1);
+		str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
+		System.out.println("generated id = " + Integer.parseInt(str));
+		return Integer.parseInt(str);
 	}
+	
 	
 	private PGobject convertFileToPGobject(File file) throws Exception {
 		/*SQLXML sqlxml = connection.createSQLXML();
@@ -227,16 +242,6 @@ public enum SimulationDao {
 		result.setType("json");
 		result.setValue(jsonObj.toString());
 		return result;
-	}
-	
-	public static void main(String[] arg) {
-		try {
-			System.out.println(SimulationDao.instance.getSimulations());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
 	

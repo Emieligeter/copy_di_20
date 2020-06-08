@@ -34,16 +34,27 @@ public class SimulationResource {
 		this.ID = ID;
 	}
 	
-	//TODO
-//	@GET
-//	@Produces(MediaType.APPLICATION_XML)
-//	public Simulation getSimulation() {
-//		Simulation simulation = SimulationDao.instance.getModel().get(ID);
-//		if (simulation == null) {
-//			throw new RuntimeException("Simulation " + ID + " not found.");
-//		}
-//		return simulation;
-//	}
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSimulation() {
+		int numericID;
+		try {
+			numericID = Integer.parseInt(ID);
+		} catch (NumberFormatException e) {
+			return Response.status(400).entity("Invalid ID, not a number.").build();
+		}
+		
+		try {
+			Simulation simulation = SimulationDao.instance.getSimulation(numericID);
+			
+			Response response = Response.status(200).entity(simulation).build();
+			return response;
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
+			Response response = Response.status(500).entity(errorMsg).build();
+			return response;
+		}
+	}
 	
 	@GET
 	@Path("/avgspeedtime")
@@ -70,7 +81,7 @@ public class SimulationResource {
 	}
 	
 	@PUT
-	@Consumes(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public void updateSimulation(Simulation simulation) {
 		//SimulationDao.instance.getModel().put(simulation.getID(), simulation);
 	}
