@@ -49,6 +49,7 @@ public class SimulationResource {
 	@Path("/avgspeedtime")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeedTime() {
+		System.out.println("getAvgSpeedTime() at /avgspeedtime in SimulationResource was reached.");
 		int numericID;
 		try {
 			numericID = Integer.parseInt(ID);
