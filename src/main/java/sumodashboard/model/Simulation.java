@@ -1,19 +1,10 @@
 package sumodashboard.model;
 
 
-import java.io.File;
-import java.io.Reader;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Scanner;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.junit.platform.commons.util.StringUtils;
 
 @XmlRootElement
 public class Simulation {
@@ -25,19 +16,31 @@ public class Simulation {
 	private ArrayList<State> states;
 	private ArrayList<String> tags;
 	
+	private String net;
+	private String routes;
+	private String config;
+	
 	public Simulation() {
 		
 	}
 	
-	public Simulation(int ID, String name, Date date, String description, Configuration configuration, ArrayList<State> states, ArrayList<String> tags) {
+	public Simulation(int ID, String name, Date date, String description) {
 		super();
 		this.ID = ID;
 		this.name = name;
 		this.date = date;
 		this.description = description;
-		this.configuration = configuration;
-		this.states = states;
-		this.tags = tags;
+	}
+	
+	public Simulation(int ID, String name, Date date, String description, String net, String routes, String config) {
+		super();
+		this.ID = ID;
+		this.name = name;
+		this.date = date;
+		this.description = description;
+		this.net = net;
+		this.routes = routes;
+		this.config = config;
 	}
 	
 	public Simulation(String metadataPath, String netPath, String routesPath, String configPath) {
@@ -98,5 +101,29 @@ public class Simulation {
 	
 	public void setTags(ArrayList<String> tags) {
 		this.tags = tags;
+	}
+
+	public String getNet() {
+		return net;
+	}
+
+	public void setNet(String net) {
+		this.net = net;
+	}
+
+	public String getRoutes() {
+		return routes;
+	}
+
+	public void setRoutes(String routes) {
+		this.routes = routes;
+	}
+
+	public String getConfig() {
+		return config;
+	}
+
+	public void setConfig(String config) {
+		this.config = config;
 	}
 }
