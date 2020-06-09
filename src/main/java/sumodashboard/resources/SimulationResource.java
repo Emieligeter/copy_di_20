@@ -67,6 +67,7 @@ public class SimulationResource {
 	@Path("/avgspeedtime")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeedTime() {
+		System.out.println("getAvgSpeedTime() at /avgspeedtime in SimulationResource was reached.");
 		int numericID;
 		try {
 			numericID = Integer.parseInt(ID);
@@ -77,7 +78,13 @@ public class SimulationResource {
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgSpeedTime(numericID);
 			
-			Response response = Response.status(200).entity(graphPoints).build();
+			Response response;
+			if (graphPoints.size() > 0) {
+				response = Response.status(200).entity(graphPoints).build();
+			}
+			else {
+				response = Response.status(400).entity("Invalid ID, does not exist").build();
+			}
 			return response;
 
 		} catch (SQLException e) {
@@ -109,7 +116,7 @@ public class SimulationResource {
 				response = Response.status(200).build();
 			}
 			else {
-				response = Response.status(400).entity("Invalid ID, not found.").build();
+				response = Response.status(400).entity("Invalid ID, does not exist.").build();
 			}
 			
 			return response;
