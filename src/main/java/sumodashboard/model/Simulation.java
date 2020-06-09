@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 public class Simulation {
 	private int ID;
 	private String name;
-	private Date date;
+	private String date;
 	private String description;
+	private String researcher;
 	private Configuration configuration;
 	private ArrayList<State> states;
 	private ArrayList<String> tags;
@@ -24,20 +26,22 @@ public class Simulation {
 		
 	}
 	
-	public Simulation(int ID, String name, Date date, String description) {
+	public Simulation(int ID, String name, String date, String description, String researcher) {
 		super();
 		this.ID = ID;
 		this.name = name;
 		this.date = date;
 		this.description = description;
+		this.researcher = researcher;
 	}
 	
-	public Simulation(int ID, String name, Date date, String description, String net, String routes, String config) {
+	public Simulation(int ID, String name, String date, String description, String researcher, String net, String routes, String config) {
 		super();
 		this.ID = ID;
 		this.name = name;
 		this.date = date;
 		this.description = description;
+		this.researcher = researcher;
 		this.net = net;
 		this.routes = routes;
 		this.config = config;
@@ -55,7 +59,7 @@ public class Simulation {
 		return name;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
@@ -83,7 +87,7 @@ public class Simulation {
 		this.name = name;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -125,5 +129,13 @@ public class Simulation {
 
 	public void setConfig(String config) {
 		this.config = config;
+	}
+	
+	public String getResearcher() {
+		return researcher;
+	}
+	
+	public void setResearcher(String researcher) {
+		this.researcher = researcher;
 	}
 }

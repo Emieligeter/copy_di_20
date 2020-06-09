@@ -96,8 +96,31 @@ public class SimulationResource {
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateSimulation(Simulation simulation) {
-		//SimulationDao.instance.getModel().put(simulation.getID(), simulation);
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateSimulationMetadata(Simulation simulation) {
+		int numericID;
+		try {
+			numericID = Integer.parseInt(ID);
+		} catch (NumberFormatException e) {
+			return Response.status(400).entity("Invalid ID, not a number.").build();
+		}
+		
+		try {
+			Response response;
+			
+			if (SimulationDao.instance.updateMetadata(numericID, simulation)) {
+				response = Response.status(200).build();
+			}
+			else {
+				response = Response.status(400).entity("Invalid ID, does not exist.").build();
+			}
+			
+			return response;
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
+			Response response = Response.status(500).entity(errorMsg).build();
+			return response;
+		}
 	}
 	
 	@DELETE
