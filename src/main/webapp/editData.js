@@ -1,16 +1,18 @@
 /**
  * 
  */
-$("").on('click', 'ul li a', function() {
+$("#modifyMetadata").submit(function(event) {
 event.preventDefault(); // prevent default action
-  	
-    var files = $('#uploadFiles')[0];
-    var fd = new FormData(files);
-    var url = "/rest/simulations/{id}";
+    var url = "/rest/simulations/id/{id}";
+    var body = {
+    		"date": "2020-06-09",
+    		"description": "description",
+    		"name": "yes"
+    }
   	$.ajax({
-  		url : '',
+  		url : url,
   		type: 'PUT',
-  		data: fd,
+  		data: body,
   		contentType: false, 
   	    processData: false,
   	    success : function(response){

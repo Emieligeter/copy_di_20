@@ -60,18 +60,38 @@
 	margin: 10px;
 }
 
+.stdForm textarea {
+	border-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-top-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-right-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-bottom-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-left-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+}
+
+.form-control {
+	border: 1px solid #343a40;
+	margin: 10px;
+}
+
+.card {
+	margin: 10px;
+    width: 100%;
+    border: 1px solid #343a40;
+}
+
 .stdForm p {
-  margin-bottom: 0px;
-  margin-top: 8px;
-  font-weight: bold;
+	margin-bottom: 0px;
+	margin-top: 8px;
+	font-weight: bold;
 }
 
 .stdForm button {
 	margin-top: 20px;
 	margin-left: 5px;
 	margin-right: 5px;
+	margin-bottom: 10px;
 }
 
 .stdForm .card {
-  margin-top: 200px;
+	margin-top: 200px;
 }

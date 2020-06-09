@@ -53,6 +53,7 @@ function getFilteredFiles() {
 $(document).on('click', 'ul li a', function() {
 	//Makes clicked elem active and all other list elems inactive
 	$(this).addClass('active').parent().siblings().children().removeClass('active');
+	//Display current metadata of clicked sumo file
 	showMetaData($(this).parent().attr('id'));
 })
 
@@ -60,8 +61,11 @@ function showMetaData(id) {
 	var url = "/sumo-dashboard/rest/simulations/id/" + id;
 	$.get(url, function(data, status){
 		var json = data;
-		document.getElementById("newTitle").innerHtml = data.name;
-		console.log(json);
-	  });
+		document.getElementById("newTitle").setAttribute("value", data.name);
+		//var date = new Date(data.date);
+		//document.getElementById("newDate").setAttribute("value", data.date);
+		//document.getElementById("newResearcher").setAttribute("value", data.researcher);
+		document.getElementById("newDescription").setAttribute("value", data.description);
+	});
 }
 
