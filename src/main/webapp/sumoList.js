@@ -11,17 +11,18 @@ function loadFiles() {
 		  console.log(res);
 		  for (var i = 0; i < res.length; i++) {
 			  var liElem = document.createElement("li");
-			  var name = res[i].ID;
+			  liElem.id = res[i].ID;
+			  var name = res[i].name;
 			  var date = res[i].date;
-			  var researcher = "undefined";
+			  var researcher = res[i].researcher;
 			  var tags = res[i].tags;
 			  liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
 			  "<div class=\"d-flex w-100 justify-content-between\">\n" +
-			  "<h5 class=\"mb-1\">" + name + "</h5>\n" +
+			  "<h5 id=\"fileName\" class=\"mb-1\">" + name + "</h5>\n" +
 			  "</div>\n" +
-			  "<p class=\"mb-1\">Date: " + date + "</p>\n" +
-			  "<p class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
-			  "<small>" + tags + "</small>\n" +
+			  "<p id=\"fileDate\" class=\"mb-1\">Date: " + date + "</p>\n" +
+			  "<p id=\"fileResearcher\" class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
+			  "<small id=\"fileTags\">" + tags + "</small>\n" +
 			  "</a>";
 			  sumoFiles.appendChild(liElem);
 		  }
@@ -50,6 +51,20 @@ function getFilteredFiles() {
 }
 
 $(document).on('click', 'ul li a', function() {
-	$(this).addClass('active').parent().siblings().children().removeClass('active');	
+	//Makes clicked elem active and all other list elems inactive
+	$(this).addClass('active').parent().siblings().children().removeClass('active');
+	//Display current metadata of clicked sumo file
+	showMetaData($(this).parent().attr('id'));
 })
+
+function showMetaData(id) {
+	var url = "/sumo-dashboard/rest/simulations/id/" + id;
+	$.get(url, function(data, status){
+		document.getElementById("newTitle").setAttribute("value", data.name);
+		document.getElementById("newDate").setAttribute("value", data.date);
+		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
+		document.getElementById("newResearcher").setAttribute("value", researcher);
+		document.getElementById("newDescription").innerHTML = data.description;
+	});
+}
 

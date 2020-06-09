@@ -67,7 +67,7 @@ public enum SimulationDao {
 	//Get a List with all simulation metadata in the database
 	public List<Simulation> getSimulations() throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT simid, name, date, description " +
+				"SELECT simid, name, date, description, researcher " +
 				"FROM project.simulations");
 
 		ResultSet rs = simQuery.executeQuery();
@@ -76,9 +76,10 @@ public enum SimulationDao {
 		while (rs.next()) {
 			int ID = rs.getInt("simid");
 			String name = rs.getString("name");
-			Date date = rs.getDate("date");
+			String date = rs.getDate("date").toString();
 			String description = rs.getString("description");
-			Simulation entry = new Simulation(ID, name, date, description);
+			String researcher = rs.getString("researcher");
+			Simulation entry = new Simulation(ID, name, date, description, researcher);
 			simulations.add(entry);
 		}
 		
@@ -88,7 +89,7 @@ public enum SimulationDao {
 	//Get one simulation by id
 	public Simulation getSimulation(int simulation_id) throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT simid, name, date, description, net, routes, config " + 
+				"SELECT simid, name, date, description, researcher, net, routes, config " + 
 				"FROM project.simulations " +
 				"WHERE simid = ?");
 		simQuery.setInt(1, simulation_id);
@@ -101,12 +102,13 @@ public enum SimulationDao {
 		
 		int ID = rs.getInt("simid");
 		String name = rs.getString("name");
-		Date date = rs.getDate("date");
+		String date = rs.getDate("date").toString();
 		String description = rs.getString("description");
+		String researcher = rs.getString("researcher");
 		String net = rs.getString("net");
 		String routes = rs.getString("routes");
 		String config = rs.getString("config");
-		Simulation result = new Simulation(ID, name, date, description, net, routes, config);
+		Simulation result = new Simulation(ID, name, date, description, researcher, net, routes, config);
 		
 		return result;
 	}
@@ -122,6 +124,25 @@ public enum SimulationDao {
 		int deleted = remQuery.executeUpdate();
 		
 		return (deleted > 0);
+	}
+	
+	//Updates metadata of specified simulation, with the specified fields of the simulation object
+	//Returns false if the simulation id does not exist
+	public boolean updateMetadata(int simulation_id, Simulation simulation) throws SQLException {
+		StringBuilder query = new StringBuilder("UPDATE project.simulations SET ");
+		if (simulation.getName() != null) query.append("name = '" + simulation.getName() + "', ");
+		if (simulation.getDate() != null) query.append("date = '" + simulation.getDate() + "', ");
+		if (simulation.getDescription() != null) query.append("description = '" + simulation.getDescription() + "', ");
+		if (simulation.getResearcher() != null) query.append("researcher = '" + simulation.getResearcher() + "', ");
+		query.delete(query.length()-2, query.length());
+		query.append(" WHERE simid = ?");
+		
+		PreparedStatement update = connection.prepareStatement(query.toString());
+		update.setInt(1, simulation_id);
+		
+		int updated = update.executeUpdate();
+		
+		return (updated > 0);
 	}
 	
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
