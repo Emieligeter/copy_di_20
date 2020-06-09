@@ -1,16 +1,32 @@
 function chartToReport() {
-	console.log("lets add this chart to the report.")
-	var chartCopy = copyCanvas(document.getElementById('myChart'));
-	document.getElementById('report').appendChild(chartCopy);
-	console.log("done.")
+	console.log("lets add this chart to the report.");
+	var elementCopy;
+	if(chartType == 'textElement') {
+		elementCopy = copyText(document.getElementById('editor'));
+	} else {
+		elementCopy = copyCanvas(document.getElementById('reportElement'));
+	}
+	document.getElementById('report').appendChild(elementCopy);
+	console.log("done.");
 }
 
+function copyText(original) {
+	var text =  document.createElement('p');
+	text.innerHTML = original.innerHTML;
+	return text;
+}
 function copyCanvas(original) {
-	var newThing = document.createElement('canvas');
-	var cxt = newThing.getContext('2d');
-	newThing.width = original.width;
-	newThing.height = original.height;
-	cxt.scale(0.6, 0.6)
-	cxt.drawImage(original, 0, 0);
-	return newThing;
+	var imgURL = original.toDataURL("image/png");
+	var img = document.createElement('img')
+	img.src = imgURL;
+	img.width = 200;
+	img.height = 300;
+	return img;
+}
+
+var printDivCSS = new String ('<link href="styles.css" rel="stylesheet" type="text/css">');
+function printDiv(divId) {
+    window.frames["print_frame"].document.body.innerHTML=printDivCSS + document.getElementById(divId).innerHTML;
+    window.frames["print_frame"].window.focus();
+    window.frames["print_frame"].window.print();
 }

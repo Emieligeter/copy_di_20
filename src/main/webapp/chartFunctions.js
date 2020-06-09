@@ -21,13 +21,17 @@ function setData(newdata) {
 	updateChart();
 }
 
+
 function updateChart() {
 	console.log("We're going to update the chart to type " + chartType);
 	if (this.chart !== undefined) {
 		this.chart.destroy();
 	}
-	var canvas = document.getElementById('myChart');
+	var canvas = document.getElementById('reportElement');
 	var ctx = canvas.getContext('2d');
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	if(chartType == "textElement"){
+	} else {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	chart = new Chart(ctx, {
 		// The type of chart we want to create
@@ -55,6 +59,7 @@ function updateChart() {
 			
 		//}
 	});
+	}
 	console.log("done.");
 }
 

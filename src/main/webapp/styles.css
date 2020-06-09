@@ -27,6 +27,26 @@
   display: block; /* Make it into a block element to fill the whole list */
   list-style-type: none;
 }
+#editor {
+	overflow:scroll; 
+	height:300px;
+	width:100%
+}
+
+
+#editArea {
+	position:relative;
+}
+#textEditor, #chart {
+	position: absolute; 
+	height:100%;
+	width:100%;
+	visibility:hidden;
+}
+
+#fileSelect {
+	width:400px
+}
 
 .stdForm input {
 	width: 100%;
