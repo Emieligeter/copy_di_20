@@ -67,7 +67,7 @@ public enum SimulationDao {
 	//Get a List with all simulation metadata in the database
 	public List<Simulation> getSimulations() throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT simid, name, date, description " +
+				"SELECT simid, name, date, description, researcher " +
 				"FROM project.simulations");
 
 		ResultSet rs = simQuery.executeQuery();
@@ -78,7 +78,8 @@ public enum SimulationDao {
 			String name = rs.getString("name");
 			String date = rs.getDate("date").toString();
 			String description = rs.getString("description");
-			Simulation entry = new Simulation(ID, name, date, description);
+			String researcher = rs.getString("researcher");
+			Simulation entry = new Simulation(ID, name, date, description, researcher);
 			simulations.add(entry);
 		}
 		
@@ -88,7 +89,7 @@ public enum SimulationDao {
 	//Get one simulation by id
 	public Simulation getSimulation(int simulation_id) throws SQLException {
 		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT simid, name, date, description, net, routes, config " + 
+				"SELECT simid, name, date, description, researcher, net, routes, config " + 
 				"FROM project.simulations " +
 				"WHERE simid = ?");
 		simQuery.setInt(1, simulation_id);
@@ -103,10 +104,11 @@ public enum SimulationDao {
 		String name = rs.getString("name");
 		String date = rs.getDate("date").toString();
 		String description = rs.getString("description");
+		String researcher = rs.getString("researcher");
 		String net = rs.getString("net");
 		String routes = rs.getString("routes");
 		String config = rs.getString("config");
-		Simulation result = new Simulation(ID, name, date, description, net, routes, config);
+		Simulation result = new Simulation(ID, name, date, description, researcher, net, routes, config);
 		
 		return result;
 	}
@@ -131,6 +133,7 @@ public enum SimulationDao {
 		if (simulation.getName() != null) query.append("name = '" + simulation.getName() + "', ");
 		if (simulation.getDate() != null) query.append("date = '" + simulation.getDate() + "', ");
 		if (simulation.getDescription() != null) query.append("description = '" + simulation.getDescription() + "', ");
+		if (simulation.getResearcher() != null) query.append("researcher = '" + simulation.getResearcher() + "', ");
 		query.delete(query.length()-2, query.length());
 		query.append(" WHERE simid = ?");
 		
