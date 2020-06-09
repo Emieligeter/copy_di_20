@@ -76,7 +76,7 @@ public enum SimulationDao {
 		while (rs.next()) {
 			int ID = rs.getInt("simid");
 			String name = rs.getString("name");
-			Date date = rs.getDate("date");
+			String date = rs.getDate("date").toString();
 			String description = rs.getString("description");
 			Simulation entry = new Simulation(ID, name, date, description);
 			simulations.add(entry);
@@ -101,7 +101,7 @@ public enum SimulationDao {
 		
 		int ID = rs.getInt("simid");
 		String name = rs.getString("name");
-		Date date = rs.getDate("date");
+		String date = rs.getDate("date").toString();
 		String description = rs.getString("description");
 		String net = rs.getString("net");
 		String routes = rs.getString("routes");
@@ -122,6 +122,24 @@ public enum SimulationDao {
 		int deleted = remQuery.executeUpdate();
 		
 		return (deleted > 0);
+	}
+	
+	//Updates metadata of specified simulation, with the specified fields of the simulation object
+	//Returns false if the simulation id does not exist
+	public boolean updateMetadata(int simulation_id, Simulation simulation) throws SQLException {
+		StringBuilder query = new StringBuilder("UPDATE project.simulations SET ");
+		if (simulation.getName() != null) query.append("name = '" + simulation.getName() + "', ");
+		if (simulation.getDate() != null) query.append("date = '" + simulation.getDate() + "', ");
+		if (simulation.getDescription() != null) query.append("description = '" + simulation.getDescription() + "', ");
+		query.delete(query.length()-2, query.length());
+		query.append(" WHERE simid = ?");
+		
+		PreparedStatement update = connection.prepareStatement(query.toString());
+		update.setInt(1, simulation_id);
+		
+		int updated = update.executeUpdate();
+		
+		return (updated > 0);
 	}
 	
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.

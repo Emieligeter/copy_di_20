@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 public class Simulation {
 	private int ID;
 	private String name;
-	private Date date;
+	private String date;
 	private String description;
 	private Configuration configuration;
 	private ArrayList<State> states;
@@ -24,7 +25,7 @@ public class Simulation {
 		
 	}
 	
-	public Simulation(int ID, String name, Date date, String description) {
+	public Simulation(int ID, String name, String date, String description) {
 		super();
 		this.ID = ID;
 		this.name = name;
@@ -32,7 +33,7 @@ public class Simulation {
 		this.description = description;
 	}
 	
-	public Simulation(int ID, String name, Date date, String description, String net, String routes, String config) {
+	public Simulation(int ID, String name, String date, String description, String net, String routes, String config) {
 		super();
 		this.ID = ID;
 		this.name = name;
@@ -55,7 +56,7 @@ public class Simulation {
 		return name;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
@@ -83,7 +84,7 @@ public class Simulation {
 		this.name = name;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
