@@ -64,8 +64,10 @@ function showMetaData(id) {
 		document.getElementById("newTitle").setAttribute("value", data.name);
 		//var date = new Date(data.date);
 		//document.getElementById("newDate").setAttribute("value", data.date);
-		//document.getElementById("newResearcher").setAttribute("value", data.researcher);
-		document.getElementById("newDescription").setAttribute("value", data.description);
+		console.log(data.researcher);
+		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
+		document.getElementById("newResearcher").setAttribute("value", researcher);
+		document.getElementById("newDescription").innerHTML = data.description;
 	});
 }
 
