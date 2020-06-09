@@ -14,7 +14,7 @@ function loadFiles() {
 			  liElem.id = res[i].ID;
 			  var name = res[i].name;
 			  var date = res[i].date;
-			  var researcher = "undefined";
+			  var researcher = res[i].researcher;
 			  var tags = res[i].tags;
 			  liElem.innerHTML = "<a href=\"#\" class=\"list-group-item list-group-item-action flex-column align-items-start\">\n" +
 			  "<div class=\"d-flex w-100 justify-content-between\">\n" +
@@ -60,11 +60,8 @@ $(document).on('click', 'ul li a', function() {
 function showMetaData(id) {
 	var url = "/sumo-dashboard/rest/simulations/id/" + id;
 	$.get(url, function(data, status){
-		var json = data;
 		document.getElementById("newTitle").setAttribute("value", data.name);
-		//var date = new Date(data.date);
-		//document.getElementById("newDate").setAttribute("value", data.date);
-		console.log(data.researcher);
+		document.getElementById("newDate").setAttribute("value", data.date);
 		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
 		document.getElementById("newResearcher").setAttribute("value", researcher);
 		document.getElementById("newDescription").innerHTML = data.description;
