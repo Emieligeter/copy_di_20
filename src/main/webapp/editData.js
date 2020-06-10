@@ -1,22 +1,28 @@
 /**
  * 
  */
-$("#modifyMetadata").submit(function(event) {
-event.preventDefault(); // prevent default action
-    var url = "/rest/simulations/id/{id}";
-    var body = {
-    		"date": "2020-06-09",
-    		"description": "description",
-    		"name": "yes"
-    }
+$("#modifyMetadata").click(function() {
+	event.preventDefault(); // prevent default action
+    var url = "/rest/simulations/id/43655";
+    var body = "{\"" +
+    		"\"date\": \"2020-06-10\"," +
+    		"\"description\": \"Wow this description is so different\"," +
+    		"\"name\": \"SUMO file checkk\"," +
+    		"\"researcher\": \"Mr. Sir\"" +
+    "}";
   	$.ajax({
-  		url : url,
+  		url: url,
   		type: 'PUT',
   		data: body,
-  		contentType: false, 
-  	    processData: false,
   	    success : function(response){
-  	    	$("#server-results").html(response); 
+  	    	console.log("Successful!!!!!");
   	   }
     });
-}
+});
+
+/*
+"date": document.getElementById("newDate").getAttribute("value"),
+"description": document.getElementById("newDescription").innerHTML,
+"name": document.getElementById("newName").getAttribute("value"),
+"researcher": document.getElementById("newResearcher").getAttribute("value")
+*/
