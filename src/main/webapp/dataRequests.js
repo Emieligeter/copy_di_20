@@ -7,17 +7,17 @@ function getDataSnd(type) {
 }
 
 function getAvgSpeedTime() {
-	console.log("getAvgSpeedTime was reached");
+	//console.log("getAvgSpeedTime was reached");
 	
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", "http://localhost:8080/sumo-dashboard/rest/simulations/id/95759/avgspeedtime");
 		xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
 	    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-	    console.log('ok for getavgspeedtime');
+	    //console.log('ok for getavgspeedtime');
 		xhr.send();
-		console.log("request was sent");
+		//console.log("request was sent");
 		xhr.onreadystatechange = function() {
-			console.log("ready state changed to " + this.readyState + " status " + this.status);
+			//console.log("ready state changed to " + this.readyState + " status " + this.status);
 			if (this.readyState == 4 && this.status == 200) {
 				//console.log("response is received");
 				var response = this.responseText;
