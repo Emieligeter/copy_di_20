@@ -64,6 +64,22 @@ function changeFirstChoice(chartType) {
 	//console.log("this one: " + newOptions + chartType);
 	editDropDown(menu, newOptions);
 	//console.log("first choice was changed");
+	if(chartType != 'textElement') {   
+		//Hide editor, show variable selector
+		document.getElementById("chart").style.visibility="visible";  
+		document.getElementById("textEditor").style.visibility="hidden";  
+		
+		var menu = document.getElementById("first-choice");
+		var newOptions = fstDropDownOptions[chartType];
+		console.log("this one: " + newOptions + chartType);
+		editDropDown(menu, newOptions);
+		console.log("first choice was changed");
+	} else {
+		//Hide editor, show variable selector
+		document.getElementById("chart").style.visibility="hidden";  
+		document.getElementById("textEditor").style.visibility="visible";
+		
+	}
 }
 
 function changeSecondChoice() {

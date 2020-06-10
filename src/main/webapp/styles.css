@@ -27,24 +27,91 @@
   display: block; /* Make it into a block element to fill the whole list */
   list-style-type: none;
 }
+#editor {
+	overflow:scroll; 
+	height:300px;
+	width:100%
+}
+
+
+#editArea {
+	position:relative;
+}
+#textEditor, #chart {
+	position: absolute; 
+	height:100%;
+	width:100%;
+	visibility:hidden;
+}
+
+#fileSelect {
+	width:400px
+}
+
+.list-group {
+    max-height: 300px;
+    overflow-y:scroll;
+}
+
+@media (min-width: 576px) {
+	.jumbotron {
+	    padding: 2rem 2rem;
+	}
+}
+
+.jumbotron {
+    padding: 2rem 2rem;
+    margin-bottom: 0rem;
+    background-color: #e9ecef;
+    border-radius: .3rem;
+}
+
+#LogOut {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#toSimList {
+	margin-bottom: 10px;
+}
 
 .stdForm input {
 	width: 100%;
 	margin: 10px;
 }
 
+.stdForm textarea {
+	border-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-top-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-right-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-bottom-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-left-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+}
+
+.form-control {
+	border: 1px solid #343a40;
+	margin: 10px;
+}
+
+.card {
+	margin: 10px;
+    width: 100%;
+    border: 1px solid #343a40;
+}
+
 .stdForm p {
-  margin-bottom: 0px;
-  margin-top: 8px;
-  font-weight: bold;
+	margin-bottom: 0px;
+	margin-top: 8px;
+	font-weight: bold;
 }
 
 .stdForm button {
 	margin-top: 20px;
 	margin-left: 5px;
 	margin-right: 5px;
+	margin-bottom: 10px;
 }
 
 .stdForm .card {
-  margin-top: 200px;
+	margin-top: 200px;
 }
