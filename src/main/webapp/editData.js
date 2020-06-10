@@ -1,7 +1,7 @@
 /**
  * 
  */
-$("#modifyMetadata").click(function() {
+$("#modifyMetadata").submit(function() {
 	event.preventDefault();
     var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/43655";
     var newMetadata = document.getElementById("modifyMetadata");
