@@ -3,7 +3,7 @@
  */
 $("#modifyMetadata").submit(function() {
 	event.preventDefault();
-    var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/43655";
+    var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + getSelectedID();
     var newMetadata = document.getElementById("modifyMetadata");
     var body = "{\"date\": \"" + newMetadata.elements[1].value + 
     "\", \"description\": \"" + newMetadata.elements[3].value + 
