@@ -44,8 +44,9 @@ var secDropDownOptions = {};
 
 function loadFstDropDownOptions(){
 	fstDropDownOptions['line'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
+	fstDropDownOptions['scatter'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
 	fstDropDownOptions['pie'] = ['Route length', 'Edge appearance frequency'];
-	console.log("firstdropdown options are loaded");
+	//console.log("firstdropdown options are loaded");
 }
 
 function loadSecDropDownOptions(){
@@ -54,10 +55,15 @@ function loadSecDropDownOptions(){
 	secDropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
 	secDropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
 	secDropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	console.log("secondDropDownOptions are loaded");
+	//console.log("secondDropDownOptions are loaded");
 }
 
 function changeFirstChoice(chartType) {
+	var menu = document.getElementById("first-choice");
+	var newOptions = fstDropDownOptions[chartType];
+	//console.log("this one: " + newOptions + chartType);
+	editDropDown(menu, newOptions);
+	//console.log("first choice was changed");
 	if(chartType != 'textElement') {   
 		//Hide editor, show variable selector
 		document.getElementById("chart").style.visibility="visible";  
@@ -80,16 +86,17 @@ function changeSecondChoice() {
     var fst = document.getElementById("first-choice");
     var sec = document.getElementById("second-choice");
     if (sec == null) {
-    	document.getElementById("optionalSecChoice").innerHTML = "<select id=\"second-choice\" name=\"detailChoice\" class=\"form-control\"></select>";
+    	document.getElementById("optionalSecChoice").innerHTML = "<select id=\"second-choice\" name=\"detailChoice\" class=\"form-control\" onchange=\"getDataSnd(this.value)\"></select>";
     	sec = document.getElementById("second-choice");
     	}
     var chosen = fst.options[fst.selectedIndex].value;
-    console.log("chosen: " + chosen);
+    getData(chosen); //TODO obviously this is not really the right place for this, oops
+    //console.log("chosen: " + chosen);
     var newOptions = secDropDownOptions[chosen];
     editDropDown(sec, newOptions);
-    console.log("now this one: " + sec + newOptions);
-    console.log("second choice was changed");
-} 
+    //console.log("now this one: " + sec + newOptions);
+    //console.log("second choice was changed");
+}
 
 function editDropDown(menu, newOptions) {
 	while (menu.options.length) {
@@ -104,5 +111,5 @@ function editDropDown(menu, newOptions) {
     } else {
     	document.getElementById("optionalSecChoice").innerHTML = "";
     }
-    console.log("drop down was edited");
+    //console.log("drop down was edited");
 }
