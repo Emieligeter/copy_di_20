@@ -10,7 +10,7 @@ function getAvgSpeedTime() {
 	console.log("getAvgSpeedTime was reached");
 	
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "http://localhost:8080/sumo-dashboard/rest/simulations/id/13985/avgspeedtime");
+		xhr.open("GET", "http://localhost:8080/sumo-dashboard/rest/simulations/id/95759/avgspeedtime");
 		xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
 	    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 	    console.log('ok for getavgspeedtime');
