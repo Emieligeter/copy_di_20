@@ -1,5 +1,16 @@
+var optionsWithSndChoice = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor'];
+
 function getData(type) {
 	console.log("getData was called with type: " + type);
+	if (optionsWithSndChoice.includes(type)) {
+		return; //we need more input before we can show the graph
+	} else {
+		switch (type) {
+		case "Average vehicle speed":
+			getAvgSpeedTime();
+		}
+	}
+
 }
 
 function getDataSnd(type) {

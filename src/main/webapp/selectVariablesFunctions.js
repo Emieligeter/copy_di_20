@@ -61,9 +61,7 @@ function loadSecDropDownOptions(){
 function changeFirstChoice(chartType) {
 	var menu = document.getElementById("first-choice");
 	var newOptions = fstDropDownOptions[chartType];
-	//console.log("this one: " + newOptions + chartType);
 	editDropDown(menu, newOptions);
-	//console.log("first choice was changed");
 	if(chartType != 'textElement') {   
 		//Hide editor, show variable selector
 		document.getElementById("chart").style.visibility="visible";  
@@ -71,11 +69,9 @@ function changeFirstChoice(chartType) {
 		
 		var menu = document.getElementById("first-choice");
 		var newOptions = fstDropDownOptions[chartType];
-		console.log("this one: " + newOptions + chartType);
 		editDropDown(menu, newOptions);
-		console.log("first choice was changed");
 	} else {
-		//Hide editor, show variable selector
+		//Show editor, hide variable selector
 		document.getElementById("chart").style.visibility="hidden";  
 		document.getElementById("textEditor").style.visibility="visible";
 		
@@ -91,11 +87,8 @@ function changeSecondChoice() {
     	}
     var chosen = fst.options[fst.selectedIndex].value;
     getData(chosen); //TODO obviously this is not really the right place for this, oops
-    //console.log("chosen: " + chosen);
     var newOptions = secDropDownOptions[chosen];
     editDropDown(sec, newOptions);
-    //console.log("now this one: " + sec + newOptions);
-    //console.log("second choice was changed");
 }
 
 function editDropDown(menu, newOptions) {

@@ -10,14 +10,12 @@ var data;
 function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
-	//console.log("Set chartType to " + type + chartType);
 	updateChart();
-	getAvgSpeedTime(); //TODO obviously in the final result this needs to go somewhere else
+	//getAvgSpeedTime(); //TODO obviously in the final result this needs to go somewhere else
 }
 
 function setData(newdata) {
 	data = JSON.parse(newdata);
-	//console.log("data is set to: " + data);
 	updateChart();
 }
 
@@ -40,6 +38,7 @@ function updateChart() {
 		// The data for our dataset
 		data : {
 			datasets: [{
+				label: "Average speed over time.",
 				data: data,
 				fill: false
 			}]
