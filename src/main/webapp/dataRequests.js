@@ -25,8 +25,7 @@ function getAvgSpeedTime() {
 		xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
 	    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 	    //console.log('ok for getavgspeedtime');
-		xhr.send();
-		//console.log("request was sent");
+		
 		xhr.onreadystatechange = function() {
 			//console.log("ready state changed to " + this.readyState + " status " + this.status);
 			if (this.readyState == 4 && this.status == 200) {
@@ -44,5 +43,7 @@ function getAvgSpeedTime() {
 			changeData(result); //TODO This might not be the best place to call this method
 			}
 		}
-		//console.log("end of getavgspeedtime");
+		
+		xhr.send();
+		//console.log("request was sent; end of getAvgSpeedTime method");
 }
