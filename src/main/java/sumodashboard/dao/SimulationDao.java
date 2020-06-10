@@ -116,10 +116,16 @@ public enum SimulationDao {
 	//Remove one simulation by id
 	//Returns true when the simulation was removed, false if it's not found
 	public boolean removeSimulation(int simulation_id) throws SQLException {
-		PreparedStatement remQuery = connection.prepareStatement("" +
-				"DELETE FROM project.simulations " +
-				"WHERE simid = ?");
+		PreparedStatement remQuery = connection.prepareStatement(""
+				+ "DELETE FROM project.states "
+				+ "WHERE simid = ?; "
+				+ "DELETE FROM project.simulation_tags "
+				+ "WHERE simid = ?; "
+				+ "DELETE FROM project.simulations "
+				+ "WHERE simid = ?; ");
 		remQuery.setInt(1, simulation_id);
+		remQuery.setInt(2, simulation_id);
+		remQuery.setInt(3, simulation_id);
 		
 		int deleted = remQuery.executeUpdate();
 		
