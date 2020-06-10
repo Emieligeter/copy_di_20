@@ -3,12 +3,13 @@
  */
 $("#modifyMetadata").click(function() {
 	event.preventDefault(); // prevent default action
-    var url = "/rest/simulations/id/43655";
+    var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/43655";
     //var body = {"date": "2020-06-10", "description": "Wow this description is so different", "name": "SUMO file checkk", "researcher": "Mr. Sir"};
     var body = "{\"date\": \"2020-06-10\", \"description\": \"Wow this description is so different\", \"name\": \"SUMO file checkk\", \"researcher\": \"Mr. Sir\"}";
     var xhr = new XMLHttpRequest();
-    xhr.open("PUT", url, true);
-    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.open("PUT", url);
+    xhr.setRequestHeader('Content-type','application/json');
+    console.log(body);
     xhr.onload = function () {
     	console.log(this.responseText);
     	console.log("Successss!!!!!");
