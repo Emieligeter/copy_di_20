@@ -114,8 +114,7 @@ public enum SimulationDao {
 	}
 	
 	//Remove one simulation by id
-	//Returns true when the simulation was removed, false if it's not found
-	public boolean removeSimulation(int simulation_id) throws SQLException {
+	public void removeSimulation(int simulation_id) throws SQLException, IDNotFound {
 		PreparedStatement remQuery = connection.prepareStatement(""
 				+ "DELETE FROM project.states "
 				+ "WHERE simid = ?; "
@@ -127,14 +126,13 @@ public enum SimulationDao {
 		remQuery.setInt(2, simulation_id);
 		remQuery.setInt(3, simulation_id);
 		
-		int deleted = remQuery.executeUpdate();
-		
-		return (deleted > 0);
+		if (remQuery.executeUpdate() == 0) {
+			throw new IDNotFound("Could not find simulation id: " + simulation_id);
+		}
 	}
 	
 	//Updates metadata of specified simulation, with the specified fields of the simulation object
-	//Returns false if the simulation id does not exist
-	public boolean updateMetadata(int simulation_id, Simulation simulation) throws SQLException {
+	public void updateMetadata(int simulation_id, Simulation simulation) throws SQLException, IDNotFound {
 		StringBuilder query = new StringBuilder("UPDATE project.simulations SET ");
 		if (simulation.getName() != null) query.append("name = '" + simulation.getName() + "', ");
 		if (simulation.getDate() != null) query.append("date = '" + simulation.getDate() + "', ");
@@ -146,13 +144,15 @@ public enum SimulationDao {
 		PreparedStatement update = connection.prepareStatement(query.toString());
 		update.setInt(1, simulation_id);
 		
-		int updated = update.executeUpdate();
-		
-		return (updated > 0);
+		if (update.executeUpdate() == 0) {
+			throw new IDNotFound("Could not find simulation id: " + simulation_id);
+		}
 	}
 	
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
-	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException {
+	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
 				"SELECT simid, timestamp, avgSpeed " + 
 				"FROM " + 
@@ -189,8 +189,10 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the average speed of a SINGLE vehicle, over time. For a specified simulation and vehicle id.
-	public List<GraphPoint> getAvgVehicleSpeed(int simulation_id, int vehicle_id) throws SQLException {
+	//Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
+	public List<GraphPoint> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		
 		PreparedStatement dataQuery = connection.prepareStatement("" +
 				"SELECT simid, timestamp, vehicleSpeed, vehicle_id " + 
 				"FROM " + 
@@ -200,7 +202,7 @@ public enum SimulationDao {
 				"		FROM project.states " + 
 				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
 				"	UNION " + 
-				"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed, (json_array_elements(state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " + 
+				"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text as vehicle_id " + 
 				"		FROM project.states " + 
 				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
 				"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeed " + 
@@ -208,7 +210,9 @@ public enum SimulationDao {
 				"WHERE simid = ? AND vehicle_id = ? " +
 				"ORDER BY simid, vehicle_id, timestamp ASC ");
 		dataQuery.setInt(1, simulation_id);
-		dataQuery.setInt(2, vehicle_id);
+		dataQuery.setString(2, vehicle_id);
+		
+		System.out.println(vehicle_id);
 		
 		ResultSet resultSet = dataQuery.executeQuery();
 		
@@ -338,5 +342,11 @@ public enum SimulationDao {
 	}
 
 	
-
+	public class IDNotFound extends Exception {
+		private static final long serialVersionUID = 4280320385143360167L;
+		
+		public IDNotFound(String msg) {
+			super(msg);
+		}
+	}
 }

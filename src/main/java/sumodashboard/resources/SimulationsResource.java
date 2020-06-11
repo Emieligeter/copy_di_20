@@ -129,7 +129,7 @@ public class SimulationsResource {
 	}
 	
 	@Path("id/{simulation}")
-	public SimulationResource getSimulation(@PathParam("simulation") String id) {
+	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, id);
 	}
 }
