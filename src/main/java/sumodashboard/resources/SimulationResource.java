@@ -64,7 +64,7 @@ public class SimulationResource {
 	}
 	
 	@GET
-	@Path("/avgspeed")
+	@Path("/avgspeedtime")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeed() {
 		int numericID;

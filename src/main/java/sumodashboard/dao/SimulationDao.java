@@ -154,23 +154,24 @@ public enum SimulationDao {
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
 	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException {
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT simid, timestamp, avgSpeed\r\n" + 
-				"FROM\r\n" + 
-				"	(\r\n" + 
-				"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed\r\n" + 
-				"		FROM project.states	\r\n" + 
-				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object'\r\n" + 
-				"	UNION\r\n" + 
-				"		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed\r\n" + 
-				"		FROM\r\n" + 
-				"			(\r\n" + 
-				"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed\r\n" + 
-				"			FROM project.states\r\n" + 
-				"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array'\r\n" + 
-				"			GROUP BY simid, timestamp\r\n" + 
-				"                        ) thing\r\n" + 
-				"                GROUP BY simid, timestamp\r\n" + 
-				"	) avgSpeeds\r\n" + 
+				"SELECT simid, timestamp, avgSpeed " + 
+				"FROM " + 
+				"	( " + 
+				"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " + 
+				"		FROM project.states	 " + 
+				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
+				"	UNION " + 
+				"		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " + 
+				"		FROM " + 
+				"			( " + 
+				"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " + 
+				"			FROM project.states " + 
+				"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
+				"			GROUP BY simid, timestamp " + 
+				"                        ) q1 " + 
+				"                GROUP BY simid, timestamp " + 
+				"	) avgSpeeds " + 
+				"WHERE simid = ? " +
 				"ORDER BY simid, timestamp ASC");
 		dataQuery.setInt(1, simulation_id);
 		
@@ -180,7 +181,7 @@ public enum SimulationDao {
 
 		while (resultSet.next()) {
 			double timestamp = resultSet.getDouble("timestamp");
-			double avgSpeed = resultSet.getDouble("avgVehicleSpeed");
+			double avgSpeed = resultSet.getDouble("avgSpeed");
 			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
 			graphPoints.add(point);
 		}
