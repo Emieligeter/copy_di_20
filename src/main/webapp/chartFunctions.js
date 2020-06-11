@@ -11,7 +11,6 @@ function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
 	updateChart();
-	//getAvgSpeedTime(); //TODO obviously in the final result this needs to go somewhere else
 }
 
 function setData(newdata) {
