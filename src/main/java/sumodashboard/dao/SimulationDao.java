@@ -152,17 +152,27 @@ public enum SimulationDao {
 	}
 	
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
-	public List<GraphPoint> getAvgSpeedTime(int simulation_id) throws SQLException {
+	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException {
 		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT vehicle.timestamp, avg(vehicle.speed::float) as avgVehicleSpeed " + 
-				"FROM (" +
-					"SELECT timestamp, json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed' AS speed " +
-					"FROM project.states " +
-					"WHERE simid = ? " +
-					"LIMIT 10000" +
-				") vehicle " +
-				"GROUP BY timestamp " +
-				"ORDER BY timestamp");
+				"SELECT simid, timestamp, avgSpeed " + 
+				"FROM " + 
+				"	( " + 
+				"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " + 
+				"		FROM project.states	 " + 
+				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
+				"	UNION " + 
+				"		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " + 
+				"		FROM " + 
+				"			( " + 
+				"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " + 
+				"			FROM project.states " + 
+				"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
+				"			GROUP BY simid, timestamp " + 
+				"                        ) q1 " + 
+				"                GROUP BY simid, timestamp " + 
+				"	) avgSpeeds " + 
+				"WHERE simid = ? " +
+				"ORDER BY simid, timestamp ASC");
 		dataQuery.setInt(1, simulation_id);
 		
 		ResultSet resultSet = dataQuery.executeQuery();
@@ -171,12 +181,48 @@ public enum SimulationDao {
 
 		while (resultSet.next()) {
 			double timestamp = resultSet.getDouble("timestamp");
-			double avgSpeed = resultSet.getDouble("avgVehicleSpeed");
+			double avgSpeed = resultSet.getDouble("avgSpeed");
 			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
 			graphPoints.add(point);
 		}
 
 		return graphPoints;
+	}
+	
+	//Get a list of datapoints for the average speed of a SINGLE vehicle, over time. For a specified simulation and vehicle id.
+	public List<GraphPoint> getAvgVehicleSpeed(int simulation_id, int vehicle_id) throws SQLException {
+		PreparedStatement dataQuery = connection.prepareStatement("" +
+				"SELECT simid, timestamp, vehicleSpeed, vehicle_id " + 
+				"FROM " + 
+				"	( " + 
+				"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed,  " + 
+				"		(state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " + 
+				"		FROM project.states " + 
+				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
+				"	UNION " + 
+				"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed, (json_array_elements(state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " + 
+				"		FROM project.states " + 
+				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
+				"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeed " + 
+				"	) q1 " + 
+				"WHERE simid = ? AND vehicle_id = ? " +
+				"ORDER BY simid, vehicle_id, timestamp ASC ");
+		dataQuery.setInt(1, simulation_id);
+		dataQuery.setInt(2, vehicle_id);
+		
+		ResultSet resultSet = dataQuery.executeQuery();
+		
+		List<GraphPoint> graphPoints = new ArrayList<>();
+		
+		while (resultSet.next()) {
+			double timeStamp = resultSet.getDouble("timestamp");
+			double avgSpeed = resultSet.getDouble("vehicleSpeed");
+			GraphPoint point = new GraphPoint(timeStamp, avgSpeed);
+			graphPoints.add(point);
+		}
+		
+		return graphPoints;
+		
 	}
 	
 	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
