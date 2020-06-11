@@ -27,12 +27,31 @@
 		<button type="button" class="stdForm btn btn-primary" data-toggle="modal" data-target="#exampleModal">
   			Upload file...
 		</button>
-		<button type="button" class="stdForm btn btn-danger" id="deleteSimButton">
+		<button type="button" class="stdForm btn btn-danger" data-toggle="modal" data-target="#deletionModal">
 			Delete selected file
 		</button>
+		<!-- Deletion modal -->
+      	<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="deletionModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="deletionModalLabel">Delete file</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        <p>Are you sure you want to delete the selected file?</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-danger" id="deleteSimButton">Delete</button>
+        		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 
 		<!-- Upload window -->
-		<!-- Modal -->
 		<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
   			<div class="modal-dialog" role="document">
 		    <div class="modal-content">
@@ -95,8 +114,24 @@
       		</div>
       	</div>
       	<br>
-      	<button type="submit" class="btn btn-success" id="submitMetadata">Submit</button>
-      	<button type="button" class="btn btn-danger" id="resetMetadataForm">Cancel</button>
+      	<button type="submit" class="btn btn-success" id="submitMetadata" data-toggle="modal" data-target="#submitDataModal">Submit</button>
+      	<!-- Submit modal -->
+      	<div class="modal fade" id="submitDataModal" tabindex="-1" role="dialog" aria-labelledby="submitDataModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="submitMetadataModalLabel">Changes have been saved</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+      <button type="button" class="btn btn-danger" id="resetMetadataForm">Cancel</button>
       </form>
     </div>
   </div>

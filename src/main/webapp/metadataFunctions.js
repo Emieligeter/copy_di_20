@@ -38,7 +38,8 @@ $("#deleteSimButton").click(function() {
 	$.ajax({
 		url: url,
 		type: "DELETE"
+		success: function(){
+			document.getElementById("deletionModal").setAttribute("aria-hidden", true);
+		}
 	});
 })
-
-
