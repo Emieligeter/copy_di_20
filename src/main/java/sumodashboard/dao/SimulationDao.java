@@ -124,8 +124,8 @@ public enum SimulationDao {
 				+ "DELETE FROM project.simulations "
 				+ "WHERE simid = ?; ");
 		remQuery.setInt(1, simulation_id);
-		remQuery.setInt(2, simulation_id);
-		remQuery.setInt(3, simulation_id);
+		remQuery.setInt(1, simulation_id);
+		remQuery.setInt(1, simulation_id);
 		
 		int deleted = remQuery.executeUpdate();
 		
