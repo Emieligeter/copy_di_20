@@ -68,3 +68,18 @@ function showMetaData(id) {
 	});
 }
 
+function getSelectedID() {
+	return $("a").filter(".active").parent().attr("id");
+}
+
+$("#deleteSimButton").click(function() {
+	event.preventDefault(); // prevent default action
+	
+	var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
+	console.log(url);
+	$.ajax({
+		url: url,
+		type: "DELETE"
+	});
+})
+

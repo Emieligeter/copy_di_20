@@ -1,22 +1,21 @@
 /**
  * 
  */
-$("#modifyMetadata").submit(function(event) {
-event.preventDefault(); // prevent default action
-    var url = "/rest/simulations/id/{id}";
-    var body = {
-    		"date": "2020-06-09",
-    		"description": "description",
-    		"name": "yes"
+$("#modifyMetadata").submit(function() {
+	event.preventDefault();
+    var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + getSelectedID();
+    var newMetadata = document.getElementById("modifyMetadata");
+    var body = "{\"date\": \"" + newMetadata.elements[1].value + 
+    "\", \"description\": \"" + newMetadata.elements[3].value + 
+    "\", \"name\": \"" + newMetadata.elements[0].value + 
+    "\", \"researcher\": \"" + newMetadata.elements[2].value + "\"}";
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader('Content-type','application/json');
+    console.log(body);
+    xhr.onload = function () {
+    	console.log(this.responseText);
     }
-  	$.ajax({
-  		url : url,
-  		type: 'PUT',
-  		data: body,
-  		contentType: false, 
-  	    processData: false,
-  	    success : function(response){
-  	    	$("#server-results").html(response); 
-  	   }
-    });
-}
+    xhr.send(body);
+});
+
