@@ -37,7 +37,7 @@ $("#deleteSimButton").click(function() {
 	console.log(url);
 	$.ajax({
 		url: url,
-		type: "DELETE"
+		type: "DELETE",
 		success: function(){
 			document.getElementById("deletionModal").setAttribute("aria-hidden", true);
 		}
