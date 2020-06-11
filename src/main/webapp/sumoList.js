@@ -58,5 +58,6 @@ $(document).on('click', 'ul li a', function() {
 })
 
 function getSelectedID() {
+	console.log("getSelectedID()" + $("a").filter(".active").parent().attr("id"));
 	return $("a").filter(".active").parent().attr("id");
 }
