@@ -19,3 +19,26 @@ $("#modifyMetadata").submit(function() {
     xhr.send(body);
 });
 
+function fileClick(id) {
+	var url = "/sumo-dashboard/rest/simulations/id/" + id;
+	$.get(url, function(data, status){
+		document.getElementById("newTitle").setAttribute("value", data.name);
+		document.getElementById("newDate").setAttribute("value", data.date);
+		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
+		document.getElementById("newResearcher").setAttribute("value", researcher);
+		document.getElementById("newDescription").innerHTML = data.description;
+	});
+}
+
+$("#deleteSimButton").click(function() {
+	event.preventDefault(); // prevent default action
+	
+	var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
+	console.log(url);
+	$.ajax({
+		url: url,
+		type: "DELETE"
+	});
+})
+
+
