@@ -8,9 +8,17 @@ function getData(type) {
 		switch (type) {
 		case "Average vehicle speed":
 			getAvgSpeedTime();
+			break;
+		default: 
+			;
+			break;
 		}
 	}
 
+}
+
+function fileClick(id) {
+//TODO update graph;
 }
 
 function getDataSnd(type) {
@@ -18,10 +26,10 @@ function getDataSnd(type) {
 }
 
 function getAvgSpeedTime() {
-	//console.log("getAvgSpeedTime was reached");
-	
+		var simid = getSelectedID();
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "http://localhost:8080/sumo-dashboard/rest/simulations/id/95759/avgspeedtime");
+		var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgspeedtime";
+		xhr.open("GET", url);
 		xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
 	    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 	    //console.log('ok for getavgspeedtime');

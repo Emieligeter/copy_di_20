@@ -54,32 +54,9 @@ $(document).on('click', 'ul li a', function() {
 	//Makes clicked elem active and all other list elems inactive
 	$(this).addClass('active').parent().siblings().children().removeClass('active');
 	//Display current metadata of clicked sumo file
-	showMetaData($(this).parent().attr('id'));
+	fileClick($(this).parent().attr('id'));
 })
-
-function showMetaData(id) {
-	var url = "/sumo-dashboard/rest/simulations/id/" + id;
-	$.get(url, function(data, status){
-		document.getElementById("newTitle").setAttribute("value", data.name);
-		document.getElementById("newDate").setAttribute("value", data.date);
-		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
-		document.getElementById("newResearcher").setAttribute("value", researcher);
-		document.getElementById("newDescription").innerHTML = data.description;
-	});
-}
 
 function getSelectedID() {
 	return $("a").filter(".active").parent().attr("id");
 }
-
-$("#deleteSimButton").click(function() {
-	event.preventDefault(); // prevent default action
-	
-	var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
-	console.log(url);
-	$.ajax({
-		url: url,
-		type: "DELETE"
-	});
-})
-

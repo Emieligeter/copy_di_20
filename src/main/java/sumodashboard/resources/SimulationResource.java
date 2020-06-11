@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import sumodashboard.dao.SimulationDao;
+import sumodashboard.dao.SimulationDao.IDNotFound;
 import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
 
@@ -27,8 +29,8 @@ public class SimulationResource {
 	@Context
 	Request request;
 	
-	String ID;
-	public SimulationResource(UriInfo uriInfo, Request request, String ID) {
+	int ID;
+	public SimulationResource(UriInfo uriInfo, Request request, int ID)  {
 		this.uriInfo = uriInfo;
 		this.request = request;
 		this.ID = ID;
@@ -36,16 +38,9 @@ public class SimulationResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSimulation() {
-		int numericID;
+	public Response getSimulation() {		
 		try {
-			numericID = Integer.parseInt(ID);
-		} catch (NumberFormatException e) {
-			return Response.status(400).entity("Invalid ID, not a number.").build();
-		}
-		
-		try {
-			Simulation simulation = SimulationDao.instance.getSimulation(numericID);
+			Simulation simulation = SimulationDao.instance.getSimulation(ID);
 			Response response;
 			
 			if (simulation == null) {
@@ -66,87 +61,68 @@ public class SimulationResource {
 	@GET
 	@Path("/avgspeedtime")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAvgSpeedTime() {
-		System.out.println("getAvgSpeedTime() at /avgspeedtime in SimulationResource was reached.");
-		int numericID;
+	public Response getAvgSpeed() {
 		try {
-			numericID = Integer.parseInt(ID);
-		} catch (NumberFormatException e) {
-			return Response.status(400).entity("Invalid ID, not a number.").build();
-		}
-		
-		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgSpeedTime(numericID);
-			
-			Response response;
-			if (graphPoints.size() > 0) {
-				response = Response.status(200).entity(graphPoints).build();
-			}
-			else {
-				response = Response.status(400).entity("Invalid ID, does not exist").build();
-			}
-			return response;
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
+			return Response.status(200).entity(graphPoints).build();
 
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
 		} catch (SQLException e) {
 			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
-			Response response = Response.status(500).entity(errorMsg).build();
-			return response;
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/vehiclespeed")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleSpeed() {
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
+			return Response.status(200).entity(graphPoints).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg speed over time for a vehicle:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
 		}
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSimulationMetadata(Simulation simulation) {
-		int numericID;
+	public Response updateSimulationMetadata(Simulation simulation) {		
 		try {
-			numericID = Integer.parseInt(ID);
-		} catch (NumberFormatException e) {
-			return Response.status(400).entity("Invalid ID, not a number.").build();
-		}
-		
-		try {
-			Response response;
+			SimulationDao.instance.updateMetadata(ID, simulation);
+			return Response.status(200).build();
+
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
 			
-			if (SimulationDao.instance.updateMetadata(numericID, simulation)) {
-				response = Response.status(200).build();
-			}
-			else {
-				response = Response.status(400).entity("Invalid ID, does not exist.").build();
-			}
-			
-			return response;
 		} catch (SQLException e) {
 			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
-			Response response = Response.status(500).entity(errorMsg).build();
-			return response;
+			return Response.status(500).entity(errorMsg).build();
 		}
 	}
 	
 	@DELETE
 	public Response deleteSimulation() {
-		int numericID;
 		try {
-			numericID = Integer.parseInt(ID);
-		} catch (NumberFormatException e) {
-			return Response.status(400).entity("Invalid ID, not a number.").build();
-		}
-		
-		try {
-			Response response;
+			SimulationDao.instance.removeSimulation(ID);
+			return Response.status(200).build();
 			
-			if (SimulationDao.instance.removeSimulation(numericID)) {
-				response = Response.status(200).build();
-			}
-			else {
-				response = Response.status(400).entity("Invalid ID, does not exist.").build();
-			}
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
 			
-			return response;
 		} catch (SQLException e) {
 			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
-			Response response = Response.status(500).entity(errorMsg).build();
-			return response;
+			return Response.status(500).entity(errorMsg).build();
 		}
 	}
 }
