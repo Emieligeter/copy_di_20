@@ -39,6 +39,12 @@ public enum SimulationDao {
 	
 	private Connection connection;
 	
+	private PreparedStatement getAllSimulationsQuery;
+	private PreparedStatement getSimulationQuery;
+	private PreparedStatement removeSimulationQuery;
+	private PreparedStatement avgSpeedQuery;
+	private PreparedStatement vehicleSpeedQuery;
+	
 	//Constructor sets up the connection to the database
 	private SimulationDao() {
 		try {
@@ -62,15 +68,95 @@ public enum SimulationDao {
 			System.err.println("SQL Exception when starting connection to database:");
 			System.err.println(e.getLocalizedMessage());
 		}
+		
+		prepareAllStatements();
+	}
+	
+	public void prepareAllStatements() {
+		try {
+			getAllSimulationsQuery = connection.prepareStatement("" +
+					"SELECT simid, name, date, description, researcher " +
+					"FROM project.simulations");
+		} catch (SQLException e) {
+			System.err.println("Couldn't prepare statement: ");
+			e.printStackTrace();
+		}
+		
+		try {
+			getSimulationQuery = connection.prepareStatement("" +
+					"SELECT simid, name, date, description, researcher, net, routes, config " + 
+					"FROM project.simulations " +
+					"WHERE simid = ?");
+		} catch (SQLException e) {
+			System.err.println("Couldn't prepare statement: ");
+			e.printStackTrace();
+		}
+		
+		try {
+			removeSimulationQuery = connection.prepareStatement(""
+					+ "DELETE FROM project.states "
+					+ "WHERE simid = ?; "
+					+ "DELETE FROM project.simulation_tags "
+					+ "WHERE simid = ?; "
+					+ "DELETE FROM project.simulations "
+					+ "WHERE simid = ?; ");
+		} catch (SQLException e) {
+			System.err.println("Couldn't prepare statement: ");
+			e.printStackTrace();
+		}
+		
+		try {
+			avgSpeedQuery = connection.prepareStatement("" + 
+					"SELECT simid, timestamp, avgSpeed " + 
+					"FROM " + 
+					"	( " + 
+					"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " + 
+					"		FROM project.states	 " + 
+					"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
+					"	UNION " + 
+					"		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " + 
+					"		FROM " + 
+					"			( " + 
+					"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " + 
+					"			FROM project.states " + 
+					"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
+					"			GROUP BY simid, timestamp " + 
+					"                        ) q1 " + 
+					"                GROUP BY simid, timestamp " + 
+					"	) avgSpeeds " + 
+					"WHERE simid = ? " +
+					"ORDER BY simid, timestamp ASC");
+		} catch (SQLException e) {
+			System.err.println("Couldn't prepare statement: ");
+			e.printStackTrace();
+		}
+		
+		try {
+			vehicleSpeedQuery = connection.prepareStatement("" +
+					"SELECT simid, timestamp, vehicleSpeed, vehicle_id " + 
+					"FROM " + 
+					"	( " + 
+					"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed,  " + 
+					"		(state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " + 
+					"		FROM project.states " + 
+					"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
+					"	UNION " + 
+					"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text as vehicle_id " + 
+					"		FROM project.states " + 
+					"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
+					"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeed " + 
+					"	) q1 " + 
+					"WHERE simid = ? AND vehicle_id = ? " +
+					"ORDER BY simid, vehicle_id, timestamp ASC ");
+		} catch (SQLException e) {
+			System.err.println("Couldn't prepare statement: ");
+			e.printStackTrace();
+		}
 	}
 	
 	//Get a List with all simulation metadata in the database
 	public List<Simulation> getSimulations() throws SQLException {
-		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT simid, name, date, description, researcher " +
-				"FROM project.simulations");
-
-		ResultSet rs = simQuery.executeQuery();
+		ResultSet rs = getAllSimulationsQuery.executeQuery();
 		
 		List<Simulation> simulations = new ArrayList<>();
 		while (rs.next()) {
@@ -88,13 +174,9 @@ public enum SimulationDao {
 	
 	//Get one simulation by id
 	public Simulation getSimulation(int simulation_id) throws SQLException {
-		PreparedStatement simQuery = connection.prepareStatement("" +
-				"SELECT simid, name, date, description, researcher, net, routes, config " + 
-				"FROM project.simulations " +
-				"WHERE simid = ?");
-		simQuery.setInt(1, simulation_id);
+		getSimulationQuery.setInt(1, simulation_id);
 		
-		ResultSet rs = simQuery.executeQuery();
+		ResultSet rs = getSimulationQuery.executeQuery();
 		
 		if (!rs.next()) {
 			return null;
@@ -115,18 +197,11 @@ public enum SimulationDao {
 	
 	//Remove one simulation by id
 	public void removeSimulation(int simulation_id) throws SQLException, IDNotFound {
-		PreparedStatement remQuery = connection.prepareStatement(""
-				+ "DELETE FROM project.states "
-				+ "WHERE simid = ?; "
-				+ "DELETE FROM project.simulation_tags "
-				+ "WHERE simid = ?; "
-				+ "DELETE FROM project.simulations "
-				+ "WHERE simid = ?; ");
-		remQuery.setInt(1, simulation_id);
-		remQuery.setInt(2, simulation_id);
-		remQuery.setInt(3, simulation_id);
+		removeSimulationQuery.setInt(1, simulation_id);
+		removeSimulationQuery.setInt(2, simulation_id);
+		removeSimulationQuery.setInt(3, simulation_id);
 		
-		if (remQuery.executeUpdate() == 0) {
+		if (removeSimulationQuery.executeUpdate() == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
 		}
 	}
@@ -153,29 +228,9 @@ public enum SimulationDao {
 	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		
-		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT simid, timestamp, avgSpeed " + 
-				"FROM " + 
-				"	( " + 
-				"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " + 
-				"		FROM project.states	 " + 
-				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
-				"	UNION " + 
-				"		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " + 
-				"		FROM " + 
-				"			( " + 
-				"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " + 
-				"			FROM project.states " + 
-				"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
-				"			GROUP BY simid, timestamp " + 
-				"                        ) q1 " + 
-				"                GROUP BY simid, timestamp " + 
-				"	) avgSpeeds " + 
-				"WHERE simid = ? " +
-				"ORDER BY simid, timestamp ASC");
-		dataQuery.setInt(1, simulation_id);
+		avgSpeedQuery.setInt(1, simulation_id);
 		
-		ResultSet resultSet = dataQuery.executeQuery();
+		ResultSet resultSet = avgSpeedQuery.executeQuery();
 		
 		List<GraphPoint> graphPoints = new ArrayList<>();
 
@@ -193,28 +248,10 @@ public enum SimulationDao {
 	public List<GraphPoint> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		
-		PreparedStatement dataQuery = connection.prepareStatement("" +
-				"SELECT simid, timestamp, vehicleSpeed, vehicle_id " + 
-				"FROM " + 
-				"	( " + 
-				"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed,  " + 
-				"		(state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " + 
-				"		FROM project.states " + 
-				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
-				"	UNION " + 
-				"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text as vehicle_id " + 
-				"		FROM project.states " + 
-				"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
-				"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeed " + 
-				"	) q1 " + 
-				"WHERE simid = ? AND vehicle_id = ? " +
-				"ORDER BY simid, vehicle_id, timestamp ASC ");
-		dataQuery.setInt(1, simulation_id);
-		dataQuery.setString(2, vehicle_id);
+		vehicleSpeedQuery.setInt(1, simulation_id);
+		vehicleSpeedQuery.setString(2, vehicle_id);
 		
-		System.out.println(vehicle_id);
-		
-		ResultSet resultSet = dataQuery.executeQuery();
+		ResultSet resultSet = vehicleSpeedQuery.executeQuery();
 		
 		List<GraphPoint> graphPoints = new ArrayList<>();
 		
@@ -228,6 +265,41 @@ public enum SimulationDao {
 		return graphPoints;
 		
 	}
+	
+	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
+		public List<GraphPoint> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
+			if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+			
+			PreparedStatement dataQuery = connection.prepareStatement("" + 
+					"SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,'e',''))) AS avgCount " + 
+					"FROM  " + 
+					"	( " + 
+					"	SELECT simid, timestamp, state -> 'snapshot' -> 'route' ->> 'edges' AS route " + 
+					"	FROM project.states " + 
+					"	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'object' " + 
+					"UNION " + 
+					"	SELECT simid, timestamp, json_array_elements(state -> 'snapshot' -> 'route') ->> 'edges' AS route " + 
+					"	FROM project.states " + 
+					"	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'array' " + 
+					"        ) thing " + 
+					"WHERE simid = ? " + 
+					"GROUP BY timestamp " + 
+					"ORDER BY timestamp ASC ");
+			dataQuery.setInt(1, simulation_id);
+			
+			ResultSet resultSet = dataQuery.executeQuery();
+			
+			List<GraphPoint> graphPoints = new ArrayList<>();
+
+			while (resultSet.next()) {
+				double timestamp = resultSet.getDouble("timestamp");
+				double avgSpeed = resultSet.getDouble("avgCount");
+				GraphPoint point = new GraphPoint(timestamp, avgSpeed);
+				graphPoints.add(point);
+			}
+
+			return graphPoints;
+		}
 	
 	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
 		PreparedStatement dataQuery = connection.prepareStatement(
