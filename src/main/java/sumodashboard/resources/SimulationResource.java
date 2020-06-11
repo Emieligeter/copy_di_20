@@ -64,10 +64,9 @@ public class SimulationResource {
 	}
 	
 	@GET
-	@Path("/avgspeedtime")
+	@Path("/avgspeed")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAvgSpeedTime() {
-		System.out.println("getAvgSpeedTime() at /avgspeedtime in SimulationResource was reached.");
+	public Response getAvgSpeed() {
 		int numericID;
 		try {
 			numericID = Integer.parseInt(ID);
@@ -76,7 +75,7 @@ public class SimulationResource {
 		}
 		
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgSpeedTime(numericID);
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeed(numericID);
 			
 			Response response;
 			if (graphPoints.size() > 0) {
@@ -87,6 +86,30 @@ public class SimulationResource {
 			}
 			return response;
 
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
+			Response response = Response.status(500).entity(errorMsg).build();
+			return response;
+		}
+	}
+	
+	@GET
+	@Path("/avgvehiclespeed")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvgVehicleSpeed() {
+		int numericID;
+		try {
+			numericID = Integer.parseInt(ID);
+		} catch (NumberFormatException e) {
+			return Response.status(400).entity("Invalid ID, not a number.").build();
+		}
+		
+		
+		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgVehicleSpeed(numericID, 0);
+			//TODO
+			return null;
 		} catch (SQLException e) {
 			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
 			Response response = Response.status(500).entity(errorMsg).build();
