@@ -22,7 +22,7 @@ function loadFiles() {
 			  "</div>\n" +
 			  "<p id=\"fileDate\" class=\"mb-1\">Date: " + date + "</p>\n" +
 			  "<p id=\"fileResearcher\" class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
-			  "<small id=\"fileTags\">" + tags + "</small>\n" +
+			  "<small id=\"fileTags\">Tags: " + tags + "</small>\n" +
 			  "</a>";
 			  sumoFiles.appendChild(liElem);
 		  }
