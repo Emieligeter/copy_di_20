@@ -10,7 +10,7 @@ function getData(type) {
 			getAvgSpeedTime();
 			break;
 		case "Average route length":
-			getAvgRouteLengthTime();
+			getAvgRouteLength();
 			break;
 		default: 
 			;
@@ -28,9 +28,7 @@ function getDataSnd(type) {
 	console.log("getDataSnd was called with type: " + type);
 }
 
-function responseReceived(label) {
-	if (this.readyState == 4 && this.status == 200) {
-		var response = this.responseText;
+function responseReceived(response, label) {
 		myObj = JSON.parse(response);
 		var result = "[";
 			for (var i = 0; i < myObj.length; i++) {
@@ -42,7 +40,6 @@ function responseReceived(label) {
 		result += "]";
 	changeData(result, label); //TODO This might not be the best place to call this method
 	}
-}
 
 function getAvgSpeedTime() {
 	var simid = getSelectedID();
@@ -51,7 +48,12 @@ function getAvgSpeedTime() {
 	xhr.open("GET", url);
 	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-	xhr.onreadystatechange = responseReceived("Average speed");
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		responseReceived(response, "Average speed");
+		}
+	}
 	xhr.send();
 }
 
@@ -62,6 +64,11 @@ function getAvgRouteLength() {
 	xhr.open("GET", url);
 	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-	xhr.onreadystatechange = responseReceived("Average route length");
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var response = this.responseText;
+			responseReceived(response, "Average route length");
+		}
+	}
 	xhr.send();
 }
