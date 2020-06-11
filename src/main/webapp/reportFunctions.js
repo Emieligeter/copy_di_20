@@ -1,8 +1,12 @@
+var textInput = '';
 function chartToReport() {
 	console.log("lets add this chart to the report.");
 	var elementCopy;
 	if(chartType == 'textElement') {
-		elementCopy = copyText(document.getElementById('editor'));
+		var editor = $('#textFrame').contents().find('#editor');
+		elementCopy = copyText(editor.cleanHtml());
+		editor.clearHtml();
+
 	} else {
 		elementCopy = copyCanvas(document.getElementById('reportElement'));
 	}
@@ -12,7 +16,7 @@ function chartToReport() {
 
 function copyText(original) {
 	var text =  document.createElement('p');
-	text.innerHTML = original.innerHTML;
+	text.innerHTML = original;
 	return text;
 }
 function copyCanvas(original) {
