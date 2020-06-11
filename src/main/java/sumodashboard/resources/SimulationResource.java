@@ -94,6 +94,23 @@ public class SimulationResource {
 		}
 	}
 	
+	@GET
+	@Path("/avgroutelength")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvgRouteLength() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
+			return Response.status(200).entity(graphPoints).build();
+
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
