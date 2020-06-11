@@ -38,12 +38,7 @@ public enum SimulationDao {
 	private boolean storeData = true;
 	
 	private Connection connection;
-	
-	private PreparedStatement getAllSimulationsQuery;
-	private PreparedStatement getSimulationQuery;
-	private PreparedStatement removeSimulationQuery;
-	private PreparedStatement avgSpeedQuery;
-	private PreparedStatement vehicleSpeedQuery;
+	private SQLQueries sqlQueries;
 	
 	//Constructor sets up the connection to the database
 	private SimulationDao() {
@@ -54,6 +49,7 @@ public enum SimulationDao {
 		}
 		
 		startDBConnection();
+		sqlQueries = new SQLQueries(connection);
 	}
 	
 	//Start the connection to the database
@@ -68,95 +64,11 @@ public enum SimulationDao {
 			System.err.println("SQL Exception when starting connection to database:");
 			System.err.println(e.getLocalizedMessage());
 		}
-		
-		prepareAllStatements();
-	}
-	
-	public void prepareAllStatements() {
-		try {
-			getAllSimulationsQuery = connection.prepareStatement("" +
-					"SELECT simid, name, date, description, researcher " +
-					"FROM project.simulations");
-		} catch (SQLException e) {
-			System.err.println("Couldn't prepare statement: ");
-			e.printStackTrace();
-		}
-		
-		try {
-			getSimulationQuery = connection.prepareStatement("" +
-					"SELECT simid, name, date, description, researcher, net, routes, config " + 
-					"FROM project.simulations " +
-					"WHERE simid = ?");
-		} catch (SQLException e) {
-			System.err.println("Couldn't prepare statement: ");
-			e.printStackTrace();
-		}
-		
-		try {
-			removeSimulationQuery = connection.prepareStatement(""
-					+ "DELETE FROM project.states "
-					+ "WHERE simid = ?; "
-					+ "DELETE FROM project.simulation_tags "
-					+ "WHERE simid = ?; "
-					+ "DELETE FROM project.simulations "
-					+ "WHERE simid = ?; ");
-		} catch (SQLException e) {
-			System.err.println("Couldn't prepare statement: ");
-			e.printStackTrace();
-		}
-		
-		try {
-			avgSpeedQuery = connection.prepareStatement("" + 
-					"SELECT simid, timestamp, avgSpeed " + 
-					"FROM " + 
-					"	( " + 
-					"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " + 
-					"		FROM project.states	 " + 
-					"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
-					"	UNION " + 
-					"		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " + 
-					"		FROM " + 
-					"			( " + 
-					"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " + 
-					"			FROM project.states " + 
-					"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
-					"			GROUP BY simid, timestamp " + 
-					"                        ) q1 " + 
-					"                GROUP BY simid, timestamp " + 
-					"	) avgSpeeds " + 
-					"WHERE simid = ? " +
-					"ORDER BY simid, timestamp ASC");
-		} catch (SQLException e) {
-			System.err.println("Couldn't prepare statement: ");
-			e.printStackTrace();
-		}
-		
-		try {
-			vehicleSpeedQuery = connection.prepareStatement("" +
-					"SELECT simid, timestamp, vehicleSpeed, vehicle_id " + 
-					"FROM " + 
-					"	( " + 
-					"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed,  " + 
-					"		(state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " + 
-					"		FROM project.states " + 
-					"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " + 
-					"	UNION " + 
-					"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text as vehicle_id " + 
-					"		FROM project.states " + 
-					"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " + 
-					"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeed " + 
-					"	) q1 " + 
-					"WHERE simid = ? AND vehicle_id = ? " +
-					"ORDER BY simid, vehicle_id, timestamp ASC ");
-		} catch (SQLException e) {
-			System.err.println("Couldn't prepare statement: ");
-			e.printStackTrace();
-		}
 	}
 	
 	//Get a List with all simulation metadata in the database
 	public List<Simulation> getSimulations() throws SQLException {
-		ResultSet rs = getAllSimulationsQuery.executeQuery();
+		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();
 		
 		List<Simulation> simulations = new ArrayList<>();
 		while (rs.next()) {
@@ -174,9 +86,9 @@ public enum SimulationDao {
 	
 	//Get one simulation by id
 	public Simulation getSimulation(int simulation_id) throws SQLException {
-		getSimulationQuery.setInt(1, simulation_id);
+		sqlQueries.getSimulationQuery.setInt(1, simulation_id);
 		
-		ResultSet rs = getSimulationQuery.executeQuery();
+		ResultSet rs = sqlQueries.getSimulationQuery.executeQuery();
 		
 		if (!rs.next()) {
 			return null;
@@ -197,11 +109,11 @@ public enum SimulationDao {
 	
 	//Remove one simulation by id
 	public void removeSimulation(int simulation_id) throws SQLException, IDNotFound {
-		removeSimulationQuery.setInt(1, simulation_id);
-		removeSimulationQuery.setInt(2, simulation_id);
-		removeSimulationQuery.setInt(3, simulation_id);
+		sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
+		sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
+		sqlQueries.removeSimulationQuery.setInt(3, simulation_id);
 		
-		if (removeSimulationQuery.executeUpdate() == 0) {
+		if (sqlQueries.removeSimulationQuery.executeUpdate() == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
 		}
 	}
@@ -227,10 +139,10 @@ public enum SimulationDao {
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
 	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+
+		sqlQueries.avgSpeedQuery.setInt(1, simulation_id);
 		
-		avgSpeedQuery.setInt(1, simulation_id);
-		
-		ResultSet resultSet = avgSpeedQuery.executeQuery();
+		ResultSet resultSet = sqlQueries.avgSpeedQuery.executeQuery();
 		
 		List<GraphPoint> graphPoints = new ArrayList<>();
 
@@ -247,11 +159,11 @@ public enum SimulationDao {
 	//Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
 	public List<GraphPoint> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+
+		sqlQueries.vehicleSpeedQuery.setInt(1, simulation_id);
+		sqlQueries.vehicleSpeedQuery.setString(2, vehicle_id);
 		
-		vehicleSpeedQuery.setInt(1, simulation_id);
-		vehicleSpeedQuery.setString(2, vehicle_id);
-		
-		ResultSet resultSet = vehicleSpeedQuery.executeQuery();
+		ResultSet resultSet = sqlQueries.vehicleSpeedQuery.executeQuery();
 		
 		List<GraphPoint> graphPoints = new ArrayList<>();
 		
@@ -269,25 +181,10 @@ public enum SimulationDao {
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
 		public List<GraphPoint> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
 			if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+
+			sqlQueries.avgRouteLengthQuery.setInt(1, simulation_id);
 			
-			PreparedStatement dataQuery = connection.prepareStatement("" + 
-					"SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,'e',''))) AS avgCount " + 
-					"FROM  " + 
-					"	( " + 
-					"	SELECT simid, timestamp, state -> 'snapshot' -> 'route' ->> 'edges' AS route " + 
-					"	FROM project.states " + 
-					"	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'object' " + 
-					"UNION " + 
-					"	SELECT simid, timestamp, json_array_elements(state -> 'snapshot' -> 'route') ->> 'edges' AS route " + 
-					"	FROM project.states " + 
-					"	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'array' " + 
-					"        ) thing " + 
-					"WHERE simid = ? " + 
-					"GROUP BY timestamp " + 
-					"ORDER BY timestamp ASC ");
-			dataQuery.setInt(1, simulation_id);
-			
-			ResultSet resultSet = dataQuery.executeQuery();
+			ResultSet resultSet = sqlQueries.avgRouteLengthQuery.executeQuery();
 			
 			List<GraphPoint> graphPoints = new ArrayList<>();
 
@@ -302,37 +199,27 @@ public enum SimulationDao {
 		}
 	
 	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
-		PreparedStatement dataQuery = connection.prepareStatement(
-				"INSERT INTO project.simulations (simID, name, date, description, net, routes, config)" +
-				"VALUES(?, ?, ?::date ,? ,? ,? ,?)");
-		dataQuery.setInt(1, simId);
-		dataQuery.setString(2, name);	
-		dataQuery.setString(3, date.toString());
-		dataQuery.setString(4, description);
-		dataQuery.setObject(5, convertFileToPGobject(net));
-		dataQuery.setObject(6, convertFileToPGobject(routes));
-		dataQuery.setObject(7, convertFileToPGobject(config));		
-		if(storeData) dataQuery.executeUpdate();
+		sqlQueries.storeSimulationQuery.setInt(1, simId);
+		sqlQueries.storeSimulationQuery.setString(2, name);
+		sqlQueries.storeSimulationQuery.setString(3, date.toString());
+		sqlQueries.storeSimulationQuery.setString(4, description);
+		sqlQueries.storeSimulationQuery.setObject(5, convertFileToPGobject(net));
+		sqlQueries.storeSimulationQuery.setObject(6, convertFileToPGobject(routes));
+		sqlQueries.storeSimulationQuery.setObject(7, convertFileToPGobject(config));
+		if(storeData) sqlQueries.storeSimulationQuery.executeUpdate();
 	}
 	
 	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws Exception {
-		PreparedStatement dataQuery = connection.prepareStatement(
-				"INSERT INTO project.states (simID, timestamp, state)" +
-				"VALUES(?, ?, ?)");
-		dataQuery.setInt(1, simId);
-		dataQuery.setFloat(2, timeStamp);
-		dataQuery.setObject(3, convertFileToPGobject(stateFile));
-		if(storeData) dataQuery.executeUpdate();
+		sqlQueries.storeStateQuery.setInt(1, simId);
+		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
+		sqlQueries.storeStateQuery.setObject(3, convertFileToPGobject(stateFile));
+		if(storeData) sqlQueries.storeStateQuery.executeUpdate();
 		
 	}
 	
 	public Integer getTagId(String tag) throws SQLException {
-		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT tagid " +
-				"FROM project.tags " +
-				"WHERE value = ?");
-		dataQuery.setString(1, tag);
-		ResultSet resultSet = dataQuery.executeQuery();
+		sqlQueries.getTagIdQuery.setString(1, tag);
+		ResultSet resultSet = sqlQueries.getTagIdQuery.executeQuery();
 		if(resultSet.next()) {
 			return resultSet.getInt(1);
 		}
@@ -340,40 +227,26 @@ public enum SimulationDao {
 	}
 
 	public void storeTag(Integer tagId, String tag) throws SQLException {
-		PreparedStatement dataQuery = connection.prepareStatement(
-				"INSERT INTO project.tags (tagId, value)" +
-				"VALUES(?, ?)");
-		dataQuery.setInt(1, tagId);
-		dataQuery.setString(2, tag);
-		if(storeData) dataQuery.executeUpdate();
+		sqlQueries.storeTagQuery.setInt(1, tagId);
+		sqlQueries.storeTagQuery.setString(2, tag);
+		if(storeData) sqlQueries.storeTagQuery.executeUpdate();
 		
 	}
 
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
-		PreparedStatement dataQuery = connection.prepareStatement(
-				"INSERT INTO project.simulation_tags (tagId, simId)" +
-				"VALUES(?, ?)");
-		dataQuery.setInt(1, tagId);
-		dataQuery.setInt(2, simId);
-		if(storeData) dataQuery.executeUpdate();
+		sqlQueries.storeSimTagQuery.setInt(1, tagId);
+		sqlQueries.storeSimTagQuery.setInt(2, simId);
+		if(storeData) sqlQueries.storeSimTagQuery.executeUpdate();
 	}
 	
 	public boolean doesTagIdExist(int tagId) throws SQLException {
-		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT * " +
-				"FROM project.tags t " +
-				"WHERE tagid = ?");
-		dataQuery.setInt(1, tagId);
-		return dataQuery.executeQuery().next();
+		sqlQueries.doesTagIdExistQuery.setInt(1, tagId);
+		return sqlQueries.doesTagIdExistQuery.executeQuery().next();
 	}
 
 	public boolean doesSimIdExist(int simId) throws SQLException {
-		PreparedStatement dataQuery = connection.prepareStatement("" + 
-				"SELECT * " +
-				"FROM project.simulations " +
-				"WHERE simid = ?");
-		dataQuery.setInt(1, simId);
-		return dataQuery.executeQuery().next();
+		sqlQueries.doesSimIdExistQuery.setInt(1, simId);
+		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
 	}
 	
 	

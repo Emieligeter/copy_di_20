@@ -9,6 +9,9 @@ function getData(type) {
 		case "Average vehicle speed":
 			getAvgSpeedTime();
 			break;
+		case "Average route length":
+			getAvgRouteLengthTime();
+			break;
 		default: 
 			;
 			break;
@@ -25,33 +28,40 @@ function getDataSnd(type) {
 	console.log("getDataSnd was called with type: " + type);
 }
 
-function getAvgSpeedTime() {
-		var simid = getSelectedID();
-		var xhr = new XMLHttpRequest();
-		var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgspeedtime";
-		xhr.open("GET", url);
-		xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-	    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-	    //console.log('ok for getavgspeedtime');
-		
-		xhr.onreadystatechange = function() {
-			//console.log("ready state changed to " + this.readyState + " status " + this.status);
-			if (this.readyState == 4 && this.status == 200) {
-				//console.log("response is received");
-				var response = this.responseText;
-				myObj = JSON.parse(response);
-				var result = "[";
-					for (var i = 0; i < myObj.length; i++) {
-						result += "{ \"x\": " + myObj[i].XValue + ", \"y\": " + myObj[i].YValue + " }";
-						if (i < myObj.length -1) {
-							result += ", ";
-						}
-					}
-				result += "]";
-			changeData(result); //TODO This might not be the best place to call this method
+function responseReceived(label) {
+	if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		myObj = JSON.parse(response);
+		var result = "[";
+			for (var i = 0; i < myObj.length; i++) {
+				result += "{ \"x\": " + myObj[i].XValue + ", \"y\": " + myObj[i].YValue + " }";
+				if (i < myObj.length -1) {
+					result += ", ";
+				}
 			}
-		}
-		
-		xhr.send();
-		//console.log("request was sent; end of getAvgSpeedTime method");
+		result += "]";
+	changeData(result, label); //TODO This might not be the best place to call this method
+	}
+}
+
+function getAvgSpeedTime() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgspeedtime";
+	xhr.open("GET", url);
+	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+	xhr.onreadystatechange = responseReceived("Average speed");
+	xhr.send();
+}
+
+function getAvgRouteLength() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgroutelength";
+	xhr.open("GET", url);
+	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+	xhr.onreadystatechange = responseReceived("Average route length");
+	xhr.send();
 }

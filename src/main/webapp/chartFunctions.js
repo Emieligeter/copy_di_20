@@ -5,6 +5,7 @@
 var chart;
 var chartType = "line";
 var data;
+var label;
 
 
 function setChartType(type) {
@@ -37,7 +38,7 @@ function updateChart() {
 		// The data for our dataset
 		data : {
 			datasets: [{
-				label: "Average speed over time.",
+				label: label,
 				data: data,
 				fill: false
 			}]
@@ -59,9 +60,11 @@ function updateChart() {
 	//console.log("done.");
 }
 
-function changeData(data) {
+function changeData(data, label) {
 	//chart.data.datasets[0].data.pop();
 	this.data = JSON.parse(data);
 	chart.data.datasets[0].data = this.data;
+	this.label = label;
+	chart.data.datasets[0].label = this.label;
 	chart.update();
 }
