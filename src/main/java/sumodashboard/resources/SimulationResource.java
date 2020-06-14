@@ -76,6 +76,25 @@ public class SimulationResource {
 	}
 	
 	@GET
+	@Path("/vehiclelist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleList() {
+		System.out.println("getting the list @simResource");
+		try {
+			List<String> vehicles = SimulationDao.instance.getVehicleList(ID);
+			System.out.println("returning the response @simResource");
+			return Response.status(200).entity(vehicles).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a vehicle list:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
 	@Path("/vehiclespeed")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeed() {

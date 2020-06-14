@@ -156,6 +156,26 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
+	//Get a list of all vehicles for a specified simulation.
+	public List<String> getVehicleList(int simulation_id) throws IDNotFound, SQLException {
+		System.out.println("getting the list @simDao");
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+
+		sqlQueries.vehicleListQuery.setInt(1, simulation_id);
+		
+		ResultSet resultSet = sqlQueries.vehicleListQuery.executeQuery();
+		System.out.println("We got the query back" + resultSet.toString());
+		List<String> vehicles = new ArrayList<>();
+		
+		while (resultSet.next()) {
+			String vehicle = resultSet.getString("vehicleid");
+			vehicles.add(vehicle);
+		}
+		
+		return vehicles;
+		
+	}
+	
 	//Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
 	public List<GraphPoint> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
