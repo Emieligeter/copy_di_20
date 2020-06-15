@@ -1,11 +1,6 @@
 package sumodashboard.model;
 
-
-import java.util.ArrayList;
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 public class Simulation {
@@ -14,9 +9,6 @@ public class Simulation {
 	private String date;
 	private String description;
 	private String researcher;
-	private Configuration configuration;
-	private ArrayList<State> states;
-	private ArrayList<String> tags;
 	
 	private String net;
 	private String routes;
@@ -46,10 +38,6 @@ public class Simulation {
 		this.routes = routes;
 		this.config = config;
 	}
-	
-	public Simulation(String metadataPath, String netPath, String routesPath, String configPath) {
-		
-	}
 
 	public int getID() {
 		return ID;
@@ -67,18 +55,6 @@ public class Simulation {
 		return description;
 	}
 
-	public Configuration getConfiguration() {
-		return configuration;
-	}
-
-	public ArrayList<State> getStates() {
-		return states;
-	}
-	
-	public ArrayList<String> getTags() {
-		return tags;
-	}
-
 	public void setID(int ID) {
 		this.ID = ID;
 	}
@@ -93,18 +69,6 @@ public class Simulation {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
-
-	public void setStates(ArrayList<State> states) {
-		this.states = states;
-	}
-	
-	public void setTags(ArrayList<String> tags) {
-		this.tags = tags;
 	}
 
 	public String getNet() {

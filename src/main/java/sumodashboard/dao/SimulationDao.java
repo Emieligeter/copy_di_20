@@ -1,31 +1,21 @@
 package sumodashboard.dao;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.Writer;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
 import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
-
-import javax.xml.bind.JAXBException;
 
 import org.json.JSONObject;
 import org.json.XML;
@@ -297,6 +287,8 @@ public enum SimulationDao {
 		while((line = in.readLine()) != null) {
 		    xmlString += line;
 		}
+		in.close();
+		
 		//System.out.println(xmlString);
 		JSONObject jsonObj = XML.toJSONObject(xmlString);
 		//System.out.println(jsonObj.toString());

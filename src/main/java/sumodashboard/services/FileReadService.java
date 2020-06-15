@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -18,12 +17,6 @@ import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import sumodashboard.dao.ParseXML;
-import sumodashboard.model.Configuration;
-import sumodashboard.model.Net;
-import sumodashboard.model.Routes;
-import sumodashboard.model.Simulation;
-import sumodashboard.model.State;
 import sumodashboard.model.SumoFilesDTO;
 
 public class FileReadService {
