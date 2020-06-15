@@ -10,6 +10,7 @@ public class SQLQueries {
     public PreparedStatement removeSimulationQuery;
     public PreparedStatement avgSpeedQuery;
     public PreparedStatement vehicleSpeedQuery;
+    public PreparedStatement vehicleListQuery;
     public PreparedStatement avgRouteLengthQuery;
     public PreparedStatement storeSimulationQuery;
     public PreparedStatement storeStateQuery;
@@ -100,6 +101,18 @@ public class SQLQueries {
             e.printStackTrace();
         }
 
+        try {
+            vehicleListQuery = connection.prepareStatement("" +
+            		"SELECT simid, (json_array_elements(routes -> 'routes' -> 'vehicle') ->> 'id') AS vehicleid " +
+            		"FROM project.simulations " +
+            		"WHERE simid = ?"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        
         try {
             avgRouteLengthQuery = connection.prepareStatement("" +
                     "SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,'e',''))) AS avgCount " +

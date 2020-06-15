@@ -46,7 +46,6 @@ function loadFstDropDownOptions(){
 	fstDropDownOptions['line'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
 	fstDropDownOptions['scatter'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
 	fstDropDownOptions['pie'] = ['Route length', 'Edge appearance frequency'];
-	//console.log("firstdropdown options are loaded");
 }
 
 function loadSecDropDownOptions(){
@@ -55,7 +54,6 @@ function loadSecDropDownOptions(){
 	secDropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
 	secDropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
 	secDropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	//console.log("secondDropDownOptions are loaded");
 }
 
 function changeFirstChoice(chartType) {
