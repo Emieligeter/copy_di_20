@@ -2,17 +2,6 @@ var optionsWithSndChoice = [edgeFrequency, laneTransitingVehicles, vehicleRouteL
 
 function getData(type) {
 	if (optionsWithSndChoice.includes(type)) {
-		switch (type) {
-		case vehicleRouteLength:
-			getVehicleList();
-			break;
-		case vehicleSpeed:
-			getVehicleList();
-			break;
-		case vehicleSpeedFactor:
-			getVehicleList();
-			break;
-		}
 		return; //we need more input before we can show the graph
 	} else {
 		switch (type) {
@@ -49,6 +38,7 @@ function getDataSnd(type) {
 }
 
 function fileClick(id) {
+	loadSecDropDownOptions();
 	//TODO update graph;
 }
 
@@ -192,12 +182,9 @@ function getVehicleList() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = this.responseText;
 			myObj = JSON.parse(response);
-			secDropDownOptions['Route length'] = [];
-			secDropDownOptions['Speed'] = [];
-			secDropDownOptions['Speed factor'] = [];
-				secDropDownOptions['Route length'] = myObj;
-				secDropDownOptions['Speed'] = myObj;
-				secDropDownOptions['Speed factor'] = myObj;
+			secDropDownOptions[vehicleRouteLength] = myObj;
+			secDropDownOptions[vehicleSpeed] = myObj;
+			secDropDownOptions[vehicleSpeedFactor] = myObj;
 		}
 	}
 	xhr.send();

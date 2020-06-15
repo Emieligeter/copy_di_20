@@ -48,12 +48,13 @@ function loadFstDropDownOptions(){
 	fstDropDownOptions['pie'] = [vehicleRouteLength, edgeFrequency];
 }
 
-function loadSecDropDownOptions(){
+function loadSecDropDownOptions() {
 	secDropDownOptions[edgeFrequency] = ['Edge 1', 'Edge 2', 'Edge 3'];
 	secDropDownOptions[laneTransitingVehicles] = ['Lane 1', 'Lane 2', 'Lane 3'];
-	secDropDownOptions[vehicleRouteLength] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	secDropDownOptions[vehicleSpeed] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	secDropDownOptions[vehicleSpeedFactor] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	secDropDownOptions[vehicleRouteLength] = [];
+	secDropDownOptions[vehicleSpeed] = [];
+	secDropDownOptions[vehicleSpeedFactor] = [];
+	getVehicleList();
 }
 
 function changeFirstChoice(chartType) {
