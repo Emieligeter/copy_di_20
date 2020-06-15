@@ -43,17 +43,17 @@ var fstDropDownOptions = {};
 var secDropDownOptions = {};
 
 function loadFstDropDownOptions(){
-	fstDropDownOptions['line'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
-	fstDropDownOptions['scatter'] = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor', 'Average route length', 'Average vehicle speed', 'Average vehicle speed factor', 'Cumulative number of arrived vehicles', 'Number of transferred vehicles', 'Number of running vehicles'];
-	fstDropDownOptions['pie'] = ['Route length', 'Edge appearance frequency'];
+	fstDropDownOptions['line'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
+	fstDropDownOptions['scatter'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
+	fstDropDownOptions['pie'] = [vehicleRouteLength, edgeFrequency];
 }
 
 function loadSecDropDownOptions(){
-	secDropDownOptions['Edge appearance frequency'] = ['Edge 1', 'Edge 2', 'Edge 3'];
-	secDropDownOptions['Number of lane transiting vehicles'] = ['Lane 1', 'Lane 2', 'Lane 3'];
-	secDropDownOptions['Route length'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	secDropDownOptions['Speed'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
-	secDropDownOptions['Speed factor'] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	secDropDownOptions[edgeFrequency] = ['Edge 1', 'Edge 2', 'Edge 3'];
+	secDropDownOptions[laneTransitingVehicles] = ['Lane 1', 'Lane 2', 'Lane 3'];
+	secDropDownOptions[vehicleRouteLength] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	secDropDownOptions[vehicleSpeed] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
+	secDropDownOptions[vehicleSpeedFactor] = ['Vehicle 1', 'Vehicle 2', 'Vehicle 3'];
 }
 
 function changeFirstChoice(chartType) {

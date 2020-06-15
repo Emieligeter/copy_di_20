@@ -79,7 +79,7 @@ function getVehicleSpeed(vehicle_id) {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Vehicle speed of " + vehicle_id);
+		handleDataResponse(response, vehicleSpeed + " of " + vehicle_id);
 		}
 	}
 	xhr.send();
@@ -93,7 +93,7 @@ function getVehicleSpeedFactor(vehicle_id) {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Vehicle speed factor of " + vehicle_id);
+		handleDataResponse(response, vehicleSpeedFactor + " of " + vehicle_id);
 		}
 	}
 	xhr.send();
@@ -107,7 +107,7 @@ function getAvgRouteLength() {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = this.responseText;
-			handleDataResponse(response, "Average route length");
+			handleDataResponse(response, avgRouteLength);
 		}
 	}
 	xhr.send();
@@ -121,7 +121,7 @@ function getAvgSpeed() {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Average speed");
+		handleDataResponse(response, avgSpeed);
 		}
 	}
 	xhr.send();
@@ -135,7 +135,7 @@ function getAvgSpeedFactor() {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Average speed factor");
+		handleDataResponse(response, avgSpeedFactor);
 		}
 	}
 	xhr.send();
@@ -149,7 +149,7 @@ function getArrivedVehicles() {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Cumulative number of arrived vehicles");
+		handleDataResponse(response, arrivedVehicles);
 		}
 	}
 	xhr.send();
@@ -163,7 +163,7 @@ function getTransferredVehicles() {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Number of transferred vehicles");
+		handleDataResponse(response, transferredVehicles);
 		}
 	}
 	xhr.send();
@@ -177,7 +177,7 @@ function getRunningVehicles() {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		handleDataResponse(response, "Number of running vehicles");
+		handleDataResponse(response, runningVehicles);
 		}
 	}
 	xhr.send();
