@@ -8,10 +8,6 @@ public class SQLQueries {
     public PreparedStatement getAllSimulationsQuery;
     public PreparedStatement getSimulationQuery;
     public PreparedStatement removeSimulationQuery;
-    public PreparedStatement avgSpeedQuery;
-    public PreparedStatement vehicleSpeedQuery;
-    public PreparedStatement vehicleListQuery;
-    public PreparedStatement avgRouteLengthQuery;
     public PreparedStatement storeSimulationQuery;
     public PreparedStatement storeStateQuery;
     public PreparedStatement getTagIdQuery;
@@ -19,6 +15,23 @@ public class SQLQueries {
     public PreparedStatement storeSimTagQuery;
     public PreparedStatement doesTagIdExistQuery;
     public PreparedStatement doesSimIdExistQuery;
+    
+    public PreparedStatement edgeAppearanceFrequencyQuery;
+    public PreparedStatement numberOfLaneTransitingVehiclesQuery;
+    public PreparedStatement vehicleRouteLengthQuery;
+    public PreparedStatement vehicleSpeedQuery;
+    public PreparedStatement vehicleSpeedFactorQuery;
+    public PreparedStatement avgRouteLengthQuery;
+    public PreparedStatement avgSpeedQuery;
+    public PreparedStatement avgSpeedFactorQuery;
+    public PreparedStatement cumulativeNumberOfArrivedVehiclesQuery;
+    public PreparedStatement numberOfTransferredVehiclesQuery;
+    public PreparedStatement numberOfRunningVehiclesQuery;
+    
+    public PreparedStatement edgeListQuery;
+    public PreparedStatement laneListQuery;
+    public PreparedStatement vehicleListQuery;    
+    
 
     public SQLQueries(Connection connection) {
         try {
@@ -199,5 +212,110 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
+        
+        try {
+            avgSpeedFactorQuery = connection.prepareStatement("" +
+            		"SELECT simid, timestamp, avgSpeedFactor " +
+            		"FROM " +
+            		"	(" +
+            		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as avgSpeedFactor " +
+            		"		FROM project.states " +
+            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
+            		"	UNION " +
+            		"		SELECT simid, timestamp, avg(vehicleSpeedFactor) AS avgSpeedFactor " +
+            		"		FROM " +
+            		"			(" +
+            		"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speedFactor')::float AS vehiclespeedFactor " + 
+            		"			FROM project.states " +
+            		"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
+            		"			GROUP BY simid, timestamp " +
+            		"                       ) vehicleSpeedFactors " +
+            		"                GROUP BY simid, timestamp " +
+            		"	) avgspeedFactors " +
+            		"WHERE simid = ? " +
+            		"ORDER BY simid, timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            vehicleSpeedFactorQuery = connection.prepareStatement("" +
+            		"SELECT simid, timestamp, vehicleSpeedFactor, vehicle_id " +
+            		"FROM " +
+            		"	(" +
+            		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as vehicleSpeedFactor, (state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " +
+            		"		FROM project.states " +
+            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
+            		"	UNION " +
+            		"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speedFactor')::float as vehicleSpeedFactor, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text AS vehicle_id " +
+            		"		FROM project.states " +
+            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
+            		"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeedFactor " +
+            		"	) vehicleSpeedFactors " +
+            		"WHERE simid = ? " +
+            		"AND vehicle_id = ? " +
+            		"ORDER BY simid, vehicle_id, timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            cumulativeNumberOfArrivedVehiclesQuery = connection.prepareStatement("" +
+            		"SELECT simid, timestamp, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
+            		"FROM project.states " +
+            		"WHERE simid = ? " +
+            		"ORDER BY simid, timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            numberOfTransferredVehiclesQuery = connection.prepareStatement("" +
+            		"SELECT simid, timestamp, numberOfTransferredVehicles " +
+            		"FROM " +
+            		"	(" +
+            		"	SELECT simid, timestamp, json_array_length(state -> 'snapshot' -> 'vehicleTransfer') AS numberOfTransferredVehicles " +
+            		"	FROM project.states " +
+            		"	WHERE json_typeof(state -> 'snapshot' -> 'vehicleTransfer') = 'array' " +
+            		"UNION " +
+            		"	SELECT simid, timestamp, 1 AS numberOfTransferredVehicles " +
+            		"	FROM project.states " +
+            		"	WHERE json_typeof(state -> 'snapshot' -> 'vehicleTransfer') = 'object' " +
+            		"UNION " +
+            		"	SELECT simid, timestamp, 0 AS numberOfTransferredVehicles " +
+            		"	FROM project.states " +
+            		"	WHERE (state -> 'snapshot' ->> 'vehicleTransfer') IS NULL " +
+            		") numbersOfTransferredVehicles " +
+            		"WHERE simid = ? " +
+            		"ORDER BY simid, timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            numberOfRunningVehiclesQuery = connection.prepareStatement("" +
+            		"SELECT simid, timestamp, (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles " +
+            		"FROM project.states " +
+            		"WHERE simid = ? " +
+            		"ORDER BY simid, timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+    
+    
+    
+    
+    
+    
     }
 }

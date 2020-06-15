@@ -37,7 +37,6 @@ public enum SimulationDao {
 		} catch (ClassNotFoundException e) {
 			System.err.println("Class org.postgresql.Driver not found in method SimulationDao.init(), check dependencies.");
 		}
-		
 		startDBConnection();
 		sqlQueries = new SQLQueries(connection);
 	}
@@ -129,20 +128,15 @@ public enum SimulationDao {
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
 	public List<GraphPoint> getAverageSpeed(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-
 		sqlQueries.avgSpeedQuery.setInt(1, simulation_id);
-		
 		ResultSet resultSet = sqlQueries.avgSpeedQuery.executeQuery();
-		
 		List<GraphPoint> graphPoints = new ArrayList<>();
-
 		while (resultSet.next()) {
 			double timestamp = resultSet.getDouble("timestamp");
 			double avgSpeed = resultSet.getDouble("avgSpeed");
 			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
 			graphPoints.add(point);
 		}
-
 		return graphPoints;
 	}
 	
@@ -150,61 +144,121 @@ public enum SimulationDao {
 	public List<String> getVehicleList(int simulation_id) throws IDNotFound, SQLException {
 		System.out.println("getting the list @simDao");
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-
 		sqlQueries.vehicleListQuery.setInt(1, simulation_id);
-		
 		ResultSet resultSet = sqlQueries.vehicleListQuery.executeQuery();
 		System.out.println("We got the query back" + resultSet.toString());
 		List<String> vehicles = new ArrayList<>();
-		
 		while (resultSet.next()) {
 			String vehicle = resultSet.getString("vehicleid");
 			vehicles.add(vehicle);
 		}
-		
 		return vehicles;
-		
 	}
 	
 	//Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
 	public List<GraphPoint> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-
 		sqlQueries.vehicleSpeedQuery.setInt(1, simulation_id);
 		sqlQueries.vehicleSpeedQuery.setString(2, vehicle_id);
-		
 		ResultSet resultSet = sqlQueries.vehicleSpeedQuery.executeQuery();
-		
 		List<GraphPoint> graphPoints = new ArrayList<>();
-		
 		while (resultSet.next()) {
 			double timeStamp = resultSet.getDouble("timestamp");
-			double avgSpeed = resultSet.getDouble("vehicleSpeed");
-			GraphPoint point = new GraphPoint(timeStamp, avgSpeed);
+			double speed = resultSet.getDouble("vehicleSpeed");
+			GraphPoint point = new GraphPoint(timeStamp, speed);
 			graphPoints.add(point);
 		}
-		
 		return graphPoints;
-		
 	}
 	
-	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
-		public List<GraphPoint> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
+	//Get a list of datapoints for the speedfactor of a single vehicle, over time. For a specified simulation and vehicle id.
+	public List<GraphPoint> getVehicleSpeedFactor(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.vehicleSpeedFactorQuery.setInt(1, simulation_id);
+		sqlQueries.vehicleSpeedFactorQuery.setString(2, vehicle_id);
+		ResultSet resultSet = sqlQueries.vehicleSpeedFactorQuery.executeQuery();
+		List<GraphPoint> graphPoints = new ArrayList<>();
+		while (resultSet.next()) {
+			double timeStamp = resultSet.getDouble("timestamp");
+			double vehicleSpeedFactor = resultSet.getDouble("vehicleSpeedFactor");
+			GraphPoint point = new GraphPoint(timeStamp, vehicleSpeedFactor);
+			graphPoints.add(point);
+		}
+		return graphPoints;
+	}
+	
+	//Get a list of datapoints for the average route length of all vehicles, over time. For a specified simulation id.
+	public List<GraphPoint> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.avgRouteLengthQuery.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.avgRouteLengthQuery.executeQuery();
+		List<GraphPoint> graphPoints = new ArrayList<>();
+		while (resultSet.next()) {
+			double timestamp = resultSet.getDouble("timestamp");
+			double avgRouteLength = resultSet.getDouble("avgCount");
+			GraphPoint point = new GraphPoint(timestamp, avgRouteLength);
+			graphPoints.add(point);
+		}
+		return graphPoints;
+	}
+	
+	//Get a list of datapoints for the average speedFactor of all vehicles, over time. For a specified simulation id.
+	public List<GraphPoint> getAverageSpeedFactor(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.avgSpeedFactorQuery.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.avgSpeedFactorQuery.executeQuery();
+		List<GraphPoint> graphPoints = new ArrayList<>();
+		while (resultSet.next()) {
+			double timestamp = resultSet.getDouble("timestamp");
+			double avgSpeedFactor = resultSet.getDouble("avgSpeedFactor");
+			GraphPoint point = new GraphPoint(timestamp, avgSpeedFactor);
+			graphPoints.add(point);
+		}
+		return graphPoints;
+	}
+	
+	//Get a list of datapoints for the cumulative number of arrived vehicles, over time. For a specified simulation id.
+	public List<GraphPoint> getCumNumArrivedVehicles(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.cumulativeNumberOfArrivedVehiclesQuery.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.cumulativeNumberOfArrivedVehiclesQuery.executeQuery();
+		List<GraphPoint> graphPoints = new ArrayList<>();
+		while (resultSet.next()) {
+			double timestamp = resultSet.getDouble("timestamp");
+			double numberArrivedVehicles = resultSet.getDouble("cumulativeNumberOfArrivedVehicles");
+			GraphPoint point = new GraphPoint(timestamp, numberArrivedVehicles);
+			graphPoints.add(point);
+		}
+		return graphPoints;
+	}
+	
+	//Get a list of datapoints for the number of transferred vehicles, over time. For a specified simulation id.
+	public List<GraphPoint> getNumTransferredVehicles(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.numberOfTransferredVehiclesQuery.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.numberOfTransferredVehiclesQuery.executeQuery();
+		List<GraphPoint> graphPoints = new ArrayList<>();
+		while (resultSet.next()) {
+			double timestamp = resultSet.getDouble("timestamp");
+			double numberTransferredVehicles = resultSet.getDouble("numberOfTransferredVehicles");
+			GraphPoint point = new GraphPoint(timestamp, numberTransferredVehicles);
+			graphPoints.add(point);
+		}
+		return graphPoints;
+	}
+	
+	//Get a list of datapoints for the number of running vehicles, over time. For a specified simulation id.
+		public List<GraphPoint> getNumRunningVehicles(int simulation_id) throws SQLException, IDNotFound {
 			if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-
-			sqlQueries.avgRouteLengthQuery.setInt(1, simulation_id);
-			
-			ResultSet resultSet = sqlQueries.avgRouteLengthQuery.executeQuery();
-			
+			sqlQueries.numberOfRunningVehiclesQuery.setInt(1, simulation_id);
+			ResultSet resultSet = sqlQueries.numberOfRunningVehiclesQuery.executeQuery();
 			List<GraphPoint> graphPoints = new ArrayList<>();
-
 			while (resultSet.next()) {
 				double timestamp = resultSet.getDouble("timestamp");
-				double avgSpeed = resultSet.getDouble("avgCount");
-				GraphPoint point = new GraphPoint(timestamp, avgSpeed);
+				double numberRunningVehicles = resultSet.getDouble("numberOfRunningVehicles");
+				GraphPoint point = new GraphPoint(timestamp, numberRunningVehicles);
 				graphPoints.add(point);
 			}
-
 			return graphPoints;
 		}
 	
@@ -272,15 +326,6 @@ public enum SimulationDao {
 	
 	
 	private PGobject convertFileToPGobject(File file) throws Exception {
-		/*SQLXML sqlxml = connection.createSQLXML();
-		Writer out= sqlxml.setCharacterStream();
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		String line = null;
-		while((line = in.readLine()) != null) {
-		    out.write(line);
-		}
-		return sqlxml;*/
-		
 		String xmlString = "";
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -289,9 +334,7 @@ public enum SimulationDao {
 		}
 		in.close();
 		
-		//System.out.println(xmlString);
 		JSONObject jsonObj = XML.toJSONObject(xmlString);
-		//System.out.println(jsonObj.toString());
 		PGobject result = new PGobject();
 		result.setType("json");
 		result.setValue(jsonObj.toString());

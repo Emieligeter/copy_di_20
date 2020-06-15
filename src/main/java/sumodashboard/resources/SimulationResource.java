@@ -55,78 +55,6 @@ public class SimulationResource {
 		}
 	}
 	
-	@GET
-	@Path("/avgspeedtime")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAvgSpeed() {
-		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
-			return Response.status(200).entity(graphPoints).build();
-
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
-	}
-	
-	@GET
-	@Path("/vehiclelist")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getVehicleList() {
-		System.out.println("getting the list @simResource");
-		try {
-			List<String> vehicles = SimulationDao.instance.getVehicleList(ID);
-			System.out.println("returning the response @simResource");
-			return Response.status(200).entity(vehicles).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a vehicle list:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
-	}
-	
-	@GET
-	@Path("/vehiclespeed")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getVehicleSpeed() {
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
-		
-		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
-			return Response.status(200).entity(graphPoints).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg speed over time for a vehicle:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
-	}
-	
-	@GET
-	@Path("/avgroutelength")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAvgRouteLength() {
-		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
-			return Response.status(200).entity(graphPoints).build();
-
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
-	}
-	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -158,4 +86,190 @@ public class SimulationResource {
 			return Response.status(500).entity(errorMsg).build();
 		}
 	}
+	
+	@GET
+	@Path("/edgefrequency")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEdgeFrequency() {
+		return null;
+	}
+	
+	@GET
+	@Path("/lanetransitingvehicles")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLaneTransitingVehicles() {
+		return null;
+	}
+	
+	@GET
+	@Path("/vehicleroutelength")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleRouteLength() {
+		return null;
+	}
+	
+	@GET
+	@Path("/vehiclespeed")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleSpeed() {
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg speed over time for a vehicle:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/vehiclespeedfactor")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleSpeedFactor() {
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeedFactor(ID, vehicleID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get the speedFactor over time for a vehicle:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}	
+	}
+	
+	@GET
+	@Path("/avgroutelength")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvgRouteLength() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
+			return Response.status(200).entity(graphPoints).build();
+
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg route length over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/avgspeed")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvgSpeed() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
+			return Response.status(200).entity(graphPoints).build();
+
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/avgspeedfactor")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvgSpeedFactor() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeedFactor(ID);
+			return Response.status(200).entity(graphPoints).build();
+
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get avg speedFactor over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/arrivedvehicles")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getArrivedVehicles() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getCumNumArrivedVehicles(ID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get cumulative number of arrived vehicles over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/transferredvehicles")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTransferredVehicles() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getNumTransferredVehicles(ID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get number of transferred vehicles over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/runningvehicles")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRunningVehicles() {
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getNumRunningVehicles(ID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get number of running vehicles over time:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	@GET
+	@Path("/edgelist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEdgeList() {
+		return null;
+	}
+	
+	@GET
+	@Path("/lanelist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLaneList() {
+		return null;
+	}
+	
+	@GET
+	@Path("/vehiclelist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleList() {
+		System.out.println("getting the list @simResource");
+		try {
+			List<String> vehicles = SimulationDao.instance.getVehicleList(ID);
+			System.out.println("returning the response @simResource");
+			return Response.status(200).entity(vehicles).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a vehicle list:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	
+	
+	
 }
