@@ -10,11 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class SumoFilesDTO {
 	private HashMap<String, File> files;
 	private TreeMap<Integer, File> stateFiles;
-
 
 	public SumoFilesDTO(HashMap<String, File> files2, TreeMap<Integer, File> stateFiles2) {
 		this.files = files2;
