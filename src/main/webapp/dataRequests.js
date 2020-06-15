@@ -1,27 +1,38 @@
-var optionsWithSndChoice = ['Edge appearance frequency', 'Number of lane transiting vehicles', 'Route length', 'Speed', 'Speed factor'];
+var optionsWithSndChoice = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor];
 
 function getData(type) {
-	console.log("getData was called with type: " + type);
 	if (optionsWithSndChoice.includes(type)) {
 		switch (type) {
-		case "Route length":
+		case vehicleRouteLength:
 			getVehicleList();
 			break;
-		case "Speed":
+		case vehicleSpeed:
 			getVehicleList();
 			break;
-		case "Speed factor":
+		case vehicleSpeedFactor:
 			getVehicleList();
 			break;
 		}
 		return; //we need more input before we can show the graph
 	} else {
 		switch (type) {
-		case "Average vehicle speed":
-			getAvgSpeedTime();
-			break;
-		case "Average route length":
+		case avgRouteLength:
 			getAvgRouteLength();
+			break;
+		case avgSpeed:
+			getAvgSpeed();
+			break;
+		case avgSpeedFactor:
+			getAvgSpeedFactor();
+			break;
+		case arrivedVehicles:
+			getArrivedVehicles();
+			break;
+		case transferredVehicles:
+			getTransferredVehicles();
+			break;
+		case runningVehicles:
+			getRunningVehicles();
 			break;
 		default: 
 			;
@@ -34,7 +45,6 @@ function getData(type) {
 
 
 function getDataSnd(type) {
-	console.log("getDataSnd was called with type: " + type);
 	getVehicleSpeed(type);
 }
 
@@ -42,7 +52,7 @@ function fileClick(id) {
 	//TODO update graph;
 }
 
-function responseReceived(response, label) {
+function handleDataResponse(response, label) {
 		myObj = JSON.parse(response);
 		var result = "[";
 			for (var i = 0; i < myObj.length; i++) {
@@ -55,17 +65,35 @@ function responseReceived(response, label) {
 	changeData(result, label); //TODO This might not be the best place to call this method
 	}
 
-function getAvgSpeedTime() {
-	var simid = getSelectedID();
-	var xhr = new XMLHttpRequest();
-	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgspeedtime";
+function openXhrGETRequest(xhr, url) {
 	xhr.open("GET", url);
 	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+}
+
+function getVehicleSpeed(vehicle_id) {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/vehiclespeed?vehicle=" + vehicle_id;
+	openXhrGETRequest(xhr, url);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		responseReceived(response, "Average speed");
+		handleDataResponse(response, "Vehicle speed of " + vehicle_id);
+		}
+	}
+	xhr.send();
+}
+
+function getVehicleSpeedFactor(vehicle_id) {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/vehiclespeedfactor?vehicle=" + vehicle_id;
+	openXhrGETRequest(xhr, url);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		handleDataResponse(response, "Vehicle speed factor of " + vehicle_id);
 		}
 	}
 	xhr.send();
@@ -75,43 +103,91 @@ function getAvgRouteLength() {
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
 	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgroutelength";
-	xhr.open("GET", url);
-	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+	openXhrGETRequest(xhr, url);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = this.responseText;
-			responseReceived(response, "Average route length");
+			handleDataResponse(response, "Average route length");
 		}
 	}
 	xhr.send();
 }
 
-function getVehicleSpeed(vehicle_id) {
+function getAvgSpeed() {
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
-	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/vehiclespeed?vehicle=" + vehicle_id;
-	xhr.open("GET", url);
-	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgspeed";
+	openXhrGETRequest(xhr, url);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 		var response = this.responseText;
-		responseReceived(response, "Vehicle speed of " + vehicle_id);
+		handleDataResponse(response, "Average speed");
 		}
 	}
 	xhr.send();
 }
 
+function getAvgSpeedFactor() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/avgspeedfactor";
+	openXhrGETRequest(xhr, url);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		handleDataResponse(response, "Average speed factor");
+		}
+	}
+	xhr.send();
+}
+
+function getArrivedVehicles() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/arrivedvehicles";
+	openXhrGETRequest(xhr, url);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		handleDataResponse(response, "Cumulative number of arrived vehicles");
+		}
+	}
+	xhr.send();
+}
+
+function getTransferredVehicles() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/transferredvehicles";
+	openXhrGETRequest(xhr, url);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		handleDataResponse(response, "Number of transferred vehicles");
+		}
+	}
+	xhr.send();
+}
+
+function getRunningVehicles() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/runningvehicles";
+	openXhrGETRequest(xhr, url);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+		var response = this.responseText;
+		handleDataResponse(response, "Number of running vehicles");
+		}
+	}
+	xhr.send();
+}
 
 function getVehicleList() {
-	console.log("getting vehicle list");
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
 	var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + simid + "/vehiclelist";
-	xhr.open("GET", url);
-	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+	openXhrGETRequest(xhr, url);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = this.responseText;
@@ -119,7 +195,6 @@ function getVehicleList() {
 			secDropDownOptions['Route length'] = [];
 			secDropDownOptions['Speed'] = [];
 			secDropDownOptions['Speed factor'] = [];
-			//for (var i = 0; i < myObj.length; i++) {
 				secDropDownOptions['Route length'] = myObj;
 				secDropDownOptions['Speed'] = myObj;
 				secDropDownOptions['Speed factor'] = myObj;
