@@ -48,7 +48,7 @@ public enum SimulationDao {
 			System.err.println("Class org.postgresql.Driver not found in method SimulationDao.init(), check dependencies.");
 		}
 		
-		startDBConnection();
+		//startDBConnection();
 		sqlQueries = new SQLQueries(connection);
 	}
 	

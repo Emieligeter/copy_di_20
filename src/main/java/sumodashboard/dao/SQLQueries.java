@@ -19,6 +19,10 @@ public class SQLQueries {
     public PreparedStatement storeSimTagQuery;
     public PreparedStatement doesTagIdExistQuery;
     public PreparedStatement doesSimIdExistQuery;
+    
+    //Account queries
+    public PreparedStatement createNewUser;
+    public PreparedStatement getSaltForUsername;
 
     public SQLQueries(Connection connection) {
         try {
@@ -142,7 +146,8 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
-
+        
+        //TODO This query is very slow. Should change to one query that has 'values(x,x,x)' line for each state
         try {
             storeStateQuery = connection.prepareStatement(
                     "INSERT INTO project.states (simID, timestamp, state)" +
@@ -195,6 +200,24 @@ public class SQLQueries {
                     "SELECT * " +
                     "FROM project.simulations " +
                     "WHERE simid = ?");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+        	getSaltForUsername = connection.prepareStatement("" 
+        			+ "SELECT *" 
+        			+ "FROM project.account " 
+        			+ "WHERE username = ?");  
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        try {
+        	createNewUser = connection.prepareStatement(                   
+        			"INSERT INTO project.account (username, password, email, created_on, last_login)" +
+                    "VALUES(?, ?, ?, ?::date ,?::date)");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
