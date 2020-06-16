@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import sumodashboard.model.GraphPoint;
+import sumodashboard.model.MetaData;
 import sumodashboard.model.Simulation;
 
 import org.json.JSONObject;
@@ -57,17 +58,17 @@ public enum SimulationDao {
 	}
 	
 	//Get a List with all simulation metadata in the database
-	public List<Simulation> getSimulations() throws SQLException {
+	public List<MetaData> getSimulations() throws SQLException {
 		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();
 		
-		List<Simulation> simulations = new ArrayList<>();
+		List<MetaData> simulations = new ArrayList<>();
 		while (rs.next()) {
 			int ID = rs.getInt("simid");
 			String name = rs.getString("name");
 			String date = rs.getDate("date").toString();
 			String description = rs.getString("description");
 			String researcher = rs.getString("researcher");
-			Simulation entry = new Simulation(ID, name, date, description, researcher);
+			MetaData entry = new MetaData(ID, name, date, description, researcher, null);
 			simulations.add(entry);
 		}
 		
@@ -208,10 +209,10 @@ public enum SimulationDao {
 			return graphPoints;
 		}
 	
-	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
+	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws Exception {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
-		sqlQueries.storeSimulationQuery.setString(3, date.toString());
+		sqlQueries.storeSimulationQuery.setString(3, date);
 		sqlQueries.storeSimulationQuery.setString(4, description);
 		sqlQueries.storeSimulationQuery.setObject(5, convertFileToPGobject(net));
 		sqlQueries.storeSimulationQuery.setObject(6, convertFileToPGobject(routes));

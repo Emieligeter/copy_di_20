@@ -18,15 +18,6 @@ public class Simulation {
 		
 	}
 	
-	public Simulation(int ID, String name, String date, String description, String researcher) {
-		super();
-		this.ID = ID;
-		this.name = name;
-		this.date = date;
-		this.description = description;
-		this.researcher = researcher;
-	}
-	
 	public Simulation(int ID, String name, String date, String description, String researcher, String net, String routes, String config) {
 		super();
 		this.ID = ID;

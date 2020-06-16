@@ -3,7 +3,6 @@ package sumodashboard.dao;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -17,7 +16,7 @@ public class ParseXML {
 		while (reader.hasNextLine()) {
 	        String line = reader.nextLine();
 	        if(line.contains("Name: "))  meta.setName(line.split(": ")[1]);
-	        if(line.contains("Date: ")) meta.setDate(new SimpleDateFormat("MMMMM dd, yyyy").parse(line.split(": ")[1]));
+	        if(line.contains("Date: ")) meta.setDate(line.split(": ")[1]);
 	        if(line.contains("Tags: ")) meta.setTags(new ArrayList<String>(Arrays.asList(line.split("\\s*:\\s*")[1].split("\\s*;\\s*"))));
 	        if(line.contains("Description: ")) meta.setDescription(line.split("\\s*:\\s*")[1]);	   
 	      }

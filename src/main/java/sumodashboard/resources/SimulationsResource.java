@@ -41,7 +41,7 @@ public class SimulationsResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
 		try {			
-			List<Simulation> simulations = SimulationDao.instance.getSimulations();
+			List<MetaData> simulations = SimulationDao.instance.getSimulations();
 			
 			Response response = Response.status(200).entity(simulations).build();
 			return response;
@@ -50,14 +50,6 @@ public class SimulationsResource {
 			Response response = Response.status(500).entity(errorMsg).build();
 			return response;
 		}
-	}
-
-	
-	@POST
-	@Produces(MediaType.APPLICATION_XML)
-	@Consumes(MediaType.APPLICATION_XML)
-	public void createSimulation(Simulation simulation) {
-		//SimulationDao.instance.getModel().put(simulation.getID(), simulation);
 	}
 
 	@POST
