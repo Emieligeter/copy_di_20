@@ -9,10 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import sumodashboard.model.GraphPoint;
 import sumodashboard.model.MetaData;
@@ -23,7 +20,7 @@ import org.json.XML;
 
 import org.postgresql.util.PGobject;
 
-
+//Class used for all communication with the database
 public enum SimulationDao {
 	instance;
 	private boolean storeData = true;
@@ -192,25 +189,26 @@ public enum SimulationDao {
 	}
 	
 	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
-		public List<GraphPoint> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
-			if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+	public List<GraphPoint> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 
-			sqlQueries.avgRouteLengthQuery.setInt(1, simulation_id);
-			
-			ResultSet resultSet = sqlQueries.avgRouteLengthQuery.executeQuery();
-			
-			List<GraphPoint> graphPoints = new ArrayList<>();
+		sqlQueries.avgRouteLengthQuery.setInt(1, simulation_id);
+		
+		ResultSet resultSet = sqlQueries.avgRouteLengthQuery.executeQuery();
+		
+		List<GraphPoint> graphPoints = new ArrayList<>();
 
-			while (resultSet.next()) {
-				double timestamp = resultSet.getDouble("timestamp");
-				double avgSpeed = resultSet.getDouble("avgCount");
-				GraphPoint point = new GraphPoint(timestamp, avgSpeed);
-				graphPoints.add(point);
-			}
-
-			return graphPoints;
+		while (resultSet.next()) {
+			double timestamp = resultSet.getDouble("timestamp");
+			double avgSpeed = resultSet.getDouble("avgCount");
+			GraphPoint point = new GraphPoint(timestamp, avgSpeed);
+			graphPoints.add(point);
 		}
+
+		return graphPoints;
+	}
 	
+	//Store a simulation in the database
 	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws Exception {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
@@ -222,6 +220,7 @@ public enum SimulationDao {
 		if(storeData) sqlQueries.storeSimulationQuery.executeUpdate();
 	}
 	
+	//Store a state file in the database
 	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws Exception {
 		sqlQueries.storeStateQuery.setInt(1, simId);
 		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
@@ -230,6 +229,7 @@ public enum SimulationDao {
 		
 	}
 	
+	//Get the id for a given tag
 	public Integer getTagId(String tag) throws SQLException {
 		sqlQueries.getTagIdQuery.setString(1, tag);
 		ResultSet resultSet = sqlQueries.getTagIdQuery.executeQuery();
@@ -238,52 +238,36 @@ public enum SimulationDao {
 		}
 		return null;
 	}
-
+	
+	//Store a new tag in the database by specified tag id
 	public void storeTag(Integer tagId, String tag) throws SQLException {
 		sqlQueries.storeTagQuery.setInt(1, tagId);
 		sqlQueries.storeTagQuery.setString(2, tag);
 		if(storeData) sqlQueries.storeTagQuery.executeUpdate();
 		
 	}
-
+	
+	//Store a new connection between a simulation and a tag in the database
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
 		sqlQueries.storeSimTagQuery.setInt(1, tagId);
 		sqlQueries.storeSimTagQuery.setInt(2, simId);
 		if(storeData) sqlQueries.storeSimTagQuery.executeUpdate();
 	}
 	
+	//Check if a tag id exists
 	public boolean doesTagIdExist(int tagId) throws SQLException {
 		sqlQueries.doesTagIdExistQuery.setInt(1, tagId);
 		return sqlQueries.doesTagIdExistQuery.executeQuery().next();
 	}
-
+	
+	//Check if a simulation id exists
 	public boolean doesSimIdExist(int simId) throws SQLException {
 		sqlQueries.doesSimIdExistQuery.setInt(1, simId);
 		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
 	}
 	
-	
-	//Generates a random ID of size 'length', never starting with a 0 
-	public int generateId(int length) {
-		Random random = new Random();
-		UUID uuid = UUID.randomUUID();
-		String str = uuid.toString().substring(0, length-1);
-		str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
-		System.out.println("generated id = " + Integer.parseInt(str));
-		return Integer.parseInt(str);
-	}
-	
-	
-	private PGobject convertFileToPGobject(File file) throws Exception {
-		/*SQLXML sqlxml = connection.createSQLXML();
-		Writer out= sqlxml.setCharacterStream();
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		String line = null;
-		while((line = in.readLine()) != null) {
-		    out.write(line);
-		}
-		return sqlxml;*/
-		
+	//Convert an uploaded XML file to a JSON file for storing the the database
+	public PGobject convertFileToPGobject(File file) throws Exception {
 		String xmlString = "";
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -300,8 +284,8 @@ public enum SimulationDao {
 		result.setValue(jsonObj.toString());
 		return result;
 	}
-
 	
+	//Exception that gets thrown if a specified id is not found
 	public class IDNotFound extends Exception {
 		private static final long serialVersionUID = 4280320385143360167L;
 		

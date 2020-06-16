@@ -6,11 +6,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.UUID;
 
 import sumodashboard.model.MetaData;
 
-public class ParseXML {    
+//Class used to work with setting Metadata
+public class MetaDataIO {   
+	//Read metadata from a metadata.txt file and store in a MetaData object
     public static MetaData parseMetadata(File file) throws FileNotFoundException, ParseException {
 		Scanner reader =  new Scanner(file);	
 		MetaData meta = new MetaData();
@@ -30,6 +34,7 @@ public class ParseXML {
 		return meta;
     }
     
+    //Convert a list of tags to a single string of all tags with the delimiter specified in class MetaData
     public static String generateTagsString(List<String> li) {
     	String tags;
 		if (li.size() == 0) {
@@ -43,5 +48,16 @@ public class ParseXML {
 		}
 		
 		return tags;
+	}
+	
+	
+	//Generates a random ID of size 'length', never starting with a 0 
+	public static int generateId(int length) {
+		Random random = new Random();
+		UUID uuid = UUID.randomUUID();
+		String str = uuid.toString().substring(0, length-1);
+		str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
+		System.out.println("generated id = " + Integer.parseInt(str));
+		return Integer.parseInt(str);
 	}
 }

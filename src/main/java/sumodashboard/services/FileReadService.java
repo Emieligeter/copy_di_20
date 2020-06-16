@@ -19,13 +19,15 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 import sumodashboard.model.SumoFilesDTO;
 
+//Read uploaded files and store the data in a SumoFilesDTO
 public class FileReadService {
 
 	public static final String tmpFolder = System.getProperty("java.io.tmpdir");
 
 	public FileReadService() {
 	}
-
+	
+	//Check if the files are a single zip or a list of files, call the appropriate methods for handling them
 	public static SumoFilesDTO readInputStream(InputStream stream, FormDataBodyPart bodyPart ) throws Exception {
 		List<String> fileList = getFileList(bodyPart);
 		
@@ -36,7 +38,8 @@ public class FileReadService {
 			return handleFiles(stream, bodyPart);
 		}
 	}
-
+	
+	//Generate a DTO for zip files
 	private static SumoFilesDTO handleZip(ZipInputStream zipStream) throws Exception {
 		HashMap<String, File> files = new HashMap<String, File>();
 		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
@@ -69,7 +72,8 @@ public class FileReadService {
 		//SimulationStoreService.storeSimulation(files, stateFiles);
 		
 	}
-
+	
+	//Generate a DTO for individual files
 	private static SumoFilesDTO handleFiles(InputStream stream, FormDataBodyPart bodyParts) throws Exception {
 		HashMap<String, File> files = new HashMap<String, File>();
 		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
@@ -103,11 +107,12 @@ public class FileReadService {
 		return new SumoFilesDTO(files, stateFiles);
 	}
 	
-
+	//Check if the uploaded files are correct
 	public static void checkFileList(List<String> fileList) throws IOException {
 		// TODO Checks on correctness of files
 	}
-
+	
+	//Convert an InputStream to a File
 	private static File convertStreamToFile(InputStream is, String fileNameLocation) throws Exception {
 		int size;
 		byte[] buffer = new byte[2048];
@@ -121,7 +126,8 @@ public class FileReadService {
 		bos.close();
 		return new File(fileNameLocation);
 	}
-
+	
+	//Unpack the zip with state files into a Map of files
 	private static TreeMap<Integer, File> convertStateFiles(InputStream is, String fileLocation) throws Exception {
 		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
 		ZipInputStream stateZip = new ZipInputStream(is);
@@ -141,6 +147,7 @@ public class FileReadService {
 		return stateFiles;
 	}
 	
+	//Get the list of files given in the BodyPart
 	public static List<String> getFileList(BodyPart bodyPart){
 		List<String> fileList = new ArrayList<String>();
 		for (BodyPart part : bodyPart.getParent().getBodyParts()) {
@@ -149,9 +156,11 @@ public class FileReadService {
 		}
 		return fileList;
 	}
+	
+	//Convert the InputStream to a ZipInputStream to handle file reading for a zip file
 	public static ZipInputStream convertToZipStream(InputStream stream) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(stream);
 		ZipInputStream zipStream = new ZipInputStream(bis);
-		return new ZipInputStream(bis);
+		return zipStream;
 	}
 }

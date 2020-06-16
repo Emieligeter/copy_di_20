@@ -7,7 +7,6 @@ $("#uploadFiles").submit(function(event){
   	
     var files = $('#uploadFiles')[0];
     var fd = new FormData(files);
-    console.log(fd);
   	$.ajax({
   		url : 'rest/simulations/upload',
   		type: 'POST',

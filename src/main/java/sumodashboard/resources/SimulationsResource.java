@@ -23,20 +23,21 @@ import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import sumodashboard.dao.ParseXML;
+import sumodashboard.dao.MetaDataIO;
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.model.MetaData;
-import sumodashboard.model.Simulation;
 import sumodashboard.model.SumoFilesDTO;
 import sumodashboard.services.FileReadService;
 
+//Class responsible for all requests to /rest/simulations
 @Path("/simulations")
 public class SimulationsResource {
 	@Context
 	UriInfo uriInfo;
 	@Context
 	Request request;
-
+	
+	//Get metadata of all simulations
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
@@ -51,11 +52,12 @@ public class SimulationsResource {
 			return response;
 		}
 	}
-
+	
+	//Upload files for a new simulation
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadZippedFile(@FormDataParam("uploadFile") InputStream inputStream,
+	public Response uploadFiles(@FormDataParam("uploadFile") InputStream inputStream,
 			@FormDataParam("uploadFile") FormDataBodyPart bodyPart) throws Exception {
 
 		//Read the inputstream and make a DTO object
@@ -64,12 +66,12 @@ public class SimulationsResource {
 
 		HashMap<String, File> files = dto.getFiles();
 		TreeMap<Integer, File> stateFiles = dto.getStateFiles();
-		MetaData meta = ParseXML.parseMetadata(files.get("metadata.txt")); //parse metadata into object
+		MetaData meta = MetaDataIO.parseMetadata(files.get("metadata.txt")); //parse metadata into object
 		SimulationDao SimDao = SimulationDao.instance;
 		
 		//Generate a random id, if it exists generate a new one
 		int simId = 0;
-		do {simId = SimDao.generateId(5);
+		do {simId = MetaDataIO.generateId(5);
 		}while(SimDao.doesSimIdExist(simId)) ;
 		 
 		//Store a simulation in 'simulation' table
@@ -96,7 +98,7 @@ public class SimulationsResource {
 			if(tagId == null) {
 				tagId = 0;
 				do 
-					tagId = SimDao.generateId(4);
+					tagId = MetaDataIO.generateId(4);
 				while(SimDao.doesTagIdExist(tagId));
 				System.out.println("generated tagId: " + tagId);
 				SimDao.storeTag(tagId, tag);
@@ -111,6 +113,7 @@ public class SimulationsResource {
 		return Response.ok("Files uploaded successfully").build();
 	}
 	
+	//Redirect all requests to /rest/simulations/id/{id}
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, id);

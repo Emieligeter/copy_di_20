@@ -20,6 +20,7 @@ import sumodashboard.dao.SimulationDao.IDNotFound;
 import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
 
+//Class responsible for handling all requests to /rest/simulations/id/{id}
 public class SimulationResource {
 	@Context
 	UriInfo uriInfo;
@@ -33,6 +34,7 @@ public class SimulationResource {
 		this.ID = ID;
 	}
 	
+	//Get all data for a simulation
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulation() {		
@@ -55,6 +57,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Get the average speed of all vehicles over time
 	@GET
 	@Path("/avgspeedtime")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -72,6 +75,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Get a list of all vehicles in a simulation
 	@GET
 	@Path("/vehiclelist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -91,11 +95,15 @@ public class SimulationResource {
 		}
 	}
 	
+	//Get the speed of a single vehicle over time
 	@GET
 	@Path("/vehiclespeed")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeed() {
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");	
+		if (vehicleID == null) {
+			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
+		}
 		
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
@@ -110,6 +118,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Get the average length of routes over time
 	@GET
 	@Path("/avgroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -127,6 +136,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Update Metadata for a simulation
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -144,6 +154,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Delete a simulation
 	@DELETE
 	public Response deleteSimulation() {
 		try {

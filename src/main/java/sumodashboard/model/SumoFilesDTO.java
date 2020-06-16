@@ -4,12 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+//TODO figure out what DTO means
 public class SumoFilesDTO {
 	private HashMap<String, File> files;
 	private TreeMap<Integer, File> stateFiles;
