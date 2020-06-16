@@ -9,6 +9,7 @@ public class Simulation {
 	private String date;
 	private String description;
 	private String researcher;
+	private String tags;
 	
 	private String net;
 	private String routes;
@@ -18,13 +19,14 @@ public class Simulation {
 		
 	}
 	
-	public Simulation(int ID, String name, String date, String description, String researcher, String net, String routes, String config) {
+	public Simulation(int ID, String name, String date, String description, String researcher, String tags, String net, String routes, String config) {
 		super();
 		this.ID = ID;
 		this.name = name;
 		this.date = date;
 		this.description = description;
 		this.researcher = researcher;
+		this.tags = tags;
 		this.net = net;
 		this.routes = routes;
 		this.config = config;
@@ -92,5 +94,13 @@ public class Simulation {
 	
 	public void setResearcher(String researcher) {
 		this.researcher = researcher;
+	}
+	
+	public String getTags() {
+		return tags;
+	}
+	
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 }

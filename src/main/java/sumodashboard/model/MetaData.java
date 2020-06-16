@@ -1,22 +1,23 @@
 package sumodashboard.model;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
 
 public class MetaData {
+	public static final String TAGDELIMITER = ", ";
 	
 	private int ID;
 	private String name;
 	private String date;
 	private String description;
 	private String researcher;
-	private ArrayList<String> tags;
+	private String tags;
 	
 	public MetaData() {
 		
 	}
 	
-	public MetaData(int ID, String name, String date, String description, String researcher, ArrayList<String> tags) {
+	public MetaData(int ID, String name, String date, String description, String researcher, String tags) {
 		super();
 		this.ID = ID;
 		this.name = name;
@@ -46,7 +47,7 @@ public class MetaData {
 		return researcher;
 	}
 
-	public ArrayList<String> getTags() {
+	public String getTags() {
 		return tags;
 	}
 
@@ -70,7 +71,7 @@ public class MetaData {
 		this.researcher = researcher;
 	}
 
-	public void setTags(ArrayList<String> tags) {
+	public void setTags(String tags) {
 		this.tags = tags;
 	}
 }

@@ -89,7 +89,8 @@ public class SimulationsResource {
 		}
 		
 		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
-		for(String tag : meta.getTags()) {
+		String tags = meta.getTags();
+		for(String tag : tags.split(MetaData.TAGDELIMITER)) {
 			Integer tagId = SimDao.getTagId(tag);
 			System.out.println("tag: " + tag + " , tagId: " + tagId);
 			if(tagId == null) {

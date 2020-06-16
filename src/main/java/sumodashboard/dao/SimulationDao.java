@@ -68,7 +68,8 @@ public enum SimulationDao {
 			String date = rs.getDate("date").toString();
 			String description = rs.getString("description");
 			String researcher = rs.getString("researcher");
-			MetaData entry = new MetaData(ID, name, date, description, researcher, null);
+			String tags = rs.getString("tags");
+			MetaData entry = new MetaData(ID, name, date, description, researcher, tags);
 			simulations.add(entry);
 		}
 		
@@ -90,10 +91,11 @@ public enum SimulationDao {
 		String date = rs.getDate("date").toString();
 		String description = rs.getString("description");
 		String researcher = rs.getString("researcher");
+		String tags = rs.getString("tags");
 		String net = rs.getString("net");
 		String routes = rs.getString("routes");
 		String config = rs.getString("config");
-		Simulation result = new Simulation(ID, name, date, description, researcher, net, routes, config);
+		Simulation result = new Simulation(ID, name, date, description, researcher, tags, net, routes, config);
 		
 		return result;
 	}

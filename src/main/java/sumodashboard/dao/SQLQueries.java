@@ -23,8 +23,11 @@ public class SQLQueries {
     public SQLQueries(Connection connection) {
         try {
             getAllSimulationsQuery = connection.prepareStatement("" +
-                    "SELECT simid, name, date, description, researcher " +
-                    "FROM project.simulations");
+                    "SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags " + 
+                    "FROM project.tags, project.simulations sim, project.simulation_tags st " + 
+                    "WHERE sim.simid = st.simid " + 
+                    "AND st.tagid = tags.tagid " + 
+                    "GROUP BY sim.simid");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -32,9 +35,12 @@ public class SQLQueries {
 
         try {
             getSimulationQuery = connection.prepareStatement("" +
-                    "SELECT simid, name, date, description, researcher, net, routes, config " +
-                    "FROM project.simulations " +
-                    "WHERE simid = ?");
+            		"SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags, sim.net, sim.routes, sim.config " +
+                    "FROM project.tags, project.simulations sim, project.simulation_tags st " +
+                    "WHERE sim.simid = st.simid " + 
+                    "AND st.tagid = tags.tagid " + 
+                    "AND sim.simid = ? " +
+                    "GROUP BY sim.simid");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
