@@ -91,21 +91,48 @@ public class SimulationResource {
 	@Path("/edgefrequency")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeFrequency() {
-		return null;
+		String edgeID = uriInfo.getQueryParameters().getFirst("edge");		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getEdgeAppearenceFrequency(ID, edgeID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get the appearence frequency for an edge:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}	
 	}
 	
 	@GET
 	@Path("/lanetransitingvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneTransitingVehicles() {
-		return null;
+		String laneID = uriInfo.getQueryParameters().getFirst("lane");		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getLaneTransitingVehicles(ID, laneID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get number of lane transiting vehicles for a lane:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}	
 	}
 	
 	@GET
 	@Path("/vehicleroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleRouteLength() {
-		return null;
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		try {
+			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleRouteLength(ID, vehicleID);
+			return Response.status(200).entity(graphPoints).build();
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get route length for a vehicle:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
 	}
 	
 	@GET
@@ -119,7 +146,7 @@ public class SimulationResource {
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg speed over time for a vehicle:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception when trying to get speed over time for a vehicle:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
 		}
 	}
@@ -240,24 +267,41 @@ public class SimulationResource {
 	@Path("/edgelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeList() {
-		return null;
-	}
+		try {
+			List<String> edges = SimulationDao.instance.getEdgeList(ID);
+			return Response.status(200).entity(edges).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a edge list:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}	}
 	
 	@GET
 	@Path("/lanelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneList() {
-		return null;
+		try {
+			List<String> lanes = SimulationDao.instance.getLaneList(ID);
+			return Response.status(200).entity(lanes).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a lane list:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
 	}
 	
 	@GET
 	@Path("/vehiclelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleList() {
-		System.out.println("getting the list @simResource");
 		try {
 			List<String> vehicles = SimulationDao.instance.getVehicleList(ID);
-			System.out.println("returning the response @simResource");
 			return Response.status(200).entity(vehicles).build();
 			
 		} catch (IDNotFound i) {
