@@ -27,7 +27,16 @@ function fileClick(id) {
 		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
 		document.getElementById("newResearcher").setAttribute("value", researcher);
 		document.getElementById("newDescription").innerHTML = data.description;
+		processTags(data.tags);
 	});
+}
+
+function processTags(tags) {
+	var tagList = tags.split(', ');
+	console.log(tagList);
+	for (var i = 0; i < tagList.lengt; i++) {
+		//make tag active, probably using id = tag
+	}
 }
 
 $("#deleteSimButton").click(function() {

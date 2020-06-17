@@ -133,3 +133,8 @@
 .stdForm .card {
 	margin-top: 200px;
 }
+
+input[type=checkbox], input[type=radio] {
+    box-sizing: border-box;
+    margin-right: 5px;
+}
