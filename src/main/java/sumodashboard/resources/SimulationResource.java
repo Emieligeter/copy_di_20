@@ -20,6 +20,7 @@ import sumodashboard.dao.SimulationDao.IDNotFound;
 import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
 
+//Class responsible for handling all requests to /rest/simulations/id/{id}
 public class SimulationResource {
 	@Context
 	UriInfo uriInfo;
@@ -33,6 +34,7 @@ public class SimulationResource {
 		this.ID = ID;
 	}
 	
+	//Get all data for a simulation
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulation() {		
@@ -72,6 +74,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Delete a simulation
 	@DELETE
 	public Response deleteSimulation() {
 		try {
@@ -91,7 +94,10 @@ public class SimulationResource {
 	@Path("/edgefrequency")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeFrequency() {
-		String edgeID = uriInfo.getQueryParameters().getFirst("edge");		
+		String edgeID = uriInfo.getQueryParameters().getFirst("edge");
+		if (edgeID == null) {
+			return Response.status(400).entity("Please specifiy edge id using query parameter \"edge\"").build();
+		}		
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getEdgeAppearenceFrequency(ID, edgeID);
 			return Response.status(200).entity(graphPoints).build();
@@ -107,7 +113,10 @@ public class SimulationResource {
 	@Path("/lanetransitingvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneTransitingVehicles() {
-		String laneID = uriInfo.getQueryParameters().getFirst("lane");		
+		String laneID = uriInfo.getQueryParameters().getFirst("lane");
+		if (laneID == null) {
+			return Response.status(400).entity("Please specifiy lane id using query parameter \"lane\"").build();
+		}		
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getLaneTransitingVehicles(ID, laneID);
 			return Response.status(200).entity(graphPoints).build();
@@ -123,7 +132,10 @@ public class SimulationResource {
 	@Path("/vehicleroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleRouteLength() {
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");
+		if (vehicleID == null) {
+			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
+		}		
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleRouteLength(ID, vehicleID);
 			return Response.status(200).entity(graphPoints).build();
@@ -139,7 +151,10 @@ public class SimulationResource {
 	@Path("/vehiclespeed")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeed() {
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");	
+		if (vehicleID == null) {
+			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
+		}		
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
 			return Response.status(200).entity(graphPoints).build();
@@ -155,7 +170,10 @@ public class SimulationResource {
 	@Path("/vehiclespeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeedFactor() {
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");		
+		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");
+		if (vehicleID == null) {
+			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
+		}		
 		try {
 			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeedFactor(ID, vehicleID);
 			return Response.status(200).entity(graphPoints).build();

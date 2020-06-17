@@ -9,12 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import sumodashboard.model.GraphPoint;
+import sumodashboard.model.MetaData;
 import sumodashboard.model.Simulation;
 
 import org.json.JSONObject;
@@ -22,7 +20,7 @@ import org.json.XML;
 
 import org.postgresql.util.PGobject;
 
-
+//Class used for all communication with the database
 public enum SimulationDao {
 	instance;
 	private boolean storeData = true;
@@ -56,17 +54,18 @@ public enum SimulationDao {
 	}
 	
 	//Get a List with all simulation metadata in the database
-	public List<Simulation> getSimulations() throws SQLException {
+	public List<MetaData> getSimulations() throws SQLException {
 		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();
 		
-		List<Simulation> simulations = new ArrayList<>();
+		List<MetaData> simulations = new ArrayList<>();
 		while (rs.next()) {
 			int ID = rs.getInt("simid");
 			String name = rs.getString("name");
 			String date = rs.getDate("date").toString();
 			String description = rs.getString("description");
 			String researcher = rs.getString("researcher");
-			Simulation entry = new Simulation(ID, name, date, description, researcher);
+			String tags = rs.getString("tags");
+			MetaData entry = new MetaData(ID, name, date, description, researcher, tags);
 			simulations.add(entry);
 		}
 		
@@ -88,10 +87,11 @@ public enum SimulationDao {
 		String date = rs.getDate("date").toString();
 		String description = rs.getString("description");
 		String researcher = rs.getString("researcher");
+		String tags = rs.getString("tags");
 		String net = rs.getString("net");
 		String routes = rs.getString("routes");
 		String config = rs.getString("config");
-		Simulation result = new Simulation(ID, name, date, description, researcher, net, routes, config);
+		Simulation result = new Simulation(ID, name, date, description, researcher, tags, net, routes, config);
 		
 		return result;
 	}
@@ -334,10 +334,11 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
+	//Store a simulation in the database
 	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
-		sqlQueries.storeSimulationQuery.setString(3, date.toString());
+		sqlQueries.storeSimulationQuery.setString(3, date);
 		sqlQueries.storeSimulationQuery.setString(4, description);
 		sqlQueries.storeSimulationQuery.setObject(5, convertFileToPGobject(net));
 		sqlQueries.storeSimulationQuery.setObject(6, convertFileToPGobject(routes));
@@ -345,6 +346,7 @@ public enum SimulationDao {
 		if(storeData) sqlQueries.storeSimulationQuery.executeUpdate();
 	}
 	
+	//Store a state file in the database
 	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws Exception {
 		sqlQueries.storeStateQuery.setInt(1, simId);
 		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
@@ -353,6 +355,7 @@ public enum SimulationDao {
 		
 	}
 	
+	//Get the id for a given tag
 	public Integer getTagId(String tag) throws SQLException {
 		sqlQueries.getTagIdQuery.setString(1, tag);
 		ResultSet resultSet = sqlQueries.getTagIdQuery.executeQuery();
@@ -361,43 +364,36 @@ public enum SimulationDao {
 		}
 		return null;
 	}
-
+	
+	//Store a new tag in the database by specified tag id
 	public void storeTag(Integer tagId, String tag) throws SQLException {
 		sqlQueries.storeTagQuery.setInt(1, tagId);
 		sqlQueries.storeTagQuery.setString(2, tag);
 		if(storeData) sqlQueries.storeTagQuery.executeUpdate();
 		
 	}
-
+	
+	//Store a new connection between a simulation and a tag in the database
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
 		sqlQueries.storeSimTagQuery.setInt(1, tagId);
 		sqlQueries.storeSimTagQuery.setInt(2, simId);
 		if(storeData) sqlQueries.storeSimTagQuery.executeUpdate();
 	}
 	
+	//Check if a tag id exists
 	public boolean doesTagIdExist(int tagId) throws SQLException {
 		sqlQueries.doesTagIdExistQuery.setInt(1, tagId);
 		return sqlQueries.doesTagIdExistQuery.executeQuery().next();
 	}
-
+	
+	//Check if a simulation id exists
 	public boolean doesSimIdExist(int simId) throws SQLException {
 		sqlQueries.doesSimIdExistQuery.setInt(1, simId);
 		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
 	}
 	
-	
-	//Generates a random ID of size 'length', never starting with a 0 
-	public int generateId(int length) {
-		Random random = new Random();
-		UUID uuid = UUID.randomUUID();
-		String str = uuid.toString().substring(0, length-1);
-		str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
-		System.out.println("generated id = " + Integer.parseInt(str));
-		return Integer.parseInt(str);
-	}
-	
-	
-	private PGobject convertFileToPGobject(File file) throws Exception {
+	//Convert an uploaded XML file to a JSON file for storing the the database
+	public PGobject convertFileToPGobject(File file) throws Exception {
 		String xmlString = "";
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -412,8 +408,8 @@ public enum SimulationDao {
 		result.setValue(jsonObj.toString());
 		return result;
 	}
-
 	
+	//Exception that gets thrown if a specified id is not found
 	public class IDNotFound extends Exception {
 		private static final long serialVersionUID = 4280320385143360167L;
 		

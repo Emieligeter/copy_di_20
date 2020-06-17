@@ -4,16 +4,35 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+//Class for storing all SQL queries used in the DAO
 public class SQLQueries {
+	//Get all simulations
     public PreparedStatement getAllSimulationsQuery;
+    //Get a single simulation by ID
     public PreparedStatement getSimulationQuery;
+    //Remove a simulation by ID
     public PreparedStatement removeSimulationQuery;
+    //Get the average speed of all vehicles over time
+    public PreparedStatement avgSpeedQuery;
+    //Get the speed of a specified vehicle over time
+    public PreparedStatement vehicleSpeedQuery;
+    //Get a list of all vehicles in a specified simulation
+    public PreparedStatement vehicleListQuery;
+    //Get the average route length over time
+    public PreparedStatement avgRouteLengthQuery;
+    //Store a new simulation in the database
     public PreparedStatement storeSimulationQuery;
+    //Store a new state in the database
     public PreparedStatement storeStateQuery;
+    //Get the id of a given tag
     public PreparedStatement getTagIdQuery;
+    //Store a new tag in the database
     public PreparedStatement storeTagQuery;
+    //Store a new connection between a simulation and a tag in the database
     public PreparedStatement storeSimTagQuery;
+    //Check if a tag id exists
     public PreparedStatement doesTagIdExistQuery;
+    //Check if a simulation id exists
     public PreparedStatement doesSimIdExistQuery;
     
     public PreparedStatement edgeAppearanceFrequencyQuery;
@@ -37,8 +56,11 @@ public class SQLQueries {
     	final String schemaName = "project";
         try {
             getAllSimulationsQuery = connection.prepareStatement("" +
-                    "SELECT simid, name, date, description, researcher " +
-                    "FROM " + schemaName + ".simulations");
+                    "SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags " + 
+                    "FROM project.tags, project.simulations sim, project.simulation_tags st " + 
+                    "WHERE sim.simid = st.simid " + 
+                    "AND st.tagid = tags.tagid " + 
+                    "GROUP BY sim.simid");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -46,9 +68,12 @@ public class SQLQueries {
 
         try {
             getSimulationQuery = connection.prepareStatement("" +
-                    "SELECT simid, name, date, description, researcher, net, routes, config " +
-                    "FROM " + schemaName + ".simulations " +
-                    "WHERE simid = ?");
+            		"SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags, sim.net, sim.routes, sim.config " +
+                    "FROM project.tags, project.simulations sim, project.simulation_tags st " +
+                    "WHERE sim.simid = st.simid " + 
+                    "AND st.tagid = tags.tagid " + 
+                    "AND sim.simid = ? " +
+                    "GROUP BY sim.simid");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -419,11 +444,6 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
-    
-    
-    
-    
-    
-    
+
     }
 }

@@ -1,17 +1,33 @@
 package sumodashboard.model;
 
-import java.util.ArrayList;
-import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class MetaData {
+	public static final String TAGDELIMITER = ", ";
 	
-	private String ID;
+	private int ID;
 	private String name;
-	private Date date;
+	private String date;
 	private String description;
-	private ArrayList<String> tags;
+	private String researcher;
+	private String tags;
 	
-	public String getID() {
+	public MetaData() {
+		
+	}
+	
+	public MetaData(int ID, String name, String date, String description, String researcher, String tags) {
+		super();
+		this.ID = ID;
+		this.name = name;
+		this.date = date;
+		this.description = description;
+		this.researcher = researcher;
+		this.tags = tags;
+	}
+	
+	public int getID() {
 		return ID;
 	}
 	
@@ -19,19 +35,23 @@ public class MetaData {
 		return name;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
 	public String getDescription() {
 		return description;
 	}
+	
+	public String getResearcher() {
+		return researcher;
+	}
 
-	public ArrayList<String> getTags() {
+	public String getTags() {
 		return tags;
 	}
 
-	public void setID(String ID) {
+	public void setID(int ID) {
 		this.ID = ID;
 	}
 	
@@ -39,15 +59,19 @@ public class MetaData {
 		this.name = name;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public void setResearcher(String researcher) {
+		this.researcher = researcher;
+	}
 
-	public void setTags(ArrayList<String> tags) {
+	public void setTags(String tags) {
 		this.tags = tags;
 	}
 }
