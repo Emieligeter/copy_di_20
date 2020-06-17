@@ -392,6 +392,16 @@ public enum SimulationDao {
 		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
 	}
 	
+	public List<String> getTags() throws SQLException {
+		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();	
+		List<String> tags = new ArrayList<>();
+		while (rs.next()) {
+			String tag = rs.getString("tags");
+			tags.add(tag);
+		}
+		return tags;
+	}
+	
 	//Convert an uploaded XML file to a JSON file for storing the the database
 	public PGobject convertFileToPGobject(File file) throws Exception {
 		String xmlString = "";
@@ -418,3 +428,4 @@ public enum SimulationDao {
 		}
 	}
 }
+
