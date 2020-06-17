@@ -1,36 +1,33 @@
 var optionsWithSndChoice = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor];
 var urlInit = "http://localhost:8080/sumo-dashboard/rest/simulations/id/";
+//var urlInit = "http://env-di-team1.paas.hosted-by-previder.com/sumo-dashboard/rest/simulations/id/";
 function dataSwitch(type) {
 	if (optionsWithSndChoice.includes(type)) {
 		return; //we need more input before we can show the graph
 	} else {
 		switch (type) {
 		case avgRouteLength:
-			//getAvgRouteLength();
 			getData(type, "avgroutelength");
 			break;
 		case avgSpeed:
-			//getAvgSpeed();
 			getData(type, "avgspeed");
 			break;
 		case avgSpeedFactor:
-			//getAvgSpeedFactor();
 			getData(type, "avgspeedfactor");
 			break;
 		case arrivedVehicles:
-			//getArrivedVehicles();
 			getData(type, "arrivedvehicles");
 			break;
 		case transferredVehicles:
-			//getTransferredVehicles();
 			getData(type, "transferredvehicles");
 			break;
 		case runningVehicles:
-			//getRunningVehicles();
 			var path = "runningvehicles";
-			console.log(path);
 			getData(type, path);
 			break;
+		case edgeFrequencyInitial:
+			var path = "edgefrequencyinitial"
+			getData(type, path);
 		default: 
 			;
 			break;
@@ -66,7 +63,6 @@ function fileClick(id) {
 	getOptionList("lane", "lanelist");
 	getOptionList("vehicle", "vehiclelist");
 	getOptionList("edge", "edgelist");
-	console.log("lists are loaded");
 	//TODO update graph;
 }
 
@@ -78,9 +74,24 @@ function handleDataResponse(JSONResponse, label) {
 	}
 	result = result.substring(0, result.length -1);
 	result += "]";
-	console.log(result);
-	changeData(result, label); //TODO This might not be the best place to call this method
+	changeGraphData(result, label); //TODO This might not be the best place to call this method
 	}
+
+function handleChartDataResponse(JSONResponse, dataType) {
+	var response = JSON.parse(JSONResponse);
+	var data = "[";
+	var label = "[";
+	for (var key in response) {
+		label += "\"" + key + "\", ";
+		data += response[key] + ", ";
+	}
+	label = label.substring(0, label.length -2);
+	data = data.substring(0, data.length -2);
+	label += "]";
+	data += "]";
+	console.log(data);
+	changeChartData(data, label);	
+}
 
 function openXhrGETRequest(xhr, url, wait) {
 	xhr.open("GET", url, wait);
@@ -110,7 +121,11 @@ function getData(dataType, path) {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
+			if (dataType === edgeFrequencyInitial) {
+				handleChartDataResponse(this.responseText, dataType);
+			} else {
 			handleDataResponse(this.responseText, dataType);
+			}
 		}
 	}
 	xhr.send();
@@ -131,7 +146,6 @@ function getOptionList(listType, path) {
 
 function handleOptionListResponse(JSONResponse, listType) {
 	var response = JSON.parse(JSONResponse);
-	console.log("handling list for " + listType);
 	switch (listType) {
 	case "vehicle":
 		secDropDownOptions[vehicleRouteLength] = response;

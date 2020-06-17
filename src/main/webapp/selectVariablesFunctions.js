@@ -45,7 +45,8 @@ var secDropDownOptions = {};
 function loadFstDropDownOptions(){
 	fstDropDownOptions['line'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
 	fstDropDownOptions['scatter'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
-	fstDropDownOptions['pie'] = [vehicleRouteLength, edgeFrequency];
+	fstDropDownOptions['pie'] = [edgeFrequencyInitial];
+	fstDropDownOptions['bar'] = [edgeFrequencyInitial];
 }
 
 function changeFirstChoice(chartType) {
@@ -87,7 +88,9 @@ function editDropDown(menu, newOptions) {
         menu.remove(0);
     }
     if (newOptions) {
-        var i;
+        var option = new Option("Please choose a variable", "", true, false);
+        menu.options.add(option);
+    	var i;
         for (i = 0; i < newOptions.length; i++) {
             var option = new Option(newOptions[i], newOptions[i]);
             menu.options.add(option);

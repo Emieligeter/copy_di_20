@@ -57,14 +57,24 @@ function updateChart() {
 		}
 	});
 	}
-	//console.log("done.");
 }
 
-function changeData(data, label) {
-	//chart.data.datasets[0].data.pop();
+function changeGraphData(data, label) {
 	this.data = JSON.parse(data);
 	chart.data.datasets[0].data = this.data;
 	this.label = label;
 	chart.data.datasets[0].label = this.label;
+	chart.data.labels = [];
+	chart.update();
+}
+
+function changeChartData(data, labels) {
+	this.data = JSON.parse(data);
+	console.log(this.data);
+	chart.data.datasets[0].data = this.data;
+	console.log(labels);
+	this.label = JSON.parse(labels);
+	chart.data.labels = this.label;
+	chart.data.datasets[0].label = [];
 	chart.update();
 }
