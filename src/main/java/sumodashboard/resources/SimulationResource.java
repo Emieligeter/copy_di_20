@@ -2,6 +2,7 @@ package sumodashboard.resources;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,7 +18,6 @@ import javax.ws.rs.core.UriInfo;
 
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.dao.SimulationDao.IDNotFound;
-import sumodashboard.model.GraphPoint;
 import sumodashboard.model.Simulation;
 
 //Class responsible for handling all requests to /rest/simulations/id/{id}
@@ -100,7 +100,7 @@ public class SimulationResource {
 			return Response.status(400).entity("Please specifiy edge id using query parameter \"edge\"").build();
 		}		
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getEdgeAppearenceFrequency(ID, edgeID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getEdgeAppearenceFrequency(ID, edgeID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -120,7 +120,7 @@ public class SimulationResource {
 			return Response.status(400).entity("Please specifiy lane id using query parameter \"lane\"").build();
 		}		
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getLaneTransitingVehicles(ID, laneID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getLaneTransitingVehicles(ID, laneID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -140,7 +140,7 @@ public class SimulationResource {
 			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
 		}		
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleRouteLength(ID, vehicleID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getVehicleRouteLength(ID, vehicleID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -160,7 +160,7 @@ public class SimulationResource {
 			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
 		}		
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -180,7 +180,7 @@ public class SimulationResource {
 			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
 		}		
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getVehicleSpeedFactor(ID, vehicleID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getVehicleSpeedFactor(ID, vehicleID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -196,7 +196,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgRouteLength() {
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
 			return Response.status(200).entity(graphPoints).build();
 
 		} catch (IDNotFound i) {
@@ -214,7 +214,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeed() {
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
 			return Response.status(200).entity(graphPoints).build();
 
 		} catch (IDNotFound i) {
@@ -232,7 +232,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeedFactor() {
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getAverageSpeedFactor(ID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getAverageSpeedFactor(ID);
 			return Response.status(200).entity(graphPoints).build();
 
 		} catch (IDNotFound i) {
@@ -250,7 +250,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getArrivedVehicles() {
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getCumNumArrivedVehicles(ID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getCumNumArrivedVehicles(ID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -266,7 +266,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTransferredVehicles() {
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getNumTransferredVehicles(ID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getNumTransferredVehicles(ID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -282,7 +282,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getRunningVehicles() {
 		try {
-			List<GraphPoint> graphPoints = SimulationDao.instance.getNumRunningVehicles(ID);
+			Map<Double, Double> graphPoints = SimulationDao.instance.getNumRunningVehicles(ID);
 			return Response.status(200).entity(graphPoints).build();
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
@@ -345,7 +345,23 @@ public class SimulationResource {
 		}
 	}
 	
-	
+	//Get information about all edges: how often they appear in the initial routes
+	@GET
+	@Path("/edgefrequencyinitial")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEdgeAppearanceFrequencyInitialRoute() {
+		try {
+			Map<String, Integer> dataPoints = SimulationDao.instance.getEdgeAppearanceFrequencyInitialRoute(ID);
+			return Response.status(200).entity(dataPoints).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get a vehicle list:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
 	
 	
 }
