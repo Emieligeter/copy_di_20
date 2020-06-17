@@ -26,7 +26,7 @@ public class TagsResource {
 	//Get metadata of all simulations
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSimulations() {
+	public Response getTags() {
 		try {			
 			List<String> tags = SimulationDao.instance.getTags();
 			

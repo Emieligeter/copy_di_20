@@ -73,13 +73,12 @@ function fileClick(id) {
 function handleDataResponse(JSONResponse, label) {
 	var response = JSON.parse(JSONResponse);
 	var result = "[";
-		for (var i = 0; i < response.length; i++) {
-			result += "{ \"x\": " + response[i].XValue + ", \"y\": " + response[i].YValue + " }";
-			if (i < response.length -1) {
-				result += ", ";
-			}
-		}
+	for (var key in response) {
+		result += "{ \"x\": " + key + ", \"y\": " + response[key] + " },";
+	}
+	result = result.substring(0, result.length -1);
 	result += "]";
+	console.log(result);
 	changeData(result, label); //TODO This might not be the best place to call this method
 	}
 
