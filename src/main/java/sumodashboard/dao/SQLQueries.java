@@ -38,10 +38,7 @@ public class SQLQueries {
     public PreparedStatement edgeAppearanceFrequencyQuery;
     public PreparedStatement numberOfLaneTransitingVehiclesQuery;
     public PreparedStatement vehicleRouteLengthQuery;
-    public PreparedStatement vehicleSpeedQuery;
     public PreparedStatement vehicleSpeedFactorQuery;
-    public PreparedStatement avgRouteLengthQuery;
-    public PreparedStatement avgSpeedQuery;
     public PreparedStatement avgSpeedFactorQuery;
     public PreparedStatement cumulativeNumberOfArrivedVehiclesQuery;
     public PreparedStatement numberOfTransferredVehiclesQuery;
@@ -49,7 +46,6 @@ public class SQLQueries {
     
     public PreparedStatement edgeListQuery;
     public PreparedStatement laneListQuery;
-    public PreparedStatement vehicleListQuery;    
     
 
     public SQLQueries(Connection connection) {
