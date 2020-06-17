@@ -48,15 +48,6 @@ function loadFstDropDownOptions(){
 	fstDropDownOptions['pie'] = [vehicleRouteLength, edgeFrequency];
 }
 
-function loadSecDropDownOptions() {
-	secDropDownOptions[edgeFrequency] = ['Edge 1', 'Edge 2', 'Edge 3'];
-	secDropDownOptions[laneTransitingVehicles] = ['Lane 1', 'Lane 2', 'Lane 3'];
-	secDropDownOptions[vehicleRouteLength] = [];
-	secDropDownOptions[vehicleSpeed] = [];
-	secDropDownOptions[vehicleSpeedFactor] = [];
-	getVehicleList();
-}
-
 function changeFirstChoice(chartType) {
 	var menu = document.getElementById("first-choice");
 	var newOptions = fstDropDownOptions[chartType];
@@ -81,11 +72,12 @@ function changeSecondChoice() {
     var fst = document.getElementById("first-choice");
     var sec = document.getElementById("second-choice");
     if (sec == null) {
-    	document.getElementById("optionalSecChoice").innerHTML = "<select id=\"second-choice\" name=\"detailChoice\" class=\"form-control\" onchange=\"getDataSnd(this.value)\"></select>";
+    	document.getElementById("optionalSecChoice").innerHTML = "<select id=\"second-choice\" name=\"detailChoice\" class=\"form-control\" onchange=\"dataSndSwitch(this.value)\"></select>";
     	sec = document.getElementById("second-choice");
     	}
     var chosen = fst.options[fst.selectedIndex].value;
-    getData(chosen); //TODO obviously this is not really the right place for this, oops
+    console.log(chosen);
+    dataSwitch(chosen); //TODO obviously this is not really the right place for this, oops
     var newOptions = secDropDownOptions[chosen];
     editDropDown(sec, newOptions);
 }
@@ -103,5 +95,4 @@ function editDropDown(menu, newOptions) {
     } else {
     	document.getElementById("optionalSecChoice").innerHTML = "";
     }
-    //console.log("drop down was edited");
 }
