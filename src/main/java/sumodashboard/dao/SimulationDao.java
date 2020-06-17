@@ -335,7 +335,7 @@ public enum SimulationDao {
 	}
 	
 	//Store a simulation in the database
-	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
+	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws Exception {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
 		sqlQueries.storeSimulationQuery.setString(3, date);

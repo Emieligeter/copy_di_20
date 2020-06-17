@@ -38,18 +38,15 @@ public class SQLQueries {
     public PreparedStatement edgeAppearanceFrequencyQuery;
     public PreparedStatement numberOfLaneTransitingVehiclesQuery;
     public PreparedStatement vehicleRouteLengthQuery;
-    public PreparedStatement vehicleSpeedQuery;
     public PreparedStatement vehicleSpeedFactorQuery;
-    public PreparedStatement avgRouteLengthQuery;
-    public PreparedStatement avgSpeedQuery;
     public PreparedStatement avgSpeedFactorQuery;
     public PreparedStatement cumulativeNumberOfArrivedVehiclesQuery;
     public PreparedStatement numberOfTransferredVehiclesQuery;
     public PreparedStatement numberOfRunningVehiclesQuery;
+    public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
     
     public PreparedStatement edgeListQuery;
     public PreparedStatement laneListQuery;
-    public PreparedStatement vehicleListQuery;    
     
 
     public SQLQueries(Connection connection) {
@@ -442,6 +439,23 @@ public class SQLQueries {
             		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+        	edgeAppearanceFrequencyInitialRouteQuery = connection.prepareStatement("" +
+        			"SELECT edge, array_length(string_to_array(concat(string_agg(edges, ' '), ' ~'), concat(edge, ' ')), 1) AS edgeFrequency " + 
+        			"FROM ( " + 
+        			"	SELECT DISTINCT unnest(string_to_array(edges, ' ')) AS edge, edges " + 
+        			"	FROM ( " + 
+        			"		SELECT DISTINCT (json_array_elements(routes -> 'routes' -> 'vehicle') -> 'route' ->> 'edges') AS edges " + 
+        			"		FROM " + schemaName + ".simulations " + 
+        			"		WHERE simid = ? " + 
+        			"		) routes " + 
+        			"	) edgeList " + 
+        			"GROUP BY edge");
+        } catch (SQLException e) {
+        	System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
 
