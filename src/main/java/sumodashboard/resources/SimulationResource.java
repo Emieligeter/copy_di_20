@@ -90,6 +90,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//Get the edge appearance frequency over time
 	@GET
 	@Path("/edgefrequency")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -109,6 +110,7 @@ public class SimulationResource {
 		}	
 	}
 	
+	//get the number of lane transiting vehicles over time
 	@GET
 	@Path("/lanetransitingvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -128,6 +130,7 @@ public class SimulationResource {
 		}	
 	}
 	
+	//get the route length for a specified vehicle over time
 	@GET
 	@Path("/vehicleroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -147,6 +150,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the speed for a specified vehicle over time
 	@GET
 	@Path("/vehiclespeed")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -166,6 +170,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the speed factor for a specified vehicle over time
 	@GET
 	@Path("/vehiclespeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -185,6 +190,7 @@ public class SimulationResource {
 		}	
 	}
 	
+	//get the average route length of all vehicles over time
 	@GET
 	@Path("/avgroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -202,6 +208,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the average speed of all vehicles over time
 	@GET
 	@Path("/avgspeed")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -219,6 +226,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the average speed factor of all vehicles over time
 	@GET
 	@Path("/avgspeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -236,6 +244,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the cumulative number of arrived vehicles over time
 	@GET
 	@Path("/arrivedvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -251,6 +260,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the number of transferred vehicles over time
 	@GET
 	@Path("/transferredvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -266,6 +276,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get the number of running vehicles over time
 	@GET
 	@Path("/runningvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -281,6 +292,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get a list of all edges that appear in a route in a specified simulation
 	@GET
 	@Path("/edgelist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -297,6 +309,7 @@ public class SimulationResource {
 			return Response.status(500).entity(errorMsg).build();
 		}	}
 	
+	//get a list of all lanes that appear in a simulation
 	@GET
 	@Path("/lanelist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -314,6 +327,7 @@ public class SimulationResource {
 		}
 	}
 	
+	//get a list of all vehicles that appear in a simulation
 	@GET
 	@Path("/vehiclelist")
 	@Produces(MediaType.APPLICATION_JSON)
