@@ -397,7 +397,7 @@ public enum SimulationDao {
 	}
 	
 	public List<String> getTags() throws SQLException {
-		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();	
+		ResultSet rs = sqlQueries.getAllTagsQuery.executeQuery();	
 		List<String> tags = new ArrayList<>();
 		while (rs.next()) {
 			String tag = rs.getString("tags");

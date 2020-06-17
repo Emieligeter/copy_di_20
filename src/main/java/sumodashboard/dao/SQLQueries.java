@@ -22,6 +22,8 @@ public class SQLQueries {
     public PreparedStatement storeTagQuery;
     //Store a new connection between a simulation and a tag in the database
     public PreparedStatement storeSimTagQuery;
+    //Get all tags
+    public PreparedStatement getAllTagsQuery;
     //Check if a tag id exists
     public PreparedStatement doesTagIdExistQuery;
     //Check if a simulation id exists
@@ -146,7 +148,15 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
-
+        
+        try {
+            getAllTagsQuery = connection.prepareStatement(
+                    "SELECT DISTINCT value AS tags FROM " + schemaName + ".tags");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
         try {
             doesTagIdExistQuery = connection.prepareStatement("" +
                     "SELECT * " +
