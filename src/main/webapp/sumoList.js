@@ -1,6 +1,8 @@
 /**
  * This file contains all javascript functions regarding the list of SUMO files.
  */
+
+//Loads all SUMO files with their metadata into a list
 function loadFiles() {
 	var httpReq = new XMLHttpRequest();
 	var sumoFiles = document.getElementById("sumoFiles");
@@ -9,6 +11,7 @@ function loadFiles() {
 		  var response = this.responseText;
 		  var res = JSON.parse(response);
 		  console.log(res);
+		  //For every file, create a list element and fill it with its metadata
 		  for (var i = 0; i < res.length; i++) {
 			  var liElem = document.createElement("li");
 			  liElem.id = res[i].ID;
@@ -24,21 +27,24 @@ function loadFiles() {
 			  "<p id=\"fileResearcher\" class=\"mb-1\">Researcher: " + researcher + "</p>\n" +
 			  "<small id=\"fileTags\">Tags: " + tags + "</small>\n" +
 			  "</a>";
+			  //Add element to list
 			  sumoFiles.appendChild(liElem);
 		  }
 	  }
 	}
+	//Request all sumo files
 	httpReq.open("GET", "/sumo-dashboard/rest/simulations", true);
 	httpReq.send();
 }
 
+//Filters the files on current input
 function getFilteredFiles() {
   var input, filter, files, li, a, i, txtValue;
   input = document.getElementById('fileSearch');
   filter = input.value.toUpperCase();
   files = document.getElementById("sumoFiles");
   li = files.getElementsByTagName('li');
-  // Loop through all list items, and hide those who don't match the search query
+  // Loop through all list items, hide the ones that don't match the search query
   for (i = 0; i < li.length; i++) {
     a = li[i].getElementsByTagName("a")[0];
     txtValue = a.textContent || a.innerText;
@@ -53,10 +59,11 @@ function getFilteredFiles() {
 $(document).on('click', 'ul li a', function() {
 	//Makes clicked elem active and all other list elems inactive
 	$(this).addClass('active').parent().siblings().children().removeClass('active');
-	//Display current metadata of clicked sumo file
+	//Display current metadata of clicked SUMO file
 	fileClick($(this).parent().attr('id'));
 })
 
+//returns the id of the current selected SUMO file
 function getSelectedID() {
 	console.log("getSelectedID()" + $("a").filter(".active").parent().attr("id"));
 	return $("a").filter(".active").parent().attr("id");
