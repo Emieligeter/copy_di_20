@@ -24,19 +24,23 @@ function loadTags() {
 	var tagList = document.getElementById("tagList");
 	$.get(url, function(data, status){
 		for (var i = 0; i < data.length; i++) {
+			var div = document.createElement("div");
+			div.class = "form-check";
 			var checkBox = document.createElement("input");
+			checkBox.class = "form-check-input";
 			checkBox.type = "checkbox";
 			checkBox.id = data[i];
 			checkBox.name = "tags";
 			checkBox.value = data[i];
+			checkBox.disabled = true;
 			var tag = document.createElement("label");
+			tag.class = "form-check-label";
 			tag.for = data[i];
-			tag.innerHTML = " " + data[i];
-			/*var tag = "<input type=\"checkbox\" id=\"" + data[i] + "\" name=\"tags\" value=\"" + data[i] + "\">\n" + 
-  			"<label for=\"" + data[i] + "\"> " + data[i] + "</label><br>";*/
-			tagList.appendChild(checkBox);
-			tagList.appendChild(tag);
-			tagList.appendChild(document.createElement("br"));
+			tag.innerHTML = data[i];
+			div.appendChild(checkBox);
+			div.appendChild(tag);
+			tagList.appendChild(div);
+			//tagList.appendChild(document.createElement("br"));
 		}
 	});
 }
