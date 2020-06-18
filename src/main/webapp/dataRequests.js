@@ -68,29 +68,44 @@ function fileClick(id) {
 
 function handleDataResponse(JSONResponse, label) {
 	var response = JSON.parse(JSONResponse);
-	var result = "[";
+	console.log(response);
+	const length = Object.keys(response).length;
+	
+	const sorted = [];
 	for (var key in response) {
-		result += "{ \"x\": " + key + ", \"y\": " + response[key] + " },";
+		sorted.push({key: key, value: response[key]});
+	}
+	sorted.sort((a,b) => a.key - b.key);
+	console.log(sorted);
+	
+	var result = "[";
+	for (var i = 0; i < sorted.length; i++) {
+		result += "{ \"x\": " + sorted[i].key + ", \"y\": " + sorted[i].value + " },";
+		console.log(sorted[i]);
 	}
 	result = result.substring(0, result.length -1);
 	result += "]";
-	changeGraphData(result, label); //TODO This might not be the best place to call this method
+	console.log(result);
+	changeGraphData(result, label);
 	}
 
 function handleChartDataResponse(JSONResponse, dataType) {
 	var response = JSON.parse(JSONResponse);
 	var data = "[";
-	var label = "[";
+	var labels = "[";
+	var i = 0;
 	for (var key in response) {
-		label += "\"" + key + "\", ";
+		/*if (i < 5) {*/
+		labels += "\"" + key + "\", ";
 		data += response[key] + ", ";
+		//}
+		//i++;
 	}
-	label = label.substring(0, label.length -2);
+	labels = labels.substring(0, labels.length -2);
 	data = data.substring(0, data.length -2);
-	label += "]";
+	labels += "]";
 	data += "]";
-	console.log(data);
-	changeChartData(data, label);	
+	changeChartData(data, labels, dataType);	
 }
 
 function openXhrGETRequest(xhr, url, wait) {

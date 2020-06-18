@@ -21,7 +21,6 @@ function setData(newdata) {
 
 
 function updateChart() {
-	//console.log("We're going to update the chart to type " + chartType);
 	if (this.chart !== undefined) {
 		this.chart.destroy();
 	}
@@ -68,13 +67,11 @@ function changeGraphData(data, label) {
 	chart.update();
 }
 
-function changeChartData(data, labels) {
+function changeChartData(data, labels, label) {
 	this.data = JSON.parse(data);
-	console.log(this.data);
 	chart.data.datasets[0].data = this.data;
-	console.log(labels);
-	this.label = JSON.parse(labels);
-	chart.data.labels = this.label;
-	chart.data.datasets[0].label = [];
+	this.label = label;
+	chart.data.datasets[0].label = this.label;
+	chart.data.labels = JSON.parse(labels);
 	chart.update();
 }
