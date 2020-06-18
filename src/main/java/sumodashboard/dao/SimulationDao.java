@@ -54,16 +54,17 @@ public enum SimulationDao {
 	
 	//Start the connection to the database
 	private void startDBConnection() {
-		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
-		final String username = "dab_di19202b_333";
-		final String password = "zyU3/uAIyZgigF+A";
-		
-		try {
-			connection = DriverManager.getConnection(url, username, password);
-		} catch (SQLException e) {
-			System.err.println("SQL Exception when starting connection to database:");
-			System.err.println(e.getLocalizedMessage());
-		}
+		new dblogin();
+//		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
+//		final String username = "dab_di19202b_333";
+//		final String password = "zyU3/uAIyZgigF+A";
+//
+//		try {
+//			connection = DriverManager.getConnection(url, username, password);
+//		} catch (SQLException e) {
+//			System.err.println("SQL Exception when starting connection to database:");
+//			System.err.println(e.getLocalizedMessage());
+//		}
 	}
 	
 	//Get a List with all simulation metadata in the database
@@ -197,6 +198,25 @@ public enum SimulationDao {
 
 			return graphPoints;
 		}
+
+		public List<String> summaryStats(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+
+		sqlQueries.summaryStats.setInt(1, simulation_id);
+
+		ResultSet resultSet = sqlQueries.summaryStats.executeQuery();
+
+		List<String> summaryStats = new ArrayList<>();
+
+		while (resultSet.next()) {
+			double timestamp = resultSet.getDouble("timestamp");
+			String summary_statistics = resultSet.getString("summary_statistics");
+			String timeStamp = timestamp + "";
+			String sumstat = timeStamp + " " + summary_statistics;
+		}
+
+		return summaryStats;
+	}
 	
 	public void storeSimulation(Integer simId, String name, String description, Date date, File net, File routes, File config) throws Exception {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);

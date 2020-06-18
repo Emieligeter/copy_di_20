@@ -18,6 +18,7 @@ public class SQLQueries {
     public PreparedStatement storeSimTagQuery;
     public PreparedStatement doesTagIdExistQuery;
     public PreparedStatement doesSimIdExistQuery;
+    public PreparedStatement summaryStats;
 
     public SQLQueries(Connection connection) {
         try {
@@ -120,7 +121,22 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
+        try {
+            summaryStats = connection.prepareStatement("" +
+                    "SELECT simid, timestamp, summary_statistics" +
+                    "FROM" +
+                    "(" +
+                    "SELECT simid, timestamp, (state -> 'snapshot' ->> 'delay') as delay" +
+                    "FROM project.states" +
+                    "WHERE json_typeof(state -> 'snapshot' -> 'delay') = 'object') as summary_statistics " +
+                    "WHERE simid = ?" +
+                    "GROUP BY timestamp " +
+                    "ORDER BY simid, timestamp ASC ");
 
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
         try {
             storeSimulationQuery = connection.prepareStatement(
                     "INSERT INTO project.simulations (simID, name, date, description, net, routes, config)" +
