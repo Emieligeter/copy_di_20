@@ -27,7 +27,14 @@ public class FileReadService {
 	public FileReadService() {
 	}
 	
-	//Check if the files are a single zip or a list of files, call the appropriate methods for handling them
+	/**
+	 * The {@link InputStream} is checked to see it is a ZIP file. If it is, then the stream is used in {@link #handleZip()}. 
+	 * If it's not a zip the stream and {@link FormDataBodyPart} are used in {@link #handleFiles()}. 
+	 * @param stream
+	 * @param bodyPart
+	 * @return {@link SumoFilesDTO}
+	 * @throws Exception
+	 */
 	public static SumoFilesDTO readInputStream(InputStream stream, FormDataBodyPart bodyPart ) throws Exception {
 		List<String> fileList = getFileList(bodyPart);
 		
@@ -39,7 +46,13 @@ public class FileReadService {
 		}
 	}
 	
-	//Generate a DTO for zip files
+	/**
+	 * The {@link ZipInputStream} is parsed into two {@link HashMap}s. One for the files, one for the state files.
+	 * These are then stored into a {@link SumoFilesDTO}.
+	 * @param zipStream
+	 * @return {@link SumoFilesDTO}
+	 * @throws Exception
+	 */
 	private static SumoFilesDTO handleZip(ZipInputStream zipStream) throws Exception {
 		HashMap<String, File> files = new HashMap<String, File>();
 		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();

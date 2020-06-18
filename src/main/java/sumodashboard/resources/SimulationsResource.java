@@ -53,7 +53,15 @@ public class SimulationsResource {
 		}
 	}
 	
-	//Upload files for a new simulation
+	/**
+	 * Receives an {@link InputStream} and {@link FormDataBodyPart} and returns a {@link Response}. 
+	 * The {@link InputStream} is parsed to {@link File}s and the files are stored in the database through the {@link SimulationDao}.
+	 * The files are deleted here after all reading has been done.
+	 * @param {@link InputStream} 
+	 * @param {@link FormDataBodyPart} 
+	 * @return {@link Response} Response
+	 * @throws {@link Exception}
+	 */
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -105,7 +113,6 @@ public class SimulationsResource {
 			} 
 			SimDao.storeSimTag(tagId, simId);
 		}
-		
 		// Delete files after use
 		files.forEach((key, file) -> file.delete());
 		stateFiles.forEach((key, file) -> file.delete());
