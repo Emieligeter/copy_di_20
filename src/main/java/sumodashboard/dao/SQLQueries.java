@@ -227,7 +227,7 @@ public class SQLQueries {
             		"		) lanes " +
             		") vehicles " +
             		"WHERE lane_id = ? " +
-            		"ORDER BY timestamp "
+            		"ORDER BY timestamp ASC"
                     );
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -269,7 +269,7 @@ public class SQLQueries {
         
         try {
             vehicleSpeedQuery = connection.prepareStatement("" +
-                    "SELECT simid, timestamp, vehicleSpeed, vehicle_id " +
+                    "SELECT timestamp, vehicleSpeed " +
                     "FROM " +
                     "	( " +
                     "		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as vehicleSpeed,  " +
@@ -283,11 +283,34 @@ public class SQLQueries {
                     "		GROUP BY simid, vehicle_id, timestamp, vehicleSpeed " +
                     "	) q1 " +
                     "WHERE simid = ? AND vehicle_id = ? " +
-                    "ORDER BY simid, vehicle_id, timestamp ASC ");
+                    "ORDER BY timestamp ASC ");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }        
+
+        try {
+            vehicleSpeedFactorQuery = connection.prepareStatement("" +
+            		"SELECT timestamp, vehicleSpeedFactor " +
+            		"FROM " +
+            		"	(" +
+            		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as vehicleSpeedFactor, (state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " +
+            		"		FROM " + schemaName + ".states " +
+            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
+            		"	UNION " +
+            		"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speedFactor')::float as vehicleSpeedFactor, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text AS vehicle_id " +
+            		"		FROM " + schemaName + ".states " +
+            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
+            		"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeedFactor " +
+            		"	) vehicleSpeedFactors " +
+            		"WHERE simid = ? " +
+            		"AND vehicle_id = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
         
         try {
             avgRouteLengthQuery = connection.prepareStatement("" +
@@ -304,30 +327,8 @@ public class SQLQueries {
                     "        ) thing " +
                     "WHERE simid = ? " +
                     "GROUP BY timestamp " +
-                    "ORDER BY timestamp ASC ");
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-
-        try {
-            vehicleSpeedFactorQuery = connection.prepareStatement("" +
-            		"SELECT simid, timestamp, vehicleSpeedFactor, vehicle_id " +
-            		"FROM " +
-            		"	(" +
-            		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as vehicleSpeedFactor, (state -> 'snapshot' -> 'vehicle' ->> 'id')::text as vehicle_id " +
-            		"		FROM " + schemaName + ".states " +
-            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
-            		"	UNION " +
-            		"		SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speedFactor')::float as vehicleSpeedFactor, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'id')::text AS vehicle_id " +
-            		"		FROM " + schemaName + ".states " +
-            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
-            		"		GROUP BY simid, vehicle_id, timestamp, vehicleSpeedFactor " +
-            		"	) vehicleSpeedFactors " +
-            		"WHERE simid = ? " +
-            		"AND vehicle_id = ? " +
-            		"ORDER BY simid, vehicle_id, timestamp ASC"
-            		);
+                    "ORDER BY timestamp ASC "
+                    );
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -335,7 +336,7 @@ public class SQLQueries {
         
         try {
             avgSpeedQuery = connection.prepareStatement("" +
-                    "SELECT simid, timestamp, avgSpeed " +
+                    "SELECT timestamp, avgSpeed " +
                     "FROM " +
                     "	( " +
                     "		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " +
@@ -353,7 +354,8 @@ public class SQLQueries {
                     "                GROUP BY simid, timestamp " +
                     "	) avgSpeeds " +
                     "WHERE simid = ? " +
-                    "ORDER BY simid, timestamp ASC");
+                    "ORDER BY timestamp ASC"
+                    );
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -361,7 +363,7 @@ public class SQLQueries {
         
         try {
             avgSpeedFactorQuery = connection.prepareStatement("" +
-            		"SELECT simid, timestamp, avgSpeedFactor " +
+            		"SELECT timestamp, avgSpeedFactor " +
             		"FROM " +
             		"	(" +
             		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as avgSpeedFactor " +
@@ -379,7 +381,7 @@ public class SQLQueries {
             		"                GROUP BY simid, timestamp " +
             		"	) avgspeedFactors " +
             		"WHERE simid = ? " +
-            		"ORDER BY simid, timestamp ASC"
+            		"ORDER BY timestamp ASC"
             		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -388,10 +390,10 @@ public class SQLQueries {
         
         try {
             cumulativeNumberOfArrivedVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT simid, timestamp, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
+            		"SELECT timestamp, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
             		"FROM " + schemaName + ".states " +
             		"WHERE simid = ? " +
-            		"ORDER BY simid, timestamp ASC"
+            		"ORDER BY timestamp ASC"
             		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -400,7 +402,7 @@ public class SQLQueries {
         
         try {
             numberOfTransferredVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT simid, timestamp, numberOfTransferredVehicles " +
+            		"SELECT timestamp, numberOfTransferredVehicles " +
             		"FROM " +
             		"	(" +
             		"	SELECT simid, timestamp, json_array_length(state -> 'snapshot' -> 'vehicleTransfer') AS numberOfTransferredVehicles " +
@@ -416,7 +418,7 @@ public class SQLQueries {
             		"	WHERE (state -> 'snapshot' ->> 'vehicleTransfer') IS NULL " +
             		") numbersOfTransferredVehicles " +
             		"WHERE simid = ? " +
-            		"ORDER BY simid, timestamp ASC"
+            		"ORDER BY timestamp ASC"
             		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -425,10 +427,10 @@ public class SQLQueries {
         
         try {
             numberOfRunningVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT simid, timestamp, (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles " +
+            		"SELECT timestamp, (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles " +
             		"FROM " + schemaName + ".states " +
             		"WHERE simid = ? " +
-            		"ORDER BY simid, timestamp ASC"
+            		"ORDER BY timestamp ASC"
             		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");

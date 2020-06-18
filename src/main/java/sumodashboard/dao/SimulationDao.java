@@ -216,7 +216,7 @@ public enum SimulationDao {
 		sqlQueries.vehicleSpeedQuery.setInt(1, simulation_id);
 		sqlQueries.vehicleSpeedQuery.setString(2, vehicle_id);
 		ResultSet resultSet = sqlQueries.vehicleSpeedQuery.executeQuery();
-		Map<Double, Double> graphPoints = new HashMap<Double, Double>();
+		HashMap<Double, Double> graphPoints = new HashMap<Double, Double>();
 		while (resultSet.next()) {
 			double timeStamp = resultSet.getDouble("timestamp");
 			double speed = resultSet.getDouble("vehicleSpeed");
