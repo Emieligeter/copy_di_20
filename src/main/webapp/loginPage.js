@@ -1,18 +1,30 @@
 
-$("#credentials").submit(function( event ) {
+$("#login").submit(function( event ) {
 	event.preventDefault();
-	var credentials = "inputUsername=" + $("#inputUsername").val().trim() + 
-	"&inputPassword=" + $("#inputPassword").val().trim();
-	var credentials = "inputUsername=Username&inputPassword=Password";
+	clearResponse()
+	var username = $("#login #inputUsername").val().trim();
+	var password = $("#login #inputPassword").val().trim();
+	var credentials = {'username': username,
+ 			 			'password': password}
+	
+	var serverResp = $("#login #server-response");
 	$.ajax({
   		url : 'rest/auth/login',
   		type: 'POST',
-  		contentType: 'application/x-www-form-urlencoded',
-  		data: credentials,
-  	    success : function(response){
+  		contentType: 'application/json',
+  		data: JSON.stringify(credentials),
+  	    success : function(response){ 	    	
   	    	sessionStorage.setItem('token', response);
-  	    	//location.href="dashboard.html";
-  	   }
+  	    	sessionStorage.setItem('credentials',credentials);
+  	    	location.href="dashboard.html";
+  	   },
+		error : function(response) {
+			if(response.status == 403) {
+				$("#loginPage #server-response.error").html("Username or password invalid");
+			} else {
+				$("#loginPage #server-response.error").html("Something went wrong");
+			}
+		}
     });
   });
  
@@ -23,20 +35,27 @@ $("form#createNew").on("input", function() {
 
 $("form#createNew").submit(function( event ) {
 	event.preventDefault();
+	clearResponse();
 	var credentials = 
-			"username=" + $("form#createNew #inputUsername").val().trim() +
-			"&password=" + $("form#createNew #inputPassword").val().trim() +
-			"&email="    + $("form#createNew #inputEmail").val().trim();
+			{"username": $("form#createNew #inputUsername").val().trim(),
+			"password" : $("form#createNew #inputPassword").val().trim(),
+			"email"    : $("form#createNew #inputEmail").val().trim()};
 	$.ajax({
   		url : 'rest/auth/createUser',
   		type: 'POST',
-  		contentType: 'application/x-www-form-urlencoded',
-  		data: credentials,
+  		contentType: 'application/json',
+  		data: JSON.stringify(credentials),
   	    success : function(response){
-  	    	alert(response);
-  	    	$("#server-response").html(response);
-  	    	//location.href="dashboard.html";
+  	    	$("#createPage #server-response.success").html(response);
+  	   },
+  	   error : function(response) {
+  		   $('#createPage #server-response.error').html(response.responseText);
   	   }
     });
   });
+
+function clearResponse(){
+	$("#createPage #server-response.success").html('');
+	$('#createPage #server-response.error').html('');
+}
  

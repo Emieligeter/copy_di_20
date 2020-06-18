@@ -1,5 +1,8 @@
-#server-response {
+#server-response.success {
 	color:green;
+}
+#server-response.error {
+	color:red;
 }
 .form-label-group {
   position: relative;

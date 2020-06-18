@@ -5,13 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SQLQueries {
+	//CRUD
     public PreparedStatement getAllSimulationsQuery;
     public PreparedStatement getSimulationQuery;
     public PreparedStatement removeSimulationQuery;
-    public PreparedStatement avgSpeedQuery;
-    public PreparedStatement vehicleSpeedQuery;
-    public PreparedStatement vehicleListQuery;
-    public PreparedStatement avgRouteLengthQuery;
     public PreparedStatement storeSimulationQuery;
     public PreparedStatement storeStateQuery;
     public PreparedStatement getTagIdQuery;
@@ -20,9 +17,15 @@ public class SQLQueries {
     public PreparedStatement doesTagIdExistQuery;
     public PreparedStatement doesSimIdExistQuery;
     
+    //Graphs
+    public PreparedStatement avgSpeedQuery;
+    public PreparedStatement vehicleSpeedQuery;
+    public PreparedStatement vehicleListQuery;
+    public PreparedStatement avgRouteLengthQuery;
+ 
     //Account queries
     public PreparedStatement createNewUser;
-    public PreparedStatement getSaltForUsername;
+    public PreparedStatement getHashedPass;
 
     public SQLQueries(Connection connection) {
         try {
@@ -206,7 +209,7 @@ public class SQLQueries {
         }
         
         try {
-        	getSaltForUsername = connection.prepareStatement("" 
+        	getHashedPass = connection.prepareStatement("" 
         			+ "SELECT *" 
         			+ "FROM project.account " 
         			+ "WHERE username = ?");  
