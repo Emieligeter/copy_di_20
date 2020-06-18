@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 //Class for storing all SQL queries used in the DAO
 public class SQLQueries {
+
 	//Get all simulations
     public PreparedStatement getAllSimulationsQuery;
     //Get a single simulation by ID
@@ -29,6 +30,7 @@ public class SQLQueries {
     //Check if a simulation id exists
     public PreparedStatement doesSimIdExistQuery;
     
+
     //Get the edge appearance frequency of a specified edge over time
     public PreparedStatement edgeAppearanceFrequencyQuery;
     //Get the number of lane transiting vehicles of a specified lane over time
@@ -62,6 +64,10 @@ public class SQLQueries {
     //Get the edge appearance frequency per edge in all initial routes in a simulation (for pie chart)
     public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
     
+
+    //Account queries
+    public PreparedStatement createNewUser;
+    public PreparedStatement getHashedPass;
 
     public SQLQueries(Connection connection) {
     	final String schemaName = "project";
@@ -477,7 +483,24 @@ public class SQLQueries {
         			"GROUP BY edge");
         } catch (SQLException e) {
         	System.err.println("Couldn't prepare statement: ");
+        	e.printStackTrace();
+        }
+		try {
+        	getHashedPass = connection.prepareStatement("" 
+        			+ "SELECT *" 
+        			+ "FROM project.account " 
+        			+ "WHERE username = ?");  
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
-    }
+        try {
+        	createNewUser = connection.prepareStatement(                   
+        			"INSERT INTO project.account (username, password, email, created_on, last_login)" +
+                    "VALUES(?, ?, ?, ?::date ,?::date)");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();            
+        }
+	}
 }

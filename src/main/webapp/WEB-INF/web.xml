@@ -24,7 +24,7 @@
 
 	<!-- welcome file -->
 	<welcome-file-list>
-		<welcome-file>dashboard.html</welcome-file>
+		<welcome-file>loginPage.html</welcome-file>
 	</welcome-file-list>
 	
 </web-app>

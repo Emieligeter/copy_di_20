@@ -4,7 +4,6 @@
 
 $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
-  	
     var files = $('#uploadFiles')[0];
     var fd = new FormData(files);
   	$.ajax({
