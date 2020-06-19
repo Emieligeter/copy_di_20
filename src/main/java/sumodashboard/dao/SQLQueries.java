@@ -23,8 +23,10 @@ public class SQLQueries {
     public PreparedStatement storeTagQuery;
     //Store a new connection between a simulation and a tag in the database
     public PreparedStatement storeSimTagQuery;
-    //Get all tags
+    //Get all existing tags
     public PreparedStatement getAllTagsQuery;
+    //Remove all tags from a simulation
+    public PreparedStatement removeAllSimulationTagsQuery;
     //Check if a tag id exists
     public PreparedStatement doesTagIdExistQuery;
     //Check if a simulation id exists
@@ -158,6 +160,15 @@ public class SQLQueries {
         try {
             getAllTagsQuery = connection.prepareStatement(
                     "SELECT DISTINCT value AS tags FROM " + schemaName + ".tags");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+        	removeAllSimulationTagsQuery = connection.prepareStatement(
+        			"DELETE FROM " + schemaName + ".simulation_tags " +
+        			"WHERE simid = ?");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();

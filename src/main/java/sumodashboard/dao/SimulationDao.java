@@ -2,7 +2,9 @@ package sumodashboard.dao;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -109,6 +111,7 @@ public enum SimulationDao {
 	}
 	
 	//Updates metadata of specified simulation, with the specified fields of the simulation object
+	//TODO: improve this code
 	public void updateMetadata(int simulation_id, Simulation simulation) throws SQLException, IDNotFound {
 		StringBuilder query = new StringBuilder("UPDATE project.simulations SET ");
 		if (simulation.getName() != null) query.append("name = '" + simulation.getName() + "', ");
@@ -123,6 +126,15 @@ public enum SimulationDao {
 		
 		if (update.executeUpdate() == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
+		}
+		
+		if (simulation.getTags() != null) {			
+			//Remove existing tags
+			sqlQueries.removeAllSimulationTagsQuery.setInt(1, simulation_id);
+			sqlQueries.removeAllSimulationTagsQuery.execute();
+			
+			//Add tags specified
+			MetaDataIO.addTagsToSimulation(simulation_id, simulation.getTags());
 		}
 	}
 	
@@ -339,7 +351,7 @@ public enum SimulationDao {
 	}
 	
 	//Store a simulation in the database
-	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws Exception {
+	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws SQLException, IOException {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
 		sqlQueries.storeSimulationQuery.setString(3, date);
@@ -351,7 +363,7 @@ public enum SimulationDao {
 	}
 	
 	//Store a state file in the database
-	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws Exception {
+	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws SQLException, IOException {
 		sqlQueries.storeStateQuery.setInt(1, simId);
 		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
 		sqlQueries.storeStateQuery.setObject(3, convertFileToPGobject(stateFile));
@@ -396,6 +408,7 @@ public enum SimulationDao {
 		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
 	}
 	
+	//Get all existing tags
 	public List<String> getTags() throws SQLException {
 		ResultSet rs = sqlQueries.getAllTagsQuery.executeQuery();	
 		List<String> tags = new ArrayList<>();
@@ -406,8 +419,14 @@ public enum SimulationDao {
 		return tags;
 	}
 	
+	//Remove all tags from a simulation
+	public void removeAllSimulationTags(int simId) throws SQLException {
+		sqlQueries.removeAllSimulationTagsQuery.setInt(1, simId);
+		sqlQueries.removeAllSimulationTagsQuery.execute();
+	}
+	
 	//Convert an uploaded XML file to a JSON file for storing the the database
-	public PGobject convertFileToPGobject(File file) throws Exception {
+	public PGobject convertFileToPGobject(File file) throws IOException, SQLException {
 		String xmlString = "";
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		String line = null;

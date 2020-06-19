@@ -75,15 +75,16 @@ public class SimulationsResource {
 		HashMap<String, File> files = dto.getFiles();
 		TreeMap<Integer, File> stateFiles = dto.getStateFiles();
 		MetaData meta = MetaDataIO.parseMetadata(files.get("metadata.txt")); //parse metadata into object
-		SimulationDao SimDao = SimulationDao.instance;
+		SimulationDao simDao = SimulationDao.instance;
 		
 		//Generate a random id, if it exists generate a new one
 		int simId = 0;
-		do {simId = MetaDataIO.generateId(5);
-		}while(SimDao.doesSimIdExist(simId)) ;
+		do {
+			simId = MetaDataIO.generateId(5);
+		} while(simDao.doesSimIdExist(simId)) ;
 		 
 		//Store a simulation in 'simulation' table
-		SimDao.storeSimulation(
+		simDao.storeSimulation(
 				simId, meta.getName(), 
 				meta.getDescription(), 
 				meta.getDate(),
@@ -95,24 +96,13 @@ public class SimulationsResource {
 		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
 			Integer timeStamp = sf.getKey();
 			File file = sf.getValue();
-			SimDao.storeState(simId, timeStamp, file);
+			simDao.storeState(simId, timeStamp, file);
 		}
 		
 		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
 		String tags = meta.getTags();
-		for(String tag : tags.split(MetaData.TAGDELIMITER)) {
-			Integer tagId = SimDao.getTagId(tag);
-			System.out.println("tag: " + tag + " , tagId: " + tagId);
-			if(tagId == null) {
-				tagId = 0;
-				do 
-					tagId = MetaDataIO.generateId(4);
-				while(SimDao.doesTagIdExist(tagId));
-				System.out.println("generated tagId: " + tagId);
-				SimDao.storeTag(tagId, tag);
-			} 
-			SimDao.storeSimTag(tagId, simId);
-		}
+		MetaDataIO.addTagsToSimulation(simId, tags);
+		
 		// Delete files after use
 		files.forEach((key, file) -> file.delete());
 		stateFiles.forEach((key, file) -> file.delete());
