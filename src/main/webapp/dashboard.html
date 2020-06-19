@@ -53,13 +53,11 @@
 	<div class="jumbotron text-center" id="topBorder">
   		<h1 class="display-4">Dashboard</h1>
   		<div id="mainPageButtons">
-  			<button id="LogOut" class="btn btn-danger text-left">Log Out</button>
+  			<button id="LogOut" onClick="location.href='loginPage.html'" class="btn btn-danger">Log Out</button> 
   			<button id="toModifList" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
 		</div>
 	</div>
 	<div class="container-fluid" >
-	  <button id="LogOut" onClick="location.href='loginPage.html'" class="btn btn-danger">Log Out</button> 
-
 		<div class="row" style="height:650px">
 			<div id="fileSelect" class="col-3">
 				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
