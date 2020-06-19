@@ -12,6 +12,11 @@ function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
 	updateChart();
+	if (type === "line") {
+		chart.options.scales.xAxes.type = "linear";
+	} else {
+		chart.options.scales = {};
+	}
 }
 
 function setData(newdata) {
@@ -59,10 +64,13 @@ function updateChart() {
 }
 
 function changeGraphData(data, label) {
+	//replace data
 	this.data = JSON.parse(data);
 	chart.data.datasets[0].data = this.data;
+	//replace label
 	this.label = label;
 	chart.data.datasets[0].label = this.label;
+	//make sure the labels set is empty
 	chart.data.labels = [];
 	chart.update();
 }
