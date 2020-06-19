@@ -3,12 +3,11 @@
 //Updates metadata in the database
 $("#modifyMetadata").submit(function(event) {
 	event.preventDefault();
-	console.log("I am here");
     var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + getSelectedID();
     var newMetadata = document.getElementById("modifyMetadata");
     //Body of the PUT request
-    var body = "{\", \"name\": \"" + newMetadata.elements[0].value + 
-    "\"date\": \"" + newMetadata.elements[1].value + 
+    var body = "{\"name\": \"" + newMetadata.elements[0].value + 
+    "\", \"date\": \"" + newMetadata.elements[1].value + 
     "\", \"description\": \"" + newMetadata.elements[3].value + 
     "\", \"researcher\": \"" + newMetadata.elements[2].value + "\"}";
     var xhr = new XMLHttpRequest();
