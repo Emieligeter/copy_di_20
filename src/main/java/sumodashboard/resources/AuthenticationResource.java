@@ -1,11 +1,20 @@
 package sumodashboard.resources;
 
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
+import javax.annotation.Priority;
 import javax.security.sasl.AuthenticationException;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.*;
+import javax.ws.rs.ext.Provider;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
@@ -69,6 +78,8 @@ public class AuthenticationResource {
 		if(!storeData) Response.ok("User created but not stored").build();
 		return Response.ok("User created succesfully").build();
 	}
+	
+	
 	
 
 }

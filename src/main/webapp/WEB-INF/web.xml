@@ -16,6 +16,10 @@
 			<param-name>jersey.config.server.provider.packages</param-name>
 			<param-value>sumodashboard.resources</param-value>
 		</init-param>
+		<init-param>
+		    <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+		    <param-value>sumodashboard.resources.AuthenticationResource.AuthenticationFilter</param-value>
+		</init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>javax.ws.rs.core.Application</servlet-name>
