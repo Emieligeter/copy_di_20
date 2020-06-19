@@ -1,4 +1,5 @@
-To run our system locally, start a Tomcat v8.5 server and go to localhost:8080/sumo-dashboard
+To run our system locally, first you need to install lombok: https://projectlombok.org/setup/eclipse
+Then start a Tomcat v8.5 server and go to localhost:8080/sumo-dashboard
 
 It's deployed on http://env-di-team1.paas.hosted-by-previder.com/sumo-dashboard/
 Database: https://bronto.ewi.utwente.nl/phppgadmin/
