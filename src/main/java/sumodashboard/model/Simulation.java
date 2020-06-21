@@ -1,141 +1,30 @@
 package sumodashboard.model;
 
-
-import java.util.ArrayList;
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @XmlRootElement
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Simulation {
 	private int ID;
 	private String name;
 	private String date;
 	private String description;
 	private String researcher;
-	private Configuration configuration;
-	private ArrayList<State> states;
-	private ArrayList<String> tags;
+	private String tags;
 	
-	private String net;
-	private String routes;
-	private String config;
-	
-	public Simulation() {
-		
-	}
-	
-	public Simulation(int ID, String name, String date, String description, String researcher) {
-		super();
-		this.ID = ID;
-		this.name = name;
-		this.date = date;
-		this.description = description;
-		this.researcher = researcher;
-	}
-	
-	public Simulation(int ID, String name, String date, String description, String researcher, String net, String routes, String config) {
-		super();
-		this.ID = ID;
-		this.name = name;
-		this.date = date;
-		this.description = description;
-		this.researcher = researcher;
-		this.net = net;
-		this.routes = routes;
-		this.config = config;
-	}
-	
-	public Simulation(String metadataPath, String netPath, String routesPath, String configPath) {
-		
-	}
-
-	public int getID() {
-		return ID;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Configuration getConfiguration() {
-		return configuration;
-	}
-
-	public ArrayList<State> getStates() {
-		return states;
-	}
-	
-	public ArrayList<String> getTags() {
-		return tags;
-	}
-
-	public void setID(int ID) {
-		this.ID = ID;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
-
-	public void setStates(ArrayList<State> states) {
-		this.states = states;
-	}
-	
-	public void setTags(ArrayList<String> tags) {
-		this.tags = tags;
-	}
-
-	public String getNet() {
-		return net;
-	}
-
-	public void setNet(String net) {
-		this.net = net;
-	}
-
-	public String getRoutes() {
-		return routes;
-	}
-
-	public void setRoutes(String routes) {
-		this.routes = routes;
-	}
-
-	public String getConfig() {
-		return config;
-	}
-
-	public void setConfig(String config) {
-		this.config = config;
-	}
-	
-	public String getResearcher() {
-		return researcher;
-	}
-	
-	public void setResearcher(String researcher) {
-		this.researcher = researcher;
-	}
+	@ToString.Exclude private String net;
+	@ToString.Exclude private String routes;
+	@ToString.Exclude private String config;
 }

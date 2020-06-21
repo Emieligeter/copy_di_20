@@ -12,6 +12,11 @@ function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
 	updateChart();
+	if (type === "line") {
+		chart.options.scales.xAxes.type = "linear";
+	} else {
+		chart.options.scales = {};
+	}
 }
 
 function setData(newdata) {
@@ -21,7 +26,6 @@ function setData(newdata) {
 
 
 function updateChart() {
-	//console.log("We're going to update the chart to type " + chartType);
 	if (this.chart !== undefined) {
 		this.chart.destroy();
 	}
@@ -57,14 +61,25 @@ function updateChart() {
 		}
 	});
 	}
-	//console.log("done.");
 }
 
-function changeData(data, label) {
-	//chart.data.datasets[0].data.pop();
+function changeGraphData(data, label) {
+	//replace data
+	this.data = JSON.parse(data);
+	chart.data.datasets[0].data = this.data;
+	//replace label
+	this.label = label;
+	chart.data.datasets[0].label = this.label;
+	//make sure the labels set is empty
+	chart.data.labels = [];
+	chart.update();
+}
+
+function changeChartData(data, labels, label) {
 	this.data = JSON.parse(data);
 	chart.data.datasets[0].data = this.data;
 	this.label = label;
 	chart.data.datasets[0].label = this.label;
+	chart.data.labels = JSON.parse(labels);
 	chart.update();
 }

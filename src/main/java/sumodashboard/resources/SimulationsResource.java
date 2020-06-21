@@ -2,21 +2,13 @@ package sumodashboard.resources;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Paths;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 
-import javax.json.Json;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,30 +20,29 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.glassfish.jersey.media.multipart.BodyPart;
-import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import sumodashboard.dao.ParseXML;
+import sumodashboard.dao.MetaDataIO;
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.model.MetaData;
-import sumodashboard.model.Simulation;
 import sumodashboard.model.SumoFilesDTO;
 import sumodashboard.services.FileReadService;
 
+//Class responsible for all requests to /rest/simulations
 @Path("/simulations")
 public class SimulationsResource {
 	@Context
 	UriInfo uriInfo;
 	@Context
 	Request request;
-
+	
+	//Get metadata of all simulations
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
 		try {			
-			List<Simulation> simulations = SimulationDao.instance.getSimulations();
+			List<MetaData> simulations = SimulationDao.instance.getSimulations();
 			
 			Response response = Response.status(200).entity(simulations).build();
 			return response;
@@ -61,19 +52,20 @@ public class SimulationsResource {
 			return response;
 		}
 	}
-
 	
-	@POST
-	@Produces(MediaType.APPLICATION_XML)
-	@Consumes(MediaType.APPLICATION_XML)
-	public void createSimulation(Simulation simulation) {
-		//SimulationDao.instance.getModel().put(simulation.getID(), simulation);
-	}
-
+	/**
+	 * Receives an {@link InputStream} and {@link FormDataBodyPart} and returns a {@link Response}. 
+	 * The {@link InputStream} is parsed to {@link File}s and the files are stored in the database through the {@link SimulationDao}.
+	 * The files are deleted here after all reading has been done.
+	 * @param {@link InputStream} 
+	 * @param {@link FormDataBodyPart} 
+	 * @return {@link Response} Response
+	 * @throws {@link Exception}
+	 */
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadZippedFile(@FormDataParam("uploadFile") InputStream inputStream,
+	public Response uploadFiles(@FormDataParam("uploadFile") InputStream inputStream,
 			@FormDataParam("uploadFile") FormDataBodyPart bodyPart) throws Exception {
 
 		//Read the inputstream and make a DTO object
@@ -82,16 +74,17 @@ public class SimulationsResource {
 
 		HashMap<String, File> files = dto.getFiles();
 		TreeMap<Integer, File> stateFiles = dto.getStateFiles();
-		MetaData meta = ParseXML.parseMetadata(files.get("metadata.txt")); //parse metadata into object
-		SimulationDao SimDao = SimulationDao.instance;
+		MetaData meta = MetaDataIO.parseMetadata(files.get("metadata.txt")); //parse metadata into object
+		SimulationDao simDao = SimulationDao.instance;
 		
 		//Generate a random id, if it exists generate a new one
 		int simId = 0;
-		do {simId = SimDao.generateId(5);
-		}while(SimDao.doesSimIdExist(simId)) ;
+		do {
+			simId = MetaDataIO.generateId(5);
+		} while(simDao.doesSimIdExist(simId)) ;
 		 
 		//Store a simulation in 'simulation' table
-		SimDao.storeSimulation(
+		simDao.storeSimulation(
 				simId, meta.getName(), 
 				meta.getDescription(), 
 				meta.getDate(),
@@ -103,23 +96,12 @@ public class SimulationsResource {
 		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
 			Integer timeStamp = sf.getKey();
 			File file = sf.getValue();
-			SimDao.storeState(simId, timeStamp, file);
+			simDao.storeState(simId, timeStamp, file);
 		}
 		
 		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
-		for(String tag : meta.getTags()) {
-			Integer tagId = SimDao.getTagId(tag);
-			System.out.println("tag: " + tag + " , tagId: " + tagId);
-			if(tagId == null) {
-				tagId = 0;
-				do 
-					tagId = SimDao.generateId(4);
-				while(SimDao.doesTagIdExist(tagId));
-				System.out.println("generated tagId: " + tagId);
-				SimDao.storeTag(tagId, tag);
-			} 
-			SimDao.storeSimTag(tagId, simId);
-		}
+		String tags = meta.getTags();
+		MetaDataIO.addTagsToSimulation(simId, tags);
 		
 		// Delete files after use
 		files.forEach((key, file) -> file.delete());
@@ -128,6 +110,7 @@ public class SimulationsResource {
 		return Response.ok("Files uploaded successfully").build();
 	}
 	
+	//Redirect all requests to /rest/simulations/id/{id}
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, id);

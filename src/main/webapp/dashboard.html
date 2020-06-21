@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+<link rel="shortcut icon" href="favicon.ico" >
 <!-- Bootstrap CSS -->
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -32,30 +33,33 @@
 		<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
 
 			
-
+		<script type="text/javascript" src="plotNames.js"></script>
 		<script type="text/javascript" src="chartFunctions.js"></script>
 		<script type="text/javascript" src="selectVariablesFunctions.js"></script>
 		<script type="text/javascript" src="reportFunctions.js"></script>
 		<script type="text/javascript" src="dataRequests.js"></script>
 		<script type="text/javascript" src="sumoList.js"></script>
 		
+		
 		<script>
 		window.onload=loadFstDropDownOptions();
-		window.onload=loadSecDropDownOptions();
 		window.onload = $('#editor').wysiwyg();
 
 		</script>
 </head>
 
 <body onload="loadFiles()">
+
 	<div class="jumbotron text-center" id="topBorder">
   		<h1 class="display-4">Dashboard</h1>
+  		<div id="mainPageButtons">
+  			<button id="LogOut" onClick="location.href='loginPage.html'" class="btn btn-danger">Log Out</button> 
+  			<button id="toModifList" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
+		</div>
 	</div>
 	<div class="container-fluid" >
-	  <button id="LogOut" class="btn btn-danger">Log Out</button> 
 		<div class="row" style="height:650px">
 			<div id="fileSelect" class="col-3">
-				<button id=toSimList class="btn btn-info" onclick="location.href='modPage.html'">Edit Files</button>
 				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
 					<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			</div>
@@ -110,7 +114,7 @@
 	     			</div>
 	     			<div id="enterData" class="row">
 	   					<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1">
-						<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Update</button>		   			
+						<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Submit</button>		   			
 						<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Cancel</button>		   			
 					</div>
 						 
@@ -120,7 +124,7 @@
 			<iframe id="textFrame" src="textEditor.html" style="border:none;height:100%;width:100%;position:absolute;margin-top:5px" ></iframe>
 			</div>
 			</div>
-			
+
 			</div>
 		</div>
 

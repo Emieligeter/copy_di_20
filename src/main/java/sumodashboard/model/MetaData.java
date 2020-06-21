@@ -1,53 +1,28 @@
 package sumodashboard.model;
 
-import java.util.ArrayList;
-import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@XmlRootElement
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class MetaData {
+	public static final String TAGDELIMITER = ", ";
 	
-	private String ID;
+	private int ID;
 	private String name;
-	private Date date;
+	private String date;
 	private String description;
-	private ArrayList<String> tags;
-	
-	public String getID() {
-		return ID;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public ArrayList<String> getTags() {
-		return tags;
-	}
-
-	public void setID(String ID) {
-		this.ID = ID;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setTags(ArrayList<String> tags) {
-		this.tags = tags;
-	}
+	private String researcher;
+	private String tags;
 }

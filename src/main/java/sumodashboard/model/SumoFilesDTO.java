@@ -10,23 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@AllArgsConstructor //Makes a constructor with all variables as parameters
 public class SumoFilesDTO {
 	private HashMap<String, File> files;
 	private TreeMap<Integer, File> stateFiles;
-
-
-	public SumoFilesDTO(HashMap<String, File> files2, TreeMap<Integer, File> stateFiles2) {
-		this.files = files2;
-		this.stateFiles = stateFiles2;
-	}
-
-	public HashMap<String, File> getFiles() {
-		return this.files;
-	}
-	
-	public TreeMap<Integer, File> getStateFiles() {
-		return this.stateFiles;
-	}
 
 }
