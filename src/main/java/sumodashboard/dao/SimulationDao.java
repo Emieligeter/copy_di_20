@@ -54,17 +54,17 @@ public enum SimulationDao {
 	
 	//Start the connection to the database
 	private void startDBConnection() {
-		new dblogin();
-//		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
-//		final String username = "dab_di19202b_333";
-//		final String password = "zyU3/uAIyZgigF+A";
-//
-//		try {
-//			connection = DriverManager.getConnection(url, username, password);
-//		} catch (SQLException e) {
-//			System.err.println("SQL Exception when starting connection to database:");
-//			System.err.println(e.getLocalizedMessage());
-//		}
+//		new dblogin();
+		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
+		final String username = "dab_di19202b_333";
+		final String password = "zyU3/uAIyZgigF+A";
+
+		try {
+			connection = DriverManager.getConnection(url, username, password);
+		} catch (SQLException e) {
+			System.err.println("SQL Exception when starting connection to database:");
+			System.err.println(e.getLocalizedMessage());
+		}
 	}
 	
 	//Get a List with all simulation metadata in the database
