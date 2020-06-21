@@ -9,9 +9,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+
 @WebServlet ("/dashboard.html")
 public class dblogin extends HttpServlet {
-    private Connection connection;
+     Connection connection;
+     
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -25,7 +27,10 @@ public class dblogin extends HttpServlet {
             System.err.println("SQL Exception when starting connection to database:");
             System.err.println(e.getLocalizedMessage());
         }
+
+
     }
+
 
 
 }
