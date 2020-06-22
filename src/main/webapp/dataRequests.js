@@ -112,6 +112,7 @@ function openXhrGETRequest(xhr, url, wait) {
 	xhr.open("GET", url, wait);
 	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+    xhr.setRequestHeader('Authorization', 'Bearer 12345');
 }
 
 function getDataWithParam(dataType, path, paramName, paramID) {
