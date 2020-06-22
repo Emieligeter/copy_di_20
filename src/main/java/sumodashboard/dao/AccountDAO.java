@@ -37,7 +37,7 @@ public class  AccountDAO {
 	
 	public String getHashedPassword(String username)  throws SQLException{
 		sqlQueries.getHashedPass.setString(1, username);
-		ResultSet rs =  sqlQueries.getHashedPass.executeQuery();
+		ResultSet rs = sqlQueries.getHashedPass.executeQuery();
 		rs.next();
 		return rs.getString("password");
 	}

@@ -2,6 +2,7 @@ package sumodashboard.resources;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.http.HttpHeaders;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -36,11 +38,15 @@ public class SimulationsResource {
 	UriInfo uriInfo;
 	@Context
 	Request request;
+	@Context
+	ContainerRequestContext requestContext;
 	
 	//Get metadata of all simulations
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		
 		try {			
 			List<MetaData> simulations = SimulationDao.instance.getSimulations();
 			
@@ -67,6 +73,7 @@ public class SimulationsResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFiles(@FormDataParam("uploadFile") InputStream inputStream,
 			@FormDataParam("uploadFile") FormDataBodyPart bodyPart) throws Exception {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
 
 		//Read the inputstream and make a DTO object
 		SumoFilesDTO dto = FileReadService.readInputStream(inputStream, bodyPart);
@@ -113,6 +120,6 @@ public class SimulationsResource {
 	//Redirect all requests to /rest/simulations/id/{id}
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
-		return new SimulationResource(uriInfo, request, id);
+		return new SimulationResource(uriInfo, request, requestContext, id);
 	}
 }
