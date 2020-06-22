@@ -25,6 +25,7 @@ $("#modifyMetadata").submit(function(event) {
     //PUT request to update the metadata in the database
     xhr.open("PUT", url);
     xhr.setRequestHeader('Content-type','application/json');
+    xhr.setRequestHeader('Authorization','Bearer 12345');
     xhr.onload = function () {
     	$('#submitDataModal').modal('show');
     }
@@ -33,16 +34,25 @@ $("#modifyMetadata").submit(function(event) {
 
 //When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
-	var url = "/sumo-dashboard/rest/simulations/id/" + id;
-	$.get(url, function(data, status){
-		$("#newTitle").attr("value", data.name);
-		$("#newDate").attr("value", data.date);
-		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
-		$("#newResearcher").attr("value", researcher);
-		$("#newDescription").html(data.description);
-		processTags(data.tags);
-	});
-	
+	$.ajax({
+  		url : '/sumo-dashboard/rest/simulations/id/' + id,
+  		type: 'GET',
+  	    headers: {
+  	    	"Authorization": "Bearer 12345"
+		},
+  	    success : function(data){
+  	    	$("#newTitle").attr("value", data.name);
+  			$("#newDate").attr("value", data.date);
+  			var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
+  			$("#newResearcher").attr("value", researcher);
+  			$("#newDescription").html(data.description);
+  			processTags(data.tags);
+  	    },
+  		error : function(response){
+  			alert("Error occured when receiving simulation, code: " + response.status);
+			console.error("Load simulation response:\n" + JSON.stringify(response));
+  	    }
+    });	
 }
 
 //Displays the tags of a simulation
@@ -63,12 +73,20 @@ function processTags(tags) {
 $("#deleteSimButton").click(function() {
 	event.preventDefault(); // prevent default action
 	var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
-	console.log(url);
 	$.ajax({
 		url: url,
 		type: "DELETE",
+		headers: {
+  	    	"Authorization": "Bearer 12345"
+		},
 		success: function(){
 			location.reload();
-		}
+			//document.getElementById("deletionModal").setAttribute("aria-hidden", true);
+			//alert("Deleted succesfully");
+		},
+  		error : function(response){
+  			alert("Error occured when deleting simulation, code: " + response.status);
+			console.error("Delete simulation response:\n" + JSON.stringify(response));
+  	    }
 	});
 })
