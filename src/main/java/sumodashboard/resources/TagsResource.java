@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -22,11 +23,15 @@ public class TagsResource {
 	UriInfo uriInfo;
 	@Context
 	Request request;
+	@Context
+	ContainerRequestContext requestContext;
 	
 	//Get metadata of all simulations
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTags() {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		
 		try {			
 			List<String> tags = SimulationDao.instance.getTags();
 			

@@ -17,6 +17,9 @@ import sumodashboard.model.Credentials;
 
 @Path("/auth")
 public class AuthenticationResource {
+	@Context
+	ContainerRequestContext requestContext;
+	
 	private boolean storeData = true;
 	private AccountDAO accountDAO = new AccountDAO();
 	private Argon2 argon2 = Argon2Factory.create(Argon2Types.ARGON2id);
@@ -72,6 +75,8 @@ public class AuthenticationResource {
 	@Path("/createUser")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createNewUser(Account acc) throws SQLException {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		
 		String username = acc.getUsername();
 		String password = acc.getPassword();
 		String email = acc.getEmail();
