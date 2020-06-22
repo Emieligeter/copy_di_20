@@ -6,13 +6,15 @@ import java.sql.SQLException;
 
 //Class for storing all SQL queries used in the DAO
 public class SQLQueries {
-
+	
 	//Get all simulations
     public PreparedStatement getAllSimulationsQuery;
     //Get a single simulation by ID
     public PreparedStatement getSimulationQuery;
     //Remove a simulation by ID
     public PreparedStatement removeSimulationQuery;
+    //Update simulation metadata
+    public PreparedStatement updateMetadataQuery;
     //Store a new simulation in the database
     public PreparedStatement storeSimulationQuery;
     //Store a new state in the database
@@ -106,6 +108,19 @@ public class SQLQueries {
                     + "WHERE simid = ?; "
                     + "DELETE FROM " + schemaName + ".simulations "
                     + "WHERE simid = ?; ");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+        	updateMetadataQuery = connection.prepareStatement(
+        			"UPDATE " + schemaName + ".simulations SET " +
+	        			"name = coalesce(?, name), " +
+	        			"date = coalesce(TO_DATE(?, 'YYYY-MM-DD'), date), " +
+	        			"description = coalesce(?, description), " +
+	        			"researcher = coalesce(?, researcher) " +
+        			"WHERE simid = ?");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();

@@ -111,20 +111,14 @@ public enum SimulationDao {
 	}
 	
 	//Updates metadata of specified simulation, with the specified fields of the simulation object
-	//TODO: improve this code
 	public void updateMetadata(int simulation_id, Simulation simulation) throws SQLException, IDNotFound {
-		StringBuilder query = new StringBuilder("UPDATE project.simulations SET ");
-		if (simulation.getName() != null) query.append("name = '" + simulation.getName() + "', ");
-		if (simulation.getDate() != null) query.append("date = '" + simulation.getDate() + "', ");
-		if (simulation.getDescription() != null) query.append("description = '" + simulation.getDescription() + "', ");
-		if (simulation.getResearcher() != null) query.append("researcher = '" + simulation.getResearcher() + "', ");
-		query.delete(query.length()-2, query.length());
-		query.append(" WHERE simid = ?");
+		sqlQueries.updateMetadataQuery.setString(1, simulation.getName());
+		sqlQueries.updateMetadataQuery.setString(2, simulation.getDate());
+		sqlQueries.updateMetadataQuery.setString(3, simulation.getDescription());
+		sqlQueries.updateMetadataQuery.setString(4, simulation.getResearcher());
+		sqlQueries.updateMetadataQuery.setInt(5, simulation_id);
 		
-		PreparedStatement update = connection.prepareStatement(query.toString());
-		update.setInt(1, simulation_id);
-		
-		if (update.executeUpdate() == 0) {
+		if (sqlQueries.updateMetadataQuery.executeUpdate() == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
 		}
 		
@@ -139,19 +133,19 @@ public enum SimulationDao {
 	}
 	
 	//Get a list of datapoints for the edge appearence frequency, over time. For a specified simulation and edge id.
-		public Map<Double, Double> getEdgeAppearenceFrequency(int simulation_id, String edge_id) throws SQLException, IDNotFound {
-			if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-			sqlQueries.edgeAppearanceFrequencyQuery.setInt(2, simulation_id);
-			sqlQueries.edgeAppearanceFrequencyQuery.setString(1, edge_id);
-			ResultSet resultSet = sqlQueries.edgeAppearanceFrequencyQuery.executeQuery();
-			Map<Double, Double> graphPoints = new HashMap<Double, Double>();
-			while (resultSet.next()) {
-				double timeStamp = resultSet.getDouble("timestamp");
-				double number = resultSet.getDouble("edgeFrequency");
-				graphPoints.put(timeStamp, number);
-			}
-			return graphPoints;
+	public Map<Double, Double> getEdgeAppearenceFrequency(int simulation_id, String edge_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.edgeAppearanceFrequencyQuery.setInt(2, simulation_id);
+		sqlQueries.edgeAppearanceFrequencyQuery.setString(1, edge_id);
+		ResultSet resultSet = sqlQueries.edgeAppearanceFrequencyQuery.executeQuery();
+		Map<Double, Double> graphPoints = new HashMap<Double, Double>();
+		while (resultSet.next()) {
+			double timeStamp = resultSet.getDouble("timestamp");
+			double number = resultSet.getDouble("edgeFrequency");
+			graphPoints.put(timeStamp, number);
 		}
+		return graphPoints;
+	}
 	
 	//Get a list of all edges for a specified simulation.
 	public List<String> getEdgeList(int simulation_id) throws IDNotFound, SQLException {
