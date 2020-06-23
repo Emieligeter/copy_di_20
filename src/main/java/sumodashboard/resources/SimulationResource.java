@@ -21,7 +21,9 @@ import sumodashboard.dao.SimulationDao;
 import sumodashboard.dao.SimulationDao.IDNotFound;
 import sumodashboard.model.Simulation;
 
-//Class responsible for handling all requests to /rest/simulations/id/{id}
+/**
+ * Class responsible for handling all requests to /rest/simulations/id/{id}
+ */
 public class SimulationResource {
 	@Context
 	UriInfo uriInfo;
@@ -38,7 +40,10 @@ public class SimulationResource {
 		this.ID = ID;
 	}
 	
-	//Get all data for a simulation
+	/**
+	 * Get all data for a specified simulation
+	 * @return response
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulation() {	
@@ -62,6 +67,11 @@ public class SimulationResource {
 		}
 	}
 	
+	/**
+	 * Update the simulation metadata
+	 * @param simulation a simulation with the new data
+	 * @return response
+	 */
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -80,7 +90,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//Delete a simulation
+	/**
+	 * Delete a simulation
+	 * @return response
+	 */
 	@DELETE
 	public Response deleteSimulation() {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
@@ -97,7 +110,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//Get the edge appearance frequency over time
+	/**
+	 * Get the edge appearance frequency over time
+	 * @return response
+	 */
 	@GET
 	@Path("/edgefrequency")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -118,7 +134,10 @@ public class SimulationResource {
 		}	
 	}
 	
-	//get the number of lane transiting vehicles over time
+	/**
+	 * Get the number of lane transiting vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/lanetransitingvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -139,7 +158,10 @@ public class SimulationResource {
 		}	
 	}
 	
-	//get the route length for a specified vehicle over time
+	/**
+	 * Get the route length for a specified vehicle over time
+	 * @return response
+	 */
 	@GET
 	@Path("/vehicleroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -160,7 +182,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the speed for a specified vehicle over time
+	/**
+	 * Get the speed for a specified vehicle over time
+	 * @return response
+	 */
 	@GET
 	@Path("/vehiclespeed")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -181,7 +206,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the speed factor for a specified vehicle over time
+	/**
+	 * Get the speed factor for a specified vehicle over time
+	 * @return response
+	 */
 	@GET
 	@Path("/vehiclespeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -202,7 +230,10 @@ public class SimulationResource {
 		}	
 	}
 	
-	//get the average route length of all vehicles over time
+	/**
+	 * Get the average route length of all vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/avgroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -221,7 +252,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the average speed of all vehicles over time
+	/**
+	 * Get the average speed of all vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/avgspeed")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -240,7 +274,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the average speed factor of all vehicles over time
+	/**
+	 * Get the average speed factor of all vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/avgspeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -259,7 +296,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the cumulative number of arrived vehicles over time
+	/**
+	 * Get the cumulative number of arrived vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/arrivedvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -276,7 +316,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the number of transferred vehicles over time
+	/**
+	 * Get the number of transferred vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/transferredvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -293,7 +336,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get the number of running vehicles over time
+	/**
+	 * Get the number of running vehicles over time
+	 * @return response
+	 */
 	@GET
 	@Path("/runningvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -310,7 +356,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get a list of all edges that appear in a route in a specified simulation
+	/**
+	 * Get a list of all edges that appear in a route in a specified simulation
+	 * @return response
+	 */
 	@GET
 	@Path("/edgelist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -328,7 +377,10 @@ public class SimulationResource {
 			return Response.status(500).entity(errorMsg).build();
 		}	}
 	
-	//get a list of all lanes that appear in a simulation
+	/**
+	 * Get a list of all lanes that appear in a simulation
+	 * @return response
+	 */
 	@GET
 	@Path("/lanelist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -347,7 +399,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//get a list of all vehicles that appear in a simulation
+	/**
+	 * Get a list of all vehicles that appear in a simulation
+	 * @return response
+	 */
 	@GET
 	@Path("/vehiclelist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -366,7 +421,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//Get information about all edges: how often they appear in the initial routes
+	/**
+	 * Get information about all edges: how often they appear in the initial routes
+	 * @return response
+	 */
 	@GET
 	@Path("/edgefrequencyinitial")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -385,7 +443,10 @@ public class SimulationResource {
 		}
 	}
 	
-	//Get information about all edges: how often they appear in the initial routes
+	/**
+	 * Get information about all vehicles: length of their initial routes
+	 * @return response
+	 */
 	@GET
 	@Path("/routelengthinitial")
 	@Produces(MediaType.APPLICATION_JSON)

@@ -16,7 +16,9 @@ import javax.ws.rs.core.UriInfo;
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.model.MetaData;
 
-//Class responsible for all requests to /rest/tags
+/**
+ * Class responsible for all requests to /rest/tags
+ */
 @Path("/tags")
 public class TagsResource {
 	@Context
@@ -26,7 +28,10 @@ public class TagsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
-	//Get metadata of all simulations
+	/**
+	 * Get metadata of all simulations
+	 * @return response
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTags() {

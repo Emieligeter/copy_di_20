@@ -31,7 +31,9 @@ import sumodashboard.model.MetaData;
 import sumodashboard.model.SumoFilesDTO;
 import sumodashboard.services.FileReadService;
 
-//Class responsible for all requests to /rest/simulations
+/**
+ * Class responsible for all requests to /rest/simulations
+ */
 @Path("/simulations")
 public class SimulationsResource {
 	@Context
@@ -41,7 +43,10 @@ public class SimulationsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
-	//Get metadata of all simulations
+	/**
+	 * Get metadata of all simulations
+	 * @return Response
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
@@ -117,7 +122,11 @@ public class SimulationsResource {
 		return Response.ok("Files uploaded successfully").build();
 	}
 	
-	//Redirect all requests to /rest/simulations/id/{id}
+	/**
+	 * Redirect all requests to /rest/simulations/id/{id}
+	 * @param id simulation id given in the url
+	 * @return instance of simulationResource
+	 */
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, requestContext, id);

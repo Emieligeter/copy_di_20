@@ -4,74 +4,77 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-//Class for storing all SQL queries used in the DAO
+/**
+ * Class for storing all SQL queries used in the DAO as prepared statements
+ */
 public class SQLQueries {
 	
-	//Get all simulations
+	/**Get all simulations*/
     public PreparedStatement getAllSimulationsQuery;
-    //Get a single simulation by ID
+    /**Get a single simulation by ID*/
     public PreparedStatement getSimulationQuery;
-    //Remove a simulation by ID
+    /**Remove a simulation by ID*/
     public PreparedStatement removeSimulationQuery;
-    //Update simulation metadata
+    /**Update simulation metadata*/
     public PreparedStatement updateMetadataQuery;
-    //Store a new simulation in the database
+    /**Store a new simulation in the database*/
     public PreparedStatement storeSimulationQuery;
-    //Store a new state in the database
+    /**Store a new state in the database*/
     public PreparedStatement storeStateQuery;
-    //Get the id of a given tag
+    /**Get the id of a given tag*/
     public PreparedStatement getTagIdQuery;
-    //Store a new tag in the database
+    /**Store a new tag in the database*/
     public PreparedStatement storeTagQuery;
-    //Store a new connection between a simulation and a tag in the database
+    /**Store a new connection between a simulation and a tag in the database*/
     public PreparedStatement storeSimTagQuery;
-    //Get all existing tags
+    /**Get all existing tags*/
     public PreparedStatement getAllTagsQuery;
-    //Remove all tags from a simulation
+    /**Remove all tags from a simulation*/
     public PreparedStatement removeAllSimulationTagsQuery;
-    //Check if a tag id exists
+    /**Check if a tag id exists*/
     public PreparedStatement doesTagIdExistQuery;
-    //Check if a simulation id exists
+    /**Check if a simulation id exists*/
     public PreparedStatement doesSimIdExistQuery;
     
 
-    //Get the edge appearance frequency of a specified edge over time
+    /**Get the edge appearance frequency of a specified edge over time*/
     public PreparedStatement edgeAppearanceFrequencyQuery;
-    //Get the number of lane transiting vehicles of a specified lane over time
+    /**Get the number of lane transiting vehicles of a specified lane over time*/
     public PreparedStatement numberOfLaneTransitingVehiclesQuery;
-    //Get the route length of a specified vehicle over time
+    /**Get the route length of a specified vehicle over time*/
     public PreparedStatement vehicleRouteLengthQuery;
-    //Get the speed of a specified vehicle over time
+    /**Get the speed of a specified vehicle over time*/
     public PreparedStatement vehicleSpeedQuery;
-    //Get the speed factor of specified vehicle over time
+    /**Get the speed factor of specified vehicle over time*/
     public PreparedStatement vehicleSpeedFactorQuery;
-    //Get the average route length of all vehicles over time
+    /**Get the average route length of all vehicles over time*/
     public PreparedStatement avgRouteLengthQuery;
-    //Get the average speed of all vehicles over time
+    /**Get the average speed of all vehicles over time*/
     public PreparedStatement avgSpeedQuery;
-    //Get the average speed factor of all vehicles over time
+    /**Get the average speed factor of all vehicles over time*/
     public PreparedStatement avgSpeedFactorQuery;
-    //Get the cumulative number of arrived vehicles over time
+    /**Get the cumulative number of arrived vehicles over time*/
     public PreparedStatement cumulativeNumberOfArrivedVehiclesQuery;
-    //Get the number of transferred vehicles over time
+    /**Get the number of transferred vehicles over time*/
     public PreparedStatement numberOfTransferredVehiclesQuery;
-    //Get the number of running vehicles over time
+    /**Get the number of running vehicles over time*/
     public PreparedStatement numberOfRunningVehiclesQuery;
     
-    //Get a list of all vehicles in a specified simulation
+    /**Get a list of all vehicles in a specified simulation*/
     public PreparedStatement vehicleListQuery;
-    //Get a list of all edges in a specified simulation
+    /**Get a list of all edges in a specified simulation*/
     public PreparedStatement edgeListQuery;
-    //Get a list of all lanes in a specified simulation
+    /**Get a list of all lanes in a specified simulation*/
     public PreparedStatement laneListQuery;
     
-    //Get the edge appearance frequency per edge in all initial routes in a simulation (for pie and bar chart)
+    /**Get the edge appearance frequency per edge in all initial routes in a simulation (for pie and bar chart)*/
     public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
-    //Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)
+    /**Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)*/
     public PreparedStatement initialRouteLengthPerVehicleQuery;
 
-    //Account queries
+    /**Account queries: create new user*/
     public PreparedStatement createNewUser;
+    /**Account queries: get hashed password*/
     public PreparedStatement getHashedPass;
 
     public SQLQueries(Connection connection) {
