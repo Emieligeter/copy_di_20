@@ -59,6 +59,8 @@ function loadTags() {
   		error : function(response){
   			alert("Error occured when receiving tags, status: " + response.status);
 			console.error("Load tags response:\n" + JSON.stringify(response));
+  			if(response.status == 401) location.href="loginPage.html"
+
   	    }
     });
 }

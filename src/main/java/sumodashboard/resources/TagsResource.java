@@ -30,7 +30,7 @@ public class TagsResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTags() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
 			List<String> tags = SimulationDao.instance.getTags();

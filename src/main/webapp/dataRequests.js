@@ -36,6 +36,7 @@ function dataSwitch(type) {
 
 }
 
+
 function dataSndSwitch(paramID) {
 	var element = document.getElementById("first-choice")
 	dataType = element.options[element.selectedIndex].value;

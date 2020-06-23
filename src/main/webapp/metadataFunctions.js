@@ -51,7 +51,9 @@ function fileClick(id) {
   		error : function(response){
   			alert("Error occured when receiving simulation, code: " + response.status);
 			console.error("Load simulation response:\n" + JSON.stringify(response));
-  	    }
+  			if(response.status == 401) location.href="loginPage.html"
+
+		}
     });	
 }
 
@@ -87,6 +89,8 @@ $("#deleteSimButton").click(function() {
   		error : function(response){
   			alert("Error occured when deleting simulation, code: " + response.status);
 			console.error("Delete simulation response:\n" + JSON.stringify(response));
+  			if(response.status == 401) location.href="loginPage.html"
+
   	    }
 	});
 })

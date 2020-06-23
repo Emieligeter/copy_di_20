@@ -4,18 +4,15 @@ $("#login").submit(function( event ) {
 	clearResponse()
 	var username = $("#login #inputUsername").val().trim();
 	var password = $("#login #inputPassword").val().trim();
-	var credentials = {'username': username,
- 			 			'password': password}
-	
+	var credentials = {"username": username,
+ 			 			"password": password}
 	var serverResp = $("#login #server-response");
 	$.ajax({
   		url : 'rest/auth/login',
   		type: 'POST',
   		contentType: 'application/json',
   		data: JSON.stringify(credentials),
-  	    success : function(response){ 	    	
-  	    	sessionStorage.setItem('token', response);
-  	    	sessionStorage.setItem('credentials',credentials);
+  	    success : function(response){   	    	
   	    	location.href="dashboard.html";
   	   },
 		error : function(response) {
@@ -27,7 +24,17 @@ $("#login").submit(function( event ) {
 		}
     });
   });
- 
+
+function logout(){
+	
+	$.ajax({
+		url: 'rest/auth/logout',
+		type: 'POST',
+		success: function(response) {
+			location.href = "loginPage.html";
+		}
+	});
+};
 //InputValidation for confirm password
 $("form#createNew").on("input", function() {
 ($("input[name='pw2']").get(0).setCustomValidity($("input[name='pw1']").val() != $("input[name='pw2']").val() ? "Passwords do not match." : ""));

@@ -42,7 +42,7 @@ public class SimulationResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulation() {	
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Simulation simulation = SimulationDao.instance.getSimulation(ID);
 			Response response;
@@ -66,7 +66,7 @@ public class SimulationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSimulationMetadata(Simulation simulation) {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			SimulationDao.instance.updateMetadata(ID, simulation);
 			return Response.status(200).build();
@@ -83,7 +83,7 @@ public class SimulationResource {
 	//Delete a simulation
 	@DELETE
 	public Response deleteSimulation() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			SimulationDao.instance.removeSimulation(ID);
 			return Response.status(200).build();
@@ -102,7 +102,7 @@ public class SimulationResource {
 	@Path("/edgefrequency")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeFrequency() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		String edgeID = uriInfo.getQueryParameters().getFirst("edge");
 		if (edgeID == null) {
 			return Response.status(400).entity("Please specifiy edge id using query parameter \"edge\"").build();
@@ -123,7 +123,7 @@ public class SimulationResource {
 	@Path("/lanetransitingvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneTransitingVehicles() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		String laneID = uriInfo.getQueryParameters().getFirst("lane");
 		if (laneID == null) {
 			return Response.status(400).entity("Please specifiy lane id using query parameter \"lane\"").build();
@@ -144,7 +144,7 @@ public class SimulationResource {
 	@Path("/vehicleroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleRouteLength() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");
 		if (vehicleID == null) {
 			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
@@ -165,7 +165,7 @@ public class SimulationResource {
 	@Path("/vehiclespeed")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeed() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");	
 		if (vehicleID == null) {
 			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
@@ -186,7 +186,7 @@ public class SimulationResource {
 	@Path("/vehiclespeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeedFactor() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");
 		if (vehicleID == null) {
 			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
@@ -207,7 +207,7 @@ public class SimulationResource {
 	@Path("/avgroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgRouteLength() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<Double, Double> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
 			return Response.status(200).entity(graphPoints).build();
@@ -226,7 +226,7 @@ public class SimulationResource {
 	@Path("/avgspeed")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeed() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<Double, Double> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
 			return Response.status(200).entity(graphPoints).build();
@@ -245,7 +245,7 @@ public class SimulationResource {
 	@Path("/avgspeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeedFactor() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<Double, Double> graphPoints = SimulationDao.instance.getAverageSpeedFactor(ID);
 			return Response.status(200).entity(graphPoints).build();
@@ -264,7 +264,7 @@ public class SimulationResource {
 	@Path("/arrivedvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getArrivedVehicles() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<Double, Double> graphPoints = SimulationDao.instance.getCumNumArrivedVehicles(ID);
 			return Response.status(200).entity(graphPoints).build();
@@ -281,7 +281,7 @@ public class SimulationResource {
 	@Path("/transferredvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTransferredVehicles() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<Double, Double> graphPoints = SimulationDao.instance.getNumTransferredVehicles(ID);
 			return Response.status(200).entity(graphPoints).build();
@@ -298,7 +298,7 @@ public class SimulationResource {
 	@Path("/runningvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getRunningVehicles() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<Double, Double> graphPoints = SimulationDao.instance.getNumRunningVehicles(ID);
 			return Response.status(200).entity(graphPoints).build();
@@ -315,7 +315,7 @@ public class SimulationResource {
 	@Path("/edgelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeList() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			List<String> edges = SimulationDao.instance.getEdgeList(ID);
 			return Response.status(200).entity(edges).build();
@@ -333,7 +333,7 @@ public class SimulationResource {
 	@Path("/lanelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneList() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			List<String> lanes = SimulationDao.instance.getLaneList(ID);
 			return Response.status(200).entity(lanes).build();
@@ -352,7 +352,7 @@ public class SimulationResource {
 	@Path("/vehiclelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleList() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			List<String> vehicles = SimulationDao.instance.getVehicleList(ID);
 			return Response.status(200).entity(vehicles).build();
@@ -371,7 +371,7 @@ public class SimulationResource {
 	@Path("/edgefrequencyinitial")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeAppearanceFrequencyInitialRoute() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
 			Map<String, Integer> dataPoints = SimulationDao.instance.getEdgeAppearanceFrequencyInitialRoute(ID);
 			return Response.status(200).entity(dataPoints).build();

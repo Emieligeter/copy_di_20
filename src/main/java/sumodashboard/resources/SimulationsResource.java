@@ -2,7 +2,6 @@ package sumodashboard.resources;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.http.HttpHeaders;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +44,7 @@ public class SimulationsResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return  Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
 			List<MetaData> simulations = SimulationDao.instance.getSimulations();
@@ -73,7 +72,7 @@ public class SimulationsResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFiles(@FormDataParam("uploadFile") InputStream inputStream,
 			@FormDataParam("uploadFile") FormDataBodyPart bodyPart) throws Exception {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 
 		//Read the inputstream and make a DTO object
 		SumoFilesDTO dto = FileReadService.readInputStream(inputStream, bodyPart);
