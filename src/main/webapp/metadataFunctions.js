@@ -21,15 +21,23 @@ $("#modifyMetadata").submit(function(event) {
     "\", \"description\": \"" + newMetadata.elements[3].value + 
     "\", \"researcher\": \"" + newMetadata.elements[2].value + 
     "\", \"tags\": \"" + tags + "\"}";
-    var xhr = new XMLHttpRequest();
-    //PUT request to update the metadata in the database
-    xhr.open("PUT", url);
-    xhr.setRequestHeader('Content-type','application/json');
-    xhr.setRequestHeader('Authorization','Bearer 12345');
-    xhr.onload = function () {
-    	$('#submitDataModal').modal('show');
-    }
-    xhr.send(body);
+    console.log(body);
+    $.ajax({
+  		url : url,
+  		type: 'PUT',
+  		data: body,
+  	    headers: {
+  	    	"Authorization": "Bearer 12345",
+  	    	"Content-Type": "application/json"
+		},
+  	    success: function(response){
+  	    	$("#updateResults").html("Updated metadata successfully!"); 
+  	    },
+  		error: function(response){
+  	    	$("#updateResults").html("Error occured, code: " + response.status); 
+  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  	    }
+    });
 });
 
 //When a file is clicked, its metadata will be displayed on the page
