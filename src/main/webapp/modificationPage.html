@@ -34,7 +34,7 @@
 	      <input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
 			<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			<button type="button" class="stdForm btn btn-primary" data-toggle="modal" data-target="#uploadModal">
-	  			Upload file...
+	  			Upload file
 			</button>
 			<button type="button" class="stdForm btn btn-danger" data-toggle="modal" data-target="#deletionModal">
 				Delete selected file
@@ -79,12 +79,11 @@
 						</tr>
 						<tr>
 							<td>Select Folder :</td>
-							<td><input type="file" class="btn btn-secondary" name="uploadFile" webkitdirectory mozdirectory  size="100">Choose Folder</td>
+							<td><input type="file" class="btn btn-secondary" name="uploadFile" webkitdirectory mozdirectory  size="100"></td>
 						</tr>
 						<tr> 
 							<td><input type="submit" class="btn btn-primary" ></input></td>
-							 <td id="server-results">
-	      					</td>			
+							<td id="uploadResults"></td>			
 						</tr>
 					</table>
 					</form>
@@ -114,26 +113,12 @@
 	      	<h5>Tags:</h5>
 	      	<div class="card">
 	      		<div id="tagList" class="card-body"></div>
+	      		<div><button id="newTagButton" type="button" class="btn btn-outline-primary btn-sm">+ New tag</button></div>
 	      	</div>
 	      	<br>
 	      	<button type="submit" class="btn btn-success" id="submitMetadata">Submit</button>
-	      	<!-- Submit modal -->
-	      	<div class="modal fade" id="submitDataModal" tabindex="-1" role="dialog" aria-labelledby="submitDataModalLabel" aria-hidden="true">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <h5 class="modal-title" id="submitMetadataModalLabel">Changes have been saved</h5>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			          <span aria-hidden="true">&times;</span>
-			        </button>
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
-			      </div>
-			    </div>
-			  </div>
-			</div>
-	      <button type="button" class="btn btn-danger" id="resetMetadataForm">Cancel</button>
+     	   	<button type="button" class="btn btn-danger" id="resetMetadataForm">Cancel</button>
+     	   	<span id="updateResults"></span>
 	      </form>
 	    </div>
 	  </div>

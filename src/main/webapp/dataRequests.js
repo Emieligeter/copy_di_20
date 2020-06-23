@@ -121,7 +121,11 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-		handleDataResponse(this.responseText, dataType + " of " + paramID);
+			handleDataResponse(this.responseText, dataType + " of " + paramID);
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting data, status: " + this.status);
+			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();
@@ -139,8 +143,12 @@ function getData(dataType, path) {
 			if (fstDropDownOptions['pie'].includes(dataType)) {
 				handleChartDataResponse(this.responseText, dataType);
 			} else {
-			handleDataResponse(this.responseText, dataType);
+				handleDataResponse(this.responseText, dataType);
 			}
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting data, status: " + this.status);
+			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();
@@ -154,6 +162,10 @@ function getOptionList(listType, path) {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			handleOptionListResponse(this.responseText, listType);
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting data, status: " + this.status);
+			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();

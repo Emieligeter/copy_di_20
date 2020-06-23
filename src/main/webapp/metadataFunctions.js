@@ -14,22 +14,29 @@ $("#modifyMetadata").submit(function(event) {
     		tags += ", " + $(this).attr('id');
     	}
     });;
-    console.log(tags);
     //Body of the PUT request
     var body = "{\"name\": \"" + newMetadata.elements[0].value + 
     "\", \"date\": \"" + newMetadata.elements[1].value + 
     "\", \"description\": \"" + newMetadata.elements[3].value + 
     "\", \"researcher\": \"" + newMetadata.elements[2].value + 
     "\", \"tags\": \"" + tags + "\"}";
-    var xhr = new XMLHttpRequest();
-    //PUT request to update the metadata in the database
-    xhr.open("PUT", url);
-    xhr.setRequestHeader('Content-type','application/json');
-    xhr.setRequestHeader('Authorization','Bearer 12345');
-    xhr.onload = function () {
-    	$('#submitDataModal').modal('show');
-    }
-    xhr.send(body);
+    console.log(body);
+    $.ajax({
+  		url : url,
+  		type: 'PUT',
+  		data: body,
+  	    headers: {
+  	    	"Authorization": "Bearer 12345",
+  	    	"Content-Type": "application/json"
+		},
+  	    success: function(response){
+  	    	$("#updateResults").html("Updated metadata successfully!"); 
+  	    },
+  		error: function(response){
+  	    	$("#updateResults").html("Error occured, code: " + response.status); 
+  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  	    }
+    });
 });
 
 //When a file is clicked, its metadata will be displayed on the page
@@ -47,6 +54,7 @@ function fileClick(id) {
   			$("#newResearcher").attr("value", researcher);
   			$("#newDescription").html(data.description);
   			processTags(data.tags);
+  			$("#updateResults").html("");
   	    },
   		error : function(response){
   			alert("Error occured when receiving simulation, code: " + response.status);
@@ -81,8 +89,6 @@ $("#deleteSimButton").click(function() {
 		},
 		success: function(){
 			location.reload();
-			//document.getElementById("deletionModal").setAttribute("aria-hidden", true);
-			//alert("Deleted succesfully");
 		},
   		error : function(response){
   			alert("Error occured when deleting simulation, code: " + response.status);
