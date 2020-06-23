@@ -45,8 +45,8 @@ var secDropDownOptions = {};
 function loadFstDropDownOptions(){
 	fstDropDownOptions['line'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
 	fstDropDownOptions['scatter'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
-	fstDropDownOptions['pie'] = [edgeFrequencyInitial];
-	fstDropDownOptions['bar'] = [edgeFrequencyInitial];
+	fstDropDownOptions['pie'] = [edgeFrequencyInitial, routeLengthInitial];
+	fstDropDownOptions['bar'] = [edgeFrequencyInitial, routeLengthInitial];
 }
 
 function changeFirstChoice(chartType) {

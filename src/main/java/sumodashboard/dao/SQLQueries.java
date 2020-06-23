@@ -65,9 +65,10 @@ public class SQLQueries {
     //Get a list of all lanes in a specified simulation
     public PreparedStatement laneListQuery;
     
-    //Get the edge appearance frequency per edge in all initial routes in a simulation (for pie chart)
+    //Get the edge appearance frequency per edge in all initial routes in a simulation (for pie and bar chart)
     public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
-    
+    //Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)
+    public PreparedStatement initialRouteLengthPerVehicleQuery;
 
     //Account queries
     public PreparedStatement createNewUser;
@@ -513,6 +514,20 @@ public class SQLQueries {
         	System.err.println("Couldn't prepare statement: ");
         	e.printStackTrace();
         }
+        
+        try {
+        	initialRouteLengthPerVehicleQuery = connection.prepareStatement("" +
+        			"SELECT (LENGTH(vehicle -> 'route' ->> 'edges')-LENGTH(REPLACE(vehicle -> 'route' ->> 'edges','e',''))) AS routeLength, vehicle ->> 'id' AS vehicleId " +
+        			"FROM ( " +
+        			"	SELECT JSON_array_elements(routes -> 'routes' -> 'vehicle') AS vehicle " +
+        			"	FROM " + schemaName + ".simulations " +
+        			"	WHERE simid = ? " +
+        			") vehicles");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        			
 		try {
         	getHashedPass = connection.prepareStatement("" 
         			+ "SELECT *" 

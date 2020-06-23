@@ -380,7 +380,26 @@ public class SimulationResource {
 			return Response.status(400).entity(i.getMessage()).build();
 			
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a vehicle list:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception when trying to get the initial edge frequency per edge:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	//Get information about all edges: how often they appear in the initial routes
+	@GET
+	@Path("/routelengthinitial")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getInitRouteLengthPerVehicle() {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		try {
+			Map<String, Integer> dataPoints = SimulationDao.instance.getInitRouteLengthVehicle(ID);
+			return Response.status(200).entity(dataPoints).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get the inital route length per vehicle:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
 		}
 	}

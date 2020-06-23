@@ -344,6 +344,20 @@ public enum SimulationDao {
 		return dataPoints;
 	}
 	
+	//Get information about all vehicles: route length of initial routes
+	public Map<String, Integer> getInitRouteLengthVehicle(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.initialRouteLengthPerVehicleQuery.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.initialRouteLengthPerVehicleQuery.executeQuery();
+		Map<String, Integer> dataPoints = new HashMap<>();
+		while (resultSet.next()) {
+			String vehicle = resultSet.getString("vehicleId");
+			int routeLength = resultSet.getInt("routeLength");
+			dataPoints.put(vehicle, routeLength);
+		}
+		System.out.println(dataPoints);
+		return dataPoints;
+	}	
 	//Store a simulation in the database
 	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws SQLException, IOException {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
