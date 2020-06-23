@@ -34,7 +34,7 @@
 	      <input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
 			<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			<button type="button" class="stdForm btn btn-primary" data-toggle="modal" data-target="#uploadModal">
-	  			Upload file...
+	  			Upload file
 			</button>
 			<button type="button" class="stdForm btn btn-danger" data-toggle="modal" data-target="#deletionModal">
 				Delete selected file
@@ -114,6 +114,7 @@
 	      	<h5>Tags:</h5>
 	      	<div class="card">
 	      		<div id="tagList" class="card-body"></div>
+	      		<div><button id="newTagButton" type="button" class="btn btn-outline-primary btn-sm">+ New tag</button></div>
 	      	</div>
 	      	<br>
 	      	<button type="submit" class="btn btn-success" id="submitMetadata">Submit</button>
@@ -128,7 +129,7 @@
 			        </button>
 			      </div>
 			      <div class="modal-footer">
-			        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+			        <button id="closeSubmitData" type="button" class="btn btn-info" data-dismiss="modal">Close</button>
 			      </div>
 			    </div>
 			  </div>

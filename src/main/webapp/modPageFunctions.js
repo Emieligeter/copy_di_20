@@ -35,7 +35,7 @@ function loadTags() {
   	    	"Authorization": "Bearer 12345"
 		},
   	    success : function(data){
-  	    	//Create a checkbox element for every tag
+  	    	//Create a checkbox element and corresponding label for every tag
 			for (var i = 0; i < data.length; i++) {
 				var div = document.createElement("div");
 				div.class = "form-check";
@@ -62,3 +62,13 @@ function loadTags() {
   	    }
     });
 }
+
+//Reloads the list of files, so the updated metadata is shown
+$("#closeSubmitData").click(function() {
+	var id = getSelectedID();
+	$('#sumoFiles').empty();
+	loadFiles();
+	console.log("ul li[id='" + id + "']");
+	$("ul li[id='" + id + "']").children().click();
+})
+
