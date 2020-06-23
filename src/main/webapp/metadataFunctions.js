@@ -55,6 +55,7 @@ function fileClick(id) {
   			$("#newResearcher").attr("value", researcher);
   			$("#newDescription").html(data.description);
   			processTags(data.tags);
+  			$("#updateResults").html("");
   	    },
   		error : function(response){
   			alert("Error occured when receiving simulation, code: " + response.status);
