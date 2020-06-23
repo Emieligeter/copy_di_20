@@ -76,6 +76,7 @@ public class SQLQueries {
     public PreparedStatement createNewUser;
     /**Account queries: get hashed password*/
     public PreparedStatement getHashedPass;
+    public PreparedStatement getUserByName;
 
     public SQLQueries(Connection connection) {
     	final String schemaName = "project";
@@ -533,8 +534,8 @@ public class SQLQueries {
         			
 		try {
         	getHashedPass = connection.prepareStatement("" 
-        			+ "SELECT *" 
-        			+ "FROM project.account " 
+        			+ "SELECT password " 
+        			+ "FROM "+ schemaName + ".account " 
         			+ "WHERE username = ?");  
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -547,6 +548,16 @@ public class SQLQueries {
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();            
+        }
+        
+        try {
+        	getUserByName = connection.prepareStatement(
+        			"SELECT * " + 
+        			"FROM project.account " +
+        			"WHERE username = ? ");
+        } catch (SQLException e) {
+        	System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();  
         }
 	}
 }
