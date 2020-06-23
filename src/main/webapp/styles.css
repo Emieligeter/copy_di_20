@@ -104,8 +104,8 @@
 
 #modifPageButton {
 	position: absolute;
-	left: 0;
-	bottom: 0;
+	left: 5px;
+	bottom: 5px;
 }
 
 #mainPageButtons {
@@ -185,3 +185,13 @@ input[type=checkbox][disabled] + label {
 .btn {
     margin: 2px;
 }
+
+#uploadFiles .btn {
+    margin: 5px;
+}
+
+#uploadResults, #updateResults {
+    padding-left: 10px;
+    color: grey;
+}
+

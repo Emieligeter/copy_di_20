@@ -5,6 +5,7 @@ $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
     var files = $('#uploadFiles')[0];
     var fd = new FormData(files);
+    $("#server-results").html("Server is processing, feel free to close this window.")
     //POST request
   	$.ajax({
   		url : 'rest/simulations/upload',
@@ -16,10 +17,10 @@ $("#uploadFiles").submit(function(event){
   	    	"Authorization": "Bearer 12345"
 		},
   	    success : function(response){
-  	    	$("#server-results").html(response); 
+  	    	$("#uploadResults").html(response); 
   	    },
   		error : function(response){
-  	    	$("#server-results").html("Error occured, code: " + response.status); 
+  	    	$("#uploadResults").html("Error occured, code: " + response.status); 
   	    	console.error("Upload files response:\n" + JSON.stringify(response));
   	    }
     });
