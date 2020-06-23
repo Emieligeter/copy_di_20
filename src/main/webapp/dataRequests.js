@@ -32,7 +32,6 @@ function dataSwitch(type) {
 			break;
 		}
 	}
-
 }
 
 function dataSndSwitch(paramID) {
