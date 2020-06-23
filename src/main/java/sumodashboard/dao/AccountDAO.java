@@ -2,6 +2,9 @@ package sumodashboard.dao;
 
 import java.sql.Connection;
 import java.util.Date;
+
+import sumodashboard.model.Account;
+
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,6 +52,11 @@ public class  AccountDAO {
 		sqlQueries.createNewUser.setDate(4, new java.sql.Date(new Date().getTime()));
 		sqlQueries.createNewUser.setDate(5, null);
 		sqlQueries.createNewUser.executeUpdate();
-		
+	}
+	public Account getUserByName(String username) throws SQLException {
+		sqlQueries.getUserByName.setString(1, username);
+		ResultSet rs = sqlQueries.getUserByName.executeQuery();
+		rs.next();
+		return new Account(rs.getString("username"), null, rs.getString("email"));
 	}
 }
