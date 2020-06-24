@@ -153,7 +153,6 @@ public class AuthenticationResource {
 		String password = acc.getPassword();
 		String email = acc.getEmail();
 		String hashedPass = argon2.hash(4, 1024 * 1024, 8, password);
-		System.out.println("hihi im tickled");
 		try {
 		if(storeData) accountDAO.createNewUser(username, hashedPass, email);
 		} catch(SQLException e) {			
