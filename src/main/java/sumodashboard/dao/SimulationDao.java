@@ -423,9 +423,11 @@ public enum SimulationDao {
 			double numberTransferredVehicles = resultSet.getDouble("numberOfTransferredVehicles");
 			graphPoints.put(timestamp, numberTransferredVehicles);
 		}
-<<<<<<< HEAD
+		
+		return graphPoints;
+	}
 
-		public List<String> summaryStats(int simulation_id) throws SQLException, IDNotFound {
+	public List<String> summaryStats(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 
 		sqlQueries.summaryStats.setInt(1, simulation_id);
@@ -442,9 +444,6 @@ public enum SimulationDao {
 		}
 
 		return summaryStats;
-=======
-		return graphPoints;
->>>>>>> 7c55499c7c611e260e00e4260a4f658bee810a3e
 	}
 	
 	/**
