@@ -50,7 +50,6 @@ public class  AccountDAO {
 		sqlQueries.createNewUser.setString(2, hashedPass);
 		sqlQueries.createNewUser.setString(3, email);
 		sqlQueries.createNewUser.setDate(4, new java.sql.Date(new Date().getTime()));
-		sqlQueries.createNewUser.setDate(5, null);
 		sqlQueries.createNewUser.executeUpdate();
 	}
 	public Account getUserByName(String username) throws SQLException {

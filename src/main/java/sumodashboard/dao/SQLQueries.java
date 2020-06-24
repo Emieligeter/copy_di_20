@@ -581,8 +581,8 @@ public class SQLQueries {
 =======
         try {
         	createNewUser = connection.prepareStatement(                   
-        			"INSERT INTO project.account (username, password, email, created_on, last_login)" +
-                    "VALUES(?, ?, ?, ?::date ,?::date)");
+        			"INSERT INTO project.account (username, password, email, created_on)" +
+                    "VALUES(?, ?, ?, ?::date)");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();            
