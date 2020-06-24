@@ -175,3 +175,11 @@ input[type=checkbox], input[type=radio] {
     color: grey;
 }
 
+#uploadModal .modal-footer {
+    margin: 0px;
+}
+
+#uploadFiles button {
+    float: right;
+}
+
