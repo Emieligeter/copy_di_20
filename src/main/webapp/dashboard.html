@@ -113,18 +113,29 @@
 				     				</label>
 				     				
 				     				<label class="btn btn-primary form-check-label">
+				       					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" name="editChart" value="legend"> Legend
+				     				</label>
+				     				
+				     				<label class="btn btn-primary form-check-label">
 				       					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" style="opacity: 0" name="editChart" value="color"> Color
 				     				</label>
 			     				
 			     				</form>
 			     				<div id="enterData" class="row">
-				   					<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1">
+				   					<input type="text" class="form-control" id="setTitleInput" placeholder="Enter new value">
 									<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Submit</button>		   			
-									<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Cancel</button>		   			
+									<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Remove</button>		   			
 								</div>
 			     			</div>
-			     			
-								 
+			     			<div class="col">
+				     			<div id="addLineOrReset" class="row">
+				     				<button type="button" class="btn btn-primary" onClick="addDataSet()">Add dataset</button>		   			
+									<button type="button" class="btn btn-danger" onClick="resetChart()">Reset chart</button>
+								</div>	
+								<div id="selectNewMsg" class="row" style = "display:none">
+									<p><em>Please select a simulation and plot to add to the chart. </em></p>
+								</div>
+			     			</div>	 
 						</div>
 					</div>
 					<div id="textEditor" class="row">

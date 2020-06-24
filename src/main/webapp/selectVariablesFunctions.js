@@ -35,6 +35,13 @@ function editChartStyle(type){
 		chart.data.datasets[0].backgroundColor = newColor;
 		}
 		break;
+	case 'legend':
+		if (type=== "change") {
+			var newLabel = document.getElementById("setTitleInput").value;
+			label[dataSetNumber] = newLabel;
+			chart.data.datasets[dataSetNumber].label = label[dataSetNumber];
+		}
+		break;
 	}
 	chart.update();
 }
