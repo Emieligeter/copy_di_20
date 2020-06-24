@@ -77,7 +77,6 @@ function changeSecondChoice() {
     	sec = document.getElementById("second-choice");
     	}
     var chosen = fst.options[fst.selectedIndex].value;
-    console.log(chosen);
     dataSwitch(chosen); //TODO obviously this is not really the right place for this, oops
     var newOptions = secDropDownOptions[chosen];
     editDropDown(sec, newOptions);

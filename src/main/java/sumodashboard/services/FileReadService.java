@@ -71,10 +71,8 @@ public class FileReadService {
 
 			// convert stream to files and store in array
 			if (fileName.equals("state.zip")) {
-				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
 				stateFiles = convertStateFiles(zipStream, fileLocation);
 			} else {
-				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
 				files.put(fileName, convertStreamToFile(zipStream, fileLocation));
 			}
 		}
@@ -101,15 +99,12 @@ public class FileReadService {
 
 			// Set file location
 			String fileLocation = tmpFolder + '/' + fileName;
-			System.out.println("FileLocation: " + fileLocation);
 
 			// Convert stream to files and store in array
 			if (!fileName.equals("")) {
 				if (fileName.equals("state.zip")) {
-					System.out.println("Converting: " + fileName + " to: " + fileLocation);
 					stateFiles = convertStateFiles(inputStream, fileLocation);
 				} else {
-					System.out.println("Converting: " + fileName + " to: " + fileLocation);
 					files.put(fileName, convertStreamToFile(inputStream, fileLocation));
 				}
 			}
@@ -150,7 +145,6 @@ public class FileReadService {
 			String longFileName = entry.getName();
 			String[] splitFileFolder = (longFileName.split("/"));
 			String fileName = splitFileFolder[splitFileFolder.length - 1];
-			System.out.println("Unzipping: " + fileName);			
 			
 			String fileNumbers = fileName.replaceAll("[^0-9.]", "");
 			String[] splitTimeStamp = fileNumbers.split("\\.");

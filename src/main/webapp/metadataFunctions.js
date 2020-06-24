@@ -14,14 +14,12 @@ $("#modifyMetadata").submit(function(event) {
     		tags += ", " + $(this).attr('id');
     	}
     });;
-    console.log(tags);
     //Body of the PUT request
     var body = "{\"name\": \"" + newMetadata.elements[0].value + 
     "\", \"date\": \"" + newMetadata.elements[1].value + 
     "\", \"description\": \"" + newMetadata.elements[3].value + 
     "\", \"researcher\": \"" + newMetadata.elements[2].value + 
     "\", \"tags\": \"" + tags + "\"}";
-    console.log(body);
     $.ajax({
   		url : url,
   		type: 'PUT',

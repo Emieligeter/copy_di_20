@@ -1,6 +1,5 @@
 var textInput = '';
 function chartToReport() {
-	console.log("lets add this chart to the report.");
 	var elementCopy;
 	if(chartType == 'textElement') {
 		var editor = $('#textFrame').contents().find('#editor');
@@ -11,7 +10,6 @@ function chartToReport() {
 		elementCopy = copyCanvas(document.getElementById('reportElement'));
 	}
 	document.getElementById('report').appendChild(elementCopy);
-	console.log("done.");
 }
 
 function copyText(original) {
