@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Simulation object, contains the metadata, net file, routes file and configuration file
+ */
 @XmlRootElement
 @AllArgsConstructor
 @NoArgsConstructor

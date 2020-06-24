@@ -22,24 +22,22 @@ function dataSwitch(type) {
 			getData(type, "transferredvehicles");
 			break;
 		case runningVehicles:
-			var path = "runningvehicles";
-			getData(type, path);
+			getData(type, "runningvehicles");
 			break;
 		case edgeFrequencyInitial:
-			var path = "edgefrequencyinitial"
-			getData(type, path);
-		default: 
-			;
+			getData(type, "edgefrequencyinitial");
+			break;
+		case routeLengthInitial:
+			getData(type, "routelengthinitial");
 			break;
 		}
 	}
-
 }
+
 
 function dataSndSwitch(paramID) {
 	var element = document.getElementById("first-choice")
 	dataType = element.options[element.selectedIndex].value;
-	console.log(dataType + ", " + paramID + " @dataRequest");
 	switch (dataType) {
 	case edgeFrequency:
 		getDataWithParam(dataType, "edgefrequency", "edge", paramID);
@@ -68,7 +66,6 @@ function fileClick(id) {
 
 function handleDataResponse(JSONResponse, label) {
 	var response = JSON.parse(JSONResponse);
-	console.log(response);
 	const length = Object.keys(response).length;
 	
 	const sorted = [];
@@ -76,18 +73,15 @@ function handleDataResponse(JSONResponse, label) {
 		sorted.push({key: key, value: response[key]});
 	}
 	sorted.sort((a,b) => a.key - b.key);
-	console.log(sorted);
 	
 	var result = "[";
 	for (var i = 0; i < sorted.length; i++) {
 		result += "{ \"x\": " + sorted[i].key + ", \"y\": " + sorted[i].value + " },";
-		console.log(sorted[i]);
 	}
 	result = result.substring(0, result.length -1);
 	result += "]";
-	console.log(result);
 	changeGraphData(result, label);
-	}
+}
 
 function handleChartDataResponse(JSONResponse, dataType) {
 	var response = JSON.parse(JSONResponse);
@@ -112,16 +106,21 @@ function openXhrGETRequest(xhr, url, wait) {
 	xhr.open("GET", url, wait);
 	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+    xhr.setRequestHeader('Authorization', 'Bearer 12345');
 }
 
 function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
 	var xhr = new XMLHttpRequest();
 	var url = urlInit + simID + "/" + path + "?" + paramName + "=" + paramID;
-	openXhrGETRequest(xhr, url);
+	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-		handleDataResponse(this.responseText, dataType + " of " + paramID);
+			handleDataResponse(this.responseText, dataType + " of " + paramID);
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting data, status: " + this.status);
+			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();
@@ -131,16 +130,19 @@ function getData(dataType, path) {
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
 	var pathName = path;
-	console.log(pathName);
 	var url = urlInit + simid + "/" + pathName;
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			if (dataType === edgeFrequencyInitial) {
+			if (fstDropDownOptions['pie'].includes(dataType)) {
 				handleChartDataResponse(this.responseText, dataType);
 			} else {
-			handleDataResponse(this.responseText, dataType);
+				handleDataResponse(this.responseText, dataType);
 			}
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting data, status: " + this.status);
+			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();
@@ -154,6 +156,10 @@ function getOptionList(listType, path) {
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			handleOptionListResponse(this.responseText, listType);
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting data, status: " + this.status);
+			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();

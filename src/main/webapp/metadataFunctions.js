@@ -5,55 +5,97 @@ $("#modifyMetadata").submit(function(event) {
 	event.preventDefault();
     var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + getSelectedID();
     var newMetadata = document.getElementById("modifyMetadata");
+    //Retrieve all tags that have a checked checkbox
+    var tags = "";
+    $('input:checkbox:checked').each(function () {
+    	if (tags === "") {
+    		tags += $(this).attr('id')
+    	} else {
+    		tags += ", " + $(this).attr('id');
+    	}
+    });;
     //Body of the PUT request
     var body = "{\"name\": \"" + newMetadata.elements[0].value + 
     "\", \"date\": \"" + newMetadata.elements[1].value + 
     "\", \"description\": \"" + newMetadata.elements[3].value + 
-    "\", \"researcher\": \"" + newMetadata.elements[2].value + "\"}";
-    var xhr = new XMLHttpRequest();
-    //PUT request to update the metadata in the database
-    xhr.open("PUT", url);
-    xhr.setRequestHeader('Content-type','application/json');
-    console.log(body);
-    xhr.onload = function () {
-    	//document.getElementById("submitMetadata").setAttribute("data-toggle", "modal");
-    	document.getElementById("submitDataModal").setAttribute("aria-hidden", false);    	
-    	//data-toggle="modal" data-target="#submitDataModal"
-    	console.log(this.responseText);
-    }
-    xhr.send(body);
+    "\", \"researcher\": \"" + newMetadata.elements[2].value + 
+    "\", \"tags\": \"" + tags + "\"}";
+    $.ajax({
+  		url : url,
+  		type: 'PUT',
+  		data: body,
+  	    headers: {
+  	    	"Authorization": "Bearer 12345",
+  	    	"Content-Type": "application/json"
+		},
+  	    success: function(response){
+  	    	$("#updateResults").html("Updated metadata successfully!"); 
+  	    },
+  		error: function(response){
+  	    	$("#updateResults").html("Error occured, code: " + response.status); 
+  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  	    }
+    });
 });
 
+//When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
-	var url = "/sumo-dashboard/rest/simulations/id/" + id;
-	$.get(url, function(data, status){
-		document.getElementById("newTitle").setAttribute("value", data.name);
-		document.getElementById("newDate").setAttribute("value", data.date);
-		var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
-		document.getElementById("newResearcher").setAttribute("value", researcher);
-		document.getElementById("newDescription").innerHTML = data.description;
-		processTags(data.tags);
-	});
-	
+	$.ajax({
+  		url : '/sumo-dashboard/rest/simulations/id/' + id,
+  		type: 'GET',
+  	    headers: {
+  	    	"Authorization": "Bearer 12345"
+		},
+  	    success : function(data){
+  	    	$("#newTitle").attr("value", data.name);
+  			$("#newDate").attr("value", data.date);
+  			var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
+  			$("#newResearcher").attr("value", researcher);
+  			$("#newDescription").html(data.description);
+  			processTags(data.tags);
+  			$("#updateResults").html("");
+  	    },
+  		error : function(response){
+  			alert("Error occured when receiving simulation, code: " + response.status);
+			console.error("Load simulation response:\n" + JSON.stringify(response));
+  			if(response.status == 401) location.href="loginPage.html"
+
+		}
+    });	
 }
 
+//Displays the tags of a simulation
 function processTags(tags) {
+	var checkboxes = $('input[type=checkbox]').get();
 	var tagList = tags.split(', ');
-	//console.log(tagList);
-	for (var i = 0; i < tagList.length; i++) {
-		//make tag active, probably using id = tag
+	for(var i = 0; i < checkboxes.length; i++) {
+	    checkboxes[i].disabled = false;
+	    if (tagList.includes(checkboxes[i].id)) {
+	    	$("#" + checkboxes[i].id).prop('checked', true);
+	    } else {
+	    	$("#" + checkboxes[i].id).prop('checked', false);
+	    }
 	}
 }
 
+//Deletes the currently selected simulation file from the database
 $("#deleteSimButton").click(function() {
 	event.preventDefault(); // prevent default action
 	var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
-	console.log(url);
 	$.ajax({
 		url: url,
 		type: "DELETE",
+		headers: {
+  	    	"Authorization": "Bearer 12345"
+		},
 		success: function(){
-			document.getElementById("deletionModal").setAttribute("aria-hidden", true);
-		}
+			location.reload();
+		},
+  		error : function(response){
+  			alert("Error occured when deleting simulation, code: " + response.status);
+			console.error("Delete simulation response:\n" + JSON.stringify(response));
+  			if(response.status == 401) location.href="loginPage.html"
+
+  	    }
 	});
 })

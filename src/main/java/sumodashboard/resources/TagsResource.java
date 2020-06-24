@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -15,18 +16,27 @@ import javax.ws.rs.core.UriInfo;
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.model.MetaData;
 
-//Class responsible for all requests to /rest/tags
+/**
+ * Class responsible for all requests to /rest/tags
+ */
 @Path("/tags")
 public class TagsResource {
 	@Context
 	UriInfo uriInfo;
 	@Context
 	Request request;
+	@Context
+	ContainerRequestContext requestContext;
 	
-	//Get metadata of all simulations
+	/**
+	 * Get metadata of all simulations
+	 * @return response
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTags() {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		
 		try {			
 			List<String> tags = SimulationDao.instance.getTags();
 			

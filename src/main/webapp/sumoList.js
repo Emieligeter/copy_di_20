@@ -3,14 +3,13 @@
  */
 
 //Loads all SUMO files with their metadata into a list
-function loadFiles() {
+function loadFiles() {	
 	var httpReq = new XMLHttpRequest();
 	var sumoFiles = document.getElementById("sumoFiles");
 	httpReq.onreadystatechange = function() {
 	  if (this.readyState == 4 && this.status == 200) {
 		  var response = this.responseText;
 		  var res = JSON.parse(response);
-		  console.log(res);
 		  //For every file, create a list element and fill it with its metadata
 		  for (var i = 0; i < res.length; i++) {
 			  var liElem = document.createElement("li");
@@ -31,9 +30,16 @@ function loadFiles() {
 			  sumoFiles.appendChild(liElem);
 		  }
 	  }
+	  if (this.readyState == 4 && this.status != 200) {
+		  var response = this.responseText;
+		  console.error("Load files response:\n" + response);
+		  alert("Load files request failed with status: " + this.status);
+		  if(this.status == 401) location.href ="loginPage.html"
+	  }
 	}
 	//Request all sumo files
 	httpReq.open("GET", "/sumo-dashboard/rest/simulations", true);
+	httpReq.setRequestHeader("Authorization", "Bearer " + "12345"); 
 	httpReq.send();
 }
 

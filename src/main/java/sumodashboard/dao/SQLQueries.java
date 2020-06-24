@@ -116,6 +116,19 @@ public class SQLQueries {
         }
         
         try {
+        	updateMetadataQuery = connection.prepareStatement(
+        			"UPDATE " + schemaName + ".simulations SET " +
+	        			"name = coalesce(?, name), " +
+	        			"date = coalesce(TO_DATE(?, 'YYYY-MM-DD'), date), " +
+	        			"description = coalesce(?, description), " +
+	        			"researcher = coalesce(?, researcher) " +
+        			"WHERE simid = ?");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
             storeSimulationQuery = connection.prepareStatement(
                     "INSERT INTO " + schemaName + ".simulations (simID, name, date, description, net, routes, config)" +
                             "VALUES(?, ?, ?::date ,? ,? ,? ,?)");
@@ -521,10 +534,24 @@ public class SQLQueries {
         	System.err.println("Couldn't prepare statement: ");
         	e.printStackTrace();
         }
+        
+        try {
+        	initialRouteLengthPerVehicleQuery = connection.prepareStatement("" +
+        			"SELECT (LENGTH(vehicle -> 'route' ->> 'edges')-LENGTH(REPLACE(vehicle -> 'route' ->> 'edges','e',''))) AS routeLength, vehicle ->> 'id' AS vehicleId " +
+        			"FROM ( " +
+        			"	SELECT JSON_array_elements(routes -> 'routes' -> 'vehicle') AS vehicle " +
+        			"	FROM " + schemaName + ".simulations " +
+        			"	WHERE simid = ? " +
+        			") vehicles");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        			
 		try {
         	getHashedPass = connection.prepareStatement("" 
-        			+ "SELECT *" 
-        			+ "FROM project.account " 
+        			+ "SELECT password " 
+        			+ "FROM "+ schemaName + ".account " 
         			+ "WHERE username = ?");  
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -541,6 +568,16 @@ public class SQLQueries {
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();            
+        }
+        
+        try {
+        	getUserByName = connection.prepareStatement(
+        			"SELECT * " + 
+        			"FROM project.account " +
+        			"WHERE username = ? ");
+        } catch (SQLException e) {
+        	System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();  
         }
 	}
 }

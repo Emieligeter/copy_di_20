@@ -19,7 +19,9 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 import sumodashboard.model.SumoFilesDTO;
 
-//Read uploaded files and store the data in a SumoFilesDTO
+/**
+ * Read uploaded files and store the data in a SumoFilesDTO
+ */
 public class FileReadService {
 
 	public static final String tmpFolder = System.getProperty("java.io.tmpdir");
@@ -71,10 +73,8 @@ public class FileReadService {
 
 			// convert stream to files and store in array
 			if (fileName.equals("state.zip")) {
-				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
 				stateFiles = convertStateFiles(zipStream, fileLocation);
 			} else {
-				System.out.println("Unzipping: " + fileName + " to: " + fileLocation);
 				files.put(fileName, convertStreamToFile(zipStream, fileLocation));
 			}
 		}
@@ -86,7 +86,13 @@ public class FileReadService {
 		
 	}
 	
-	//Generate a DTO for individual files
+	/**
+	 * Generate a DTO for individual files
+	 * @param stream input stream
+	 * @param bodyParts FormDataBodyPart
+	 * @return SumoFilesDTO
+	 * @throws Exception
+	 */
 	private static SumoFilesDTO handleFiles(InputStream stream, FormDataBodyPart bodyParts) throws Exception {
 		HashMap<String, File> files = new HashMap<String, File>();
 		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
@@ -101,15 +107,12 @@ public class FileReadService {
 
 			// Set file location
 			String fileLocation = tmpFolder + '/' + fileName;
-			System.out.println("FileLocation: " + fileLocation);
 
 			// Convert stream to files and store in array
 			if (!fileName.equals("")) {
 				if (fileName.equals("state.zip")) {
-					System.out.println("Converting: " + fileName + " to: " + fileLocation);
 					stateFiles = convertStateFiles(inputStream, fileLocation);
 				} else {
-					System.out.println("Converting: " + fileName + " to: " + fileLocation);
 					files.put(fileName, convertStreamToFile(inputStream, fileLocation));
 				}
 			}
@@ -120,12 +123,22 @@ public class FileReadService {
 		return new SumoFilesDTO(files, stateFiles);
 	}
 	
-	//Check if the uploaded files are correct
+	/**
+	 * Check if the uploaded files are correct
+	 * @param fileList List<String file>
+	 * @throws IOException
+	 */
 	public static void checkFileList(List<String> fileList) throws IOException {
 		// TODO Checks on correctness of files
 	}
 	
-	//Convert an InputStream to a File
+	/**
+	 * Convert an InputStream to a File
+	 * @param is input stream
+	 * @param fileNameLocation location of created file (String)
+	 * @return File
+	 * @throws Exception
+	 */
 	private static File convertStreamToFile(InputStream is, String fileNameLocation) throws Exception {
 		int size;
 		byte[] buffer = new byte[2048];
@@ -140,7 +153,13 @@ public class FileReadService {
 		return new File(fileNameLocation);
 	}
 	
-	//Unpack the zip with state files into a Map of files
+	/**
+	 * Unpack the zip with state files into a Map of files
+	 * @param is input stream
+	 * @param fileLocation location of created file (String)
+	 * @return TreeMap<Integer, File>
+	 * @throws Exception
+	 */
 	private static TreeMap<Integer, File> convertStateFiles(InputStream is, String fileLocation) throws Exception {
 		TreeMap<Integer, File> stateFiles = new TreeMap<Integer, File>();
 		ZipInputStream stateZip = new ZipInputStream(is);
@@ -150,7 +169,6 @@ public class FileReadService {
 			String longFileName = entry.getName();
 			String[] splitFileFolder = (longFileName.split("/"));
 			String fileName = splitFileFolder[splitFileFolder.length - 1];
-			System.out.println("Unzipping: " + fileName);			
 			
 			String fileNumbers = fileName.replaceAll("[^0-9.]", "");
 			String[] splitTimeStamp = fileNumbers.split("\\.");
@@ -160,7 +178,11 @@ public class FileReadService {
 		return stateFiles;
 	}
 	
-	//Get the list of files given in the BodyPart
+	/**
+	 * Get the list of files given in the BodyPart
+	 * @param bodyPart BodyPart
+	 * @return List<String file>
+	 */
 	public static List<String> getFileList(BodyPart bodyPart){
 		List<String> fileList = new ArrayList<String>();
 		for (BodyPart part : bodyPart.getParent().getBodyParts()) {
@@ -170,7 +192,12 @@ public class FileReadService {
 		return fileList;
 	}
 	
-	//Convert the InputStream to a ZipInputStream to handle file reading for a zip file
+	/**
+	 * Convert the InputStream to a ZipInputStream to handle file reading for a zip file
+	 * @param stream input stream
+	 * @return ZipInputStream
+	 * @throws IOException
+	 */
 	public static ZipInputStream convertToZipStream(InputStream stream) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(stream);
 		ZipInputStream zipStream = new ZipInputStream(bis);

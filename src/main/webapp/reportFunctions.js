@@ -1,6 +1,5 @@
 var textInput = '';
 function chartToReport() {
-	console.log("lets add this chart to the report.");
 	var elementCopy;
 	if(chartType == 'textElement') {
 		var editor = $('#textFrame').contents().find('#editor');
@@ -11,7 +10,6 @@ function chartToReport() {
 		elementCopy = copyCanvas(document.getElementById('reportElement'));
 	}
 	document.getElementById('report').appendChild(elementCopy);
-	console.log("done.");
 }
 
 function copyText(original) {
@@ -23,8 +21,9 @@ function copyCanvas(original) {
 	var imgURL = original.toDataURL("image/png");
 	var img = document.createElement('img')
 	img.src = imgURL;
-	img.width = 200;
-	img.height = 300;
+	img.width = 800;
+	img.height = 450;
+	img.className = "exportedGraph";
 	return img;
 }
 

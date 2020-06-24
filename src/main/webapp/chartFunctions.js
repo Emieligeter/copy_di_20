@@ -6,18 +6,17 @@ var chart;
 var chartType = "line";
 var data;
 var label;
-
+var options = {};
+options["line"] = {scales: {xAxes: [{type: 'linear', display: true, scaleLabel: {display: true}}]}};
+options["scatter"] = {}; 
+options["bar"] = {legend: {display: false}};
+options["pie"] = {legend: {display: false}};
 
 function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
 	updateChart();
-	if (type === "line") {
-		chart.options.scales.xAxes.type = "linear";
-	} else {
-		chart.options.scales = {};
-	}
-}
+}	
 
 function setData(newdata) {
 	data = JSON.parse(newdata);
@@ -32,8 +31,7 @@ function updateChart() {
 	var canvas = document.getElementById('reportElement');
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	if(chartType == "textElement"){
-	} else {
+	if(chartType !== "textElement") {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	chart = new Chart(ctx, {
 		// The type of chart we want to create
@@ -48,17 +46,7 @@ function updateChart() {
 			}]
 			},
 		// Configuration options go here
-		options : {	
-			scales: {
-				xAxes: [{
-					type: 'linear',
-					display: true,
-					scaleLabel: {
-						display: true
-					}
-				}]
-			}
-		}
+		options : options[chartType]
 	});
 	}
 }

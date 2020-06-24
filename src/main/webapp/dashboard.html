@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-<link rel="shortcut icon" href="favicon.ico" >
+<link rel="shortcut icon" href="favicon.ico">
 <!-- Bootstrap CSS -->
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -14,136 +14,137 @@
 	crossorigin="anonymous">
 <link rel="stylesheet" type="text/css"
 	href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css" />
-	<link rel="stylesheet" type="text/css" href="styles.css">
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-			crossorigin="anonymous"></script>
-		<script
-			src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-			crossorigin="anonymous"></script>
-		<script
-			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-			integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-			crossorigin="anonymous"></script>
-		<link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="styles.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+	integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+	integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+	integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+	crossorigin="anonymous"></script>
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css"
+	rel="stylesheet">
 
-		<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
+<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
 
-			
-		<script type="text/javascript" src="plotNames.js"></script>
-		<script type="text/javascript" src="chartFunctions.js"></script>
-		<script type="text/javascript" src="selectVariablesFunctions.js"></script>
-		<script type="text/javascript" src="reportFunctions.js"></script>
-		<script type="text/javascript" src="dataRequests.js"></script>
-		<script type="text/javascript" src="sumoList.js"></script>
-		
-		
-		<script>
+
+<script type="text/javascript" src="plotNames.js"></script>
+<script type="text/javascript" src="chartFunctions.js"></script>
+<script type="text/javascript" src="selectVariablesFunctions.js"></script>
+<script type="text/javascript" src="reportFunctions.js"></script>
+<script type="text/javascript" src="dataRequests.js"></script>
+<script type="text/javascript" src="sumoList.js"></script>
+
+
+<script>
 		window.onload=loadFstDropDownOptions();
 		window.onload = $('#editor').wysiwyg();
-
-		</script>
+	</script>
 </head>
 
 <body onload="loadFiles()">
 
 	<div class="jumbotron text-center" id="topBorder">
-  		<h1 class="display-4">Dashboard</h1>
-  		<div id="mainPageButtons">
-  			<button id="LogOut" onClick="location.href='loginPage.html'" class="btn btn-danger">Log Out</button> 
+		<h1 class="display-4">Dashboard</h1>
+		<div id="mainPageButtons">
+  			<button id="LogOut" onclick="logout()" class="btn btn-danger">Log Out</button> 
   			<button id="toModifList" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
 		</div>
 	</div>
-	<div class="container-fluid" >
-		<div class="row" style="height:650px">
-			<div id="fileSelect" class="col-3">
+	<div class="container-fluid">
+		<div class="row" id="mainRow">
+			<div id="fileSelect" class="col-2">
 				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
-					<ul id="sumoFiles" class="list-unstyled list-group"></ul>
+				<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			</div>
-			<div class="col">
+
+			<div class="col-10">
 				
-			<div id=elementButtons class="row">
-				<button id="LineGraph" class="btn btn-outline-primary" onclick="setChartType('line')">Line Graph</button> 
-				<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
-				<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
-				<button id="PieChart" class="btn btn-outline-primary" onclick="setChartType('pie')">Pie Chart</button> 
-				<button id="TextElement" class="btn btn-outline-primary" onclick="setChartType('textElement')">Text Element</button> 
-				<button id="addToReport" class="btn btn-success" onclick="chartToReport()">Add chart to report</button>
+				<div id="elementButtons" class="row">
+					<button id="LineGraph" class="btn btn-outline-primary" onclick="setChartType('line')">Line Graph</button> 
+					<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
+					<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
+					<button id="PieChart" class="btn btn-outline-primary" onclick="setChartType('pie')">Pie Chart</button> 
+					<button id="TextElement" class="btn btn-outline-primary" onclick="setChartType('textElement')">Text Element</button> 
+					<button id="addToReport" class="btn btn-success" onclick="chartToReport()">Add chart to report</button>
+					
+									 
+					<br>
+				</div>
+				<div id="editArea">
 				
+					<div id="chart" class="row">
+					
+						<canvas id="reportElement" class="col-9"></canvas>
+						<div id="paramSelect" class="col-3">	
+							<div id="varSelect" class="col card">	
+								<label for="first-choice" class="row">Choose a plot:</label>	
+								<div id="fstChoice" class="row">
+									
+									<select id="first-choice" name="plotChoice" class="form-control" onchange="changeSecondChoice()" required>
+										<option selected value="base">Please choose a chart type</option>
+									</select>
+								</div>
+								<div id="optionalSecChoice" class="row">
+								</div>
+							</div>
+							
+							<div id="editChartStyle" class="col card">
+								<label class="row"  for="editChart">Edit chart:</label>
+								<form class="row" name="editChart" id="editChart" data-toggle="buttons">
+				     				
+				     				<label class="btn btn-primary active form-check-label">
+				       					<input class="form-check-input" type="radio" style="opacity: 0" checked autocomplete="off" name="editChart" value="title"> Title
+				     				</label>
+				
+				     				<label class="btn btn-primary form-check-label">
+				      					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" name="editChart" value="y-axis"> Y-axis
+				     				</label>
+				
+				     				<label class="btn btn-primary form-check-label">
+				       					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" name="editChart" value="x-axis"> X-axis
+				     				</label>
+				     				
+				     				<label class="btn btn-primary form-check-label">
+				       					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" style="opacity: 0" name="editChart" value="color"> Color
+				     				</label>
+			     				
+			     				</form>
+			     				<div id="enterData" class="row">
+				   					<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1">
+									<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Submit</button>		   			
+									<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Cancel</button>		   			
+								</div>
+			     			</div>
+			     			
 								 
-				<br>
-			</div>
-			<div id="editArea">
-			
-			<div id="chart" class="row">
-			
-				<canvas id="reportElement" class="col"></canvas>
-				<div id="varSelect" class="col">				
-				<div id="fstChoice">
-				<label class="row"  for="first-choice">Choose a plot:</label>
-				<select id="first-choice" name="plotChoice" class="form-control row" onchange="changeSecondChoice()" required>
-					<option selected value="base">Please choose a chart type</option>
-				</select>
-				</div>
-				<div id="optionalSecChoice" class="row">
-				</div>
-				<div id="editChartStyle">
-					<label class="row"  for="editChart">Edit chart:</label>
-					<form class="row" name="editChart" id="editChart" data-toggle="buttons">
-		     				
-	     				<label class="btn btn-primary active form-check-label">
-	       				<input class="form-check-input" type="radio" checked autocomplete="off" style="opacity: 0" name="editChart" value="title"> Title
-	     				</label>
-	
-	     				<label class="btn btn-primary form-check-label">
-	      					<input class="form-check-input" type="radio" autocomplete="off" style="opacity: 0" name="editChart" value="y-axis"> Y-axis
-	     				</label>
-	
-	     				<label class="btn btn-primary form-check-label">
-	       				<input class="form-check-input" type="radio" autocomplete="off" style="opacity: 0" name="editChart" value="x-axis"> X-axis
-	     				</label>
-	     				
-	     				<label class="btn btn-primary form-check-label">
-	       				<input class="form-check-input" type="radio" autocomplete="off" style="opacity: 0" name="editChart" value="color"> Color
-	     				</label>
-	     				
-	     				</form>
-	     			</div>
-	     			<div id="enterData" class="row">
-	   					<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1">
-						<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Submit</button>		   			
-						<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Cancel</button>		   			
+						</div>
 					</div>
-						 
-			</div>
-			</div>
-			<div id="textEditor">
-			<iframe id="textFrame" src="textEditor.html" style="border:none;height:100%;width:100%;position:absolute;margin-top:5px" ></iframe>
-			</div>
-			</div>
+					<div id="textEditor" class="row">
+						<iframe id="textFrame" src="textEditor.html" class="col"></iframe>
+					</div>
+				</div>
 
 			</div>
 		</div>
 
 		
-		<div class="row">
-			<div class="col">
-			<button id="printReport" class="btn btn-success" onClick="printDiv('report')"> Print report </button>				
-			<h3>Preliminary report</h3>
-			</div>
-			<div class="w-100"></div>
-			
-			<div id="report" class="col">
-			</div>
-			</div>
-			<iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>
-			
+		<div id="exportSection" class="row justify-content-start">
+			<h3 class="col-2">Preliminary report</h3>
+			<button id="printReport" class="btn btn-success col-1" onClick="printDiv('report')"> Print report </button>	
+					
 		</div>
+		<div id="report"></div>
+		<iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>						
+	</div>
 
 		
-		
-	</body>
-	</html>
+</body>
+</html>

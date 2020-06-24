@@ -45,8 +45,8 @@ var secDropDownOptions = {};
 function loadFstDropDownOptions(){
 	fstDropDownOptions['line'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
 	fstDropDownOptions['scatter'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
-	fstDropDownOptions['pie'] = [edgeFrequencyInitial, "pie"];
-	fstDropDownOptions['bar'] = [edgeFrequencyInitial, "bar"];
+	fstDropDownOptions['pie'] = [edgeFrequencyInitial, routeLengthInitial];
+	fstDropDownOptions['bar'] = [edgeFrequencyInitial, routeLengthInitial];
 }
 
 function changeFirstChoice(chartType) {
@@ -77,7 +77,6 @@ function changeSecondChoice() {
     	sec = document.getElementById("second-choice");
     	}
     var chosen = fst.options[fst.selectedIndex].value;
-    console.log(chosen);
     dataSwitch(chosen); //TODO obviously this is not really the right place for this, oops
     var newOptions = secDropDownOptions[chosen];
     editDropDown(sec, newOptions);
