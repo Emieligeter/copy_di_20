@@ -147,13 +147,12 @@ public class AuthenticationResource {
 	@Path("/createUser")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createNewUser(Account acc) throws SQLException {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		//if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		String username = acc.getUsername();
 		String password = acc.getPassword();
 		String email = acc.getEmail();
 		String hashedPass = argon2.hash(4, 1024 * 1024, 8, password);
-		System.out.println("hihi im tickled");
 		try {
 		if(storeData) accountDAO.createNewUser(username, hashedPass, email);
 		} catch(SQLException e) {			
@@ -163,6 +162,7 @@ public class AuthenticationResource {
 			} else if(e.getMessage().contains("unique constraint \"account_username_key\"")) {
 				respMessage = "Username already in use";
 			}
+			e.printStackTrace();
 			return Response.status(Response.Status.CONFLICT).entity(respMessage).build();
 		}
 		if(!storeData) Response.ok("User created but not stored").build();
