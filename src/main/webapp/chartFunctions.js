@@ -9,23 +9,13 @@ var label;
 var options = {};
 options["line"] = {scales: {xAxes: [{type: 'linear', display: true, scaleLabel: {display: true}}]}};
 options["scatter"] = {}; 
-options["bar"] = {};
-options["pie"] = {};
+options["bar"] = {legend: {display: false}};
+options["pie"] = {legend: {display: false}};
 
 function setChartType(type) {
 	chartType = type;
 	changeFirstChoice(type);
 	updateChart();
-	/*if (type === "line") {
-		chart.options.scales.xAxes.type = 'linear';
-		chart.update();
-		chart.options.scales.xAxes.display = true;
-		chart.update();
-		chart.options.scales.xAxes.scaleLabel.display = true;
-	} else {
-		chart.options.scales = {};
-	}
-	chart.update();*/
 }	
 
 function setData(newdata) {

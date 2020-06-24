@@ -16,7 +16,9 @@ import javax.ws.rs.core.UriInfo;
 import sumodashboard.dao.SimulationDao;
 import sumodashboard.model.MetaData;
 
-//Class responsible for all requests to /rest/tags
+/**
+ * Class responsible for all requests to /rest/tags
+ */
 @Path("/tags")
 public class TagsResource {
 	@Context
@@ -26,11 +28,14 @@ public class TagsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
-	//Get metadata of all simulations
+	/**
+	 * Get metadata of all simulations
+	 * @return response
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTags() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
 			List<String> tags = SimulationDao.instance.getTags();

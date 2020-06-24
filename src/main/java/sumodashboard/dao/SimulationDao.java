@@ -23,7 +23,9 @@ import org.json.XML;
 
 import org.postgresql.util.PGobject;
 
-//Class used for all communication with the database
+/**
+ * Class used for all communication with the database
+ */
 public enum SimulationDao {
 	instance;
 	private boolean storeData = true;
@@ -31,7 +33,9 @@ public enum SimulationDao {
 	private Connection connection;
 	private SQLQueries sqlQueries;
 	
-	//Constructor sets up the connection to the database
+	/**
+	 * Constructor sets up the connection to the database
+	 */
 	private SimulationDao() {
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -42,7 +46,9 @@ public enum SimulationDao {
 		sqlQueries = new SQLQueries(connection);
 	}
 	
-	//Start the connection to the database
+	/**
+	 * Start the connection to the database
+	 */
 	private void startDBConnection() {
 		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
 		final String username = "dab_di19202b_333";
@@ -56,7 +62,11 @@ public enum SimulationDao {
 		}
 	}
 	
-	//Get a List with all simulation metadata in the database
+	/**
+	 * Get a List with all simulation metadata in the database
+	 * @return List<MetaData>
+	 * @throws SQLException database is not reachable
+	 */
 	public List<MetaData> getSimulations() throws SQLException {
 		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();
 		
@@ -75,7 +85,12 @@ public enum SimulationDao {
 		return simulations;		
 	}
 	
-	//Get one simulation by id
+	/**
+	 * Get one simulation by id
+	 * @param simulation_id simulation id (int)
+	 * @return simulation for given id
+	 * @throws SQLException database is not reachable
+	 */
 	public Simulation getSimulation(int simulation_id) throws SQLException {
 		sqlQueries.getSimulationQuery.setInt(1, simulation_id);
 		
@@ -99,7 +114,12 @@ public enum SimulationDao {
 		return result;
 	}
 	
-	//Remove one simulation by id
+	/**
+	 * Remove one simulation by id
+	 * @param simulation_id simulation id (int)
+	 * @throws SQLException database is not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public void removeSimulation(int simulation_id) throws SQLException, IDNotFound {
 		sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
@@ -110,7 +130,13 @@ public enum SimulationDao {
 		}
 	}
 	
-	//Updates metadata of specified simulation, with the specified fields of the simulation object
+	/**
+	 * Updates metadata of specified simulation, with the specified fields of the simulation object
+	 * @param simulation_id simulation id (int)
+	 * @param simulation simulation
+	 * @throws SQLException database is not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public void updateMetadata(int simulation_id, Simulation simulation) throws SQLException, IDNotFound {
 		sqlQueries.updateMetadataQuery.setString(1, simulation.getName());
 		sqlQueries.updateMetadataQuery.setString(2, simulation.getDate());
@@ -132,7 +158,14 @@ public enum SimulationDao {
 		}
 	}
 	
-	//Get a list of datapoints for the edge appearence frequency, over time. For a specified simulation and edge id.
+	/**
+	 * Get a list of datapoints for the edge appearence frequency, over time. For a specified simulation and edge id.
+	 * @param simulation_id simulation id (String)
+	 * @param edge_id edge id
+	 * @return Map<Double timestamp, Double edgeFrequency>
+	 * @throws SQLException database is not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getEdgeAppearenceFrequency(int simulation_id, String edge_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.edgeAppearanceFrequencyQuery.setInt(2, simulation_id);
@@ -147,7 +180,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of all edges for a specified simulation.
+	/**
+	 * Get a list of all edges for a specified simulation.
+	 * @param simulation_id simulation id (int)
+	 * @return List<String edge_id>
+	 * @throws IDNotFound simulation id does not exist
+	 * @throws SQLException database not reachable
+	 */
 	public List<String> getEdgeList(int simulation_id) throws IDNotFound, SQLException {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.edgeListQuery.setInt(1, simulation_id);
@@ -160,7 +199,14 @@ public enum SimulationDao {
 		return edges;
 	}
 	
-	//Get a list of datapoints for the lane transiting vehicles, over time. For a specified simulation and lane id.
+	/**
+	 * Get a list of datapoints for the lane transiting vehicles, over time. For a specified simulation and lane id.
+	 * @param simulation_id simulation id (int)
+	 * @param lane_id lane id
+	 * @return Map<Double timestamp, Double vehicleCount>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getLaneTransitingVehicles(int simulation_id, String lane_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.numberOfLaneTransitingVehiclesQuery.setInt(1, simulation_id);
@@ -175,7 +221,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of all lanes for a specified simulation.
+	/**
+	 * Get a list of all lanes for a specified simulation.
+	 * @param simulation_id simulation id (int)
+	 * @return List<String lane_id>
+	 * @throws IDNotFound simulation id does not exist
+	 * @throws SQLException database not reachable
+	 */
 	public List<String> getLaneList(int simulation_id) throws IDNotFound, SQLException {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.laneListQuery.setInt(1, simulation_id);
@@ -188,7 +240,13 @@ public enum SimulationDao {
 		return lanes;
 	}
 	
-	//Get a list of all vehicles for a specified simulation.
+	/**
+	 * Get a list of all vehicles for a specified simulation.
+	 * @param simulation_id simulation id (int)
+	 * @return List<String vehicle_id>
+	 * @throws IDNotFound simulation id does not exist
+	 * @throws SQLException database not reachable
+	 */
 	public List<String> getVehicleList(int simulation_id) throws IDNotFound, SQLException {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.vehicleListQuery.setInt(1, simulation_id);
@@ -201,7 +259,14 @@ public enum SimulationDao {
 		return vehicles;
 	}
 	
-	//Get a list of datapoints for the route length of a single vehicle, over time. For a specified simulation and vehicle id.
+	/**
+	 * Get a list of datapoints for the route length of a single vehicle, over time. For a specified simulation and vehicle id.
+	 * @param simulation_id simulation id (int)
+	 * @param vehicle_id vehicle id
+	 * @return Map<Double timestamp, Double routeLength>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getVehicleRouteLength(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.vehicleRouteLengthQuery.setInt(1, simulation_id);
@@ -216,7 +281,14 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
+	/**
+	 * Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
+	 * @param simulation_id simulation id (int)
+	 * @param vehicle_id vehicle id
+	 * @return Map<Double timestamp, Double vehicleSpeed>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.vehicleSpeedQuery.setInt(1, simulation_id);
@@ -231,7 +303,14 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the speedfactor of a single vehicle, over time. For a specified simulation and vehicle id.
+	/**
+	 * Get a list of datapoints for the speedfactor of a single vehicle, over time. For a specified simulation and vehicle id.
+	 * @param simulation_id simulation id (int)
+	 * @param vehicle_id vehicle id
+	 * @return Map<Double timestamp, Double vehicleSpeedFactor>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getVehicleSpeedFactor(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.vehicleSpeedFactorQuery.setInt(1, simulation_id);
@@ -246,7 +325,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the average route length of all vehicles, over time. For a specified simulation id.
+	/**
+	 * Get a list of datapoints for the average route length of all vehicles, over time. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @return Map<Double timestamp, Double avgRouteLength>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getAvgRouteLength(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.avgRouteLengthQuery.setInt(1, simulation_id);
@@ -260,7 +345,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
+	/**
+	 * Get a list of datapoints for the average speed of all vehicles, over time. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @return Map<Double timestamp, Double avgSpeed>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getAverageSpeed(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.avgSpeedQuery.setInt(1, simulation_id);
@@ -274,7 +365,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the average speedFactor of all vehicles, over time. For a specified simulation id.
+	/**
+	 * Get a list of datapoints for the average speedFactor of all vehicles, over time. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @return Map<Double timestamp, Double avgSpeedFactor>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getAverageSpeedFactor(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.avgSpeedFactorQuery.setInt(1, simulation_id);
@@ -288,7 +385,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the cumulative number of arrived vehicles, over time. For a specified simulation id.
+	/**
+	 * Get a list of datapoints for the cumulative number of arrived vehicles, over time. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @return Map<Double timestamp, Double cumulativeNumberOfArrivedVehicles>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getCumNumArrivedVehicles(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.cumulativeNumberOfArrivedVehiclesQuery.setInt(1, simulation_id);
@@ -302,7 +405,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the number of transferred vehicles, over time. For a specified simulation id.
+	/**
+	 * Get a list of datapoints for the number of transferred vehicles, over time. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @return Map<Double timestamp, Double numberOfTransferredVehicles>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getNumTransferredVehicles(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.numberOfTransferredVehiclesQuery.setInt(1, simulation_id);
@@ -316,7 +425,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get a list of datapoints for the number of running vehicles, over time. For a specified simulation id.
+	/**
+	 * Get a list of datapoints for the number of running vehicles, over time. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @return Map<Double timestamp, Double numberOfRunningVehicles>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<Double, Double> getNumRunningVehicles(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.numberOfRunningVehiclesQuery.setInt(1, simulation_id);
@@ -330,7 +445,13 @@ public enum SimulationDao {
 		return graphPoints;
 	}
 	
-	//Get information about all edges: how often they appear in the initial routes
+	/**
+	 * Get information about all edges: how often they appear in the initial routes
+	 * @param simulation_id simulation id (int)
+	 * @return Map<String edge_id, Integer edgeFrequency>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
 	public Map<String, Integer> getEdgeAppearanceFrequencyInitialRoute(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		sqlQueries.edgeAppearanceFrequencyInitialRouteQuery.setInt(1, simulation_id);
@@ -344,7 +465,39 @@ public enum SimulationDao {
 		return dataPoints;
 	}
 	
-	//Store a simulation in the database
+	/**
+	 * Get information about all vehicles: route length of initial routes
+	 * @param simulation_id simulation id (int)
+	 * @return Map<String vehicle_id, Integer routeLength>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<String, Integer> getInitRouteLengthVehicle(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.initialRouteLengthPerVehicleQuery.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.initialRouteLengthPerVehicleQuery.executeQuery();
+		Map<String, Integer> dataPoints = new HashMap<>();
+		while (resultSet.next()) {
+			String vehicle = resultSet.getString("vehicleId");
+			int routeLength = resultSet.getInt("routeLength");
+			dataPoints.put(vehicle, routeLength);
+		}
+		System.out.println(dataPoints);
+		return dataPoints;
+	}	
+	
+	/**
+	 * Store a simulation in the database
+	 * @param simId simulation id (int)
+	 * @param name simulation name
+	 * @param description simulation description
+	 * @param date simulation date (String)
+	 * @param net xml file containing simulation net
+	 * @param routes xml file containing simulation routes
+	 * @param config xml file containing simulation configuration
+	 * @throws SQLException database not reachable
+	 * @throws IOException conversion failed
+	 */
 	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws SQLException, IOException {
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
@@ -356,7 +509,14 @@ public enum SimulationDao {
 		if(storeData) sqlQueries.storeSimulationQuery.executeUpdate();
 	}
 	
-	//Store a state file in the database
+	/**
+	 * Store a state file in the database
+	 * @param simId simulation id (int)
+	 * @param timeStamp timestamp
+	 * @param stateFile xml file containing the state corresponding to the timestamp
+	 * @throws SQLException database not reachable
+	 * @throws IOException conversion failed
+	 */
 	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws SQLException, IOException {
 		sqlQueries.storeStateQuery.setInt(1, simId);
 		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
@@ -365,7 +525,12 @@ public enum SimulationDao {
 		
 	}
 	
-	//Get the id for a given tag
+	/**
+	 * Get the id for a given tag
+	 * @param tag tag (String)
+	 * @return Integer tag_id
+	 * @throws SQLException database not reachable
+	 */
 	public Integer getTagId(String tag) throws SQLException {
 		sqlQueries.getTagIdQuery.setString(1, tag);
 		ResultSet resultSet = sqlQueries.getTagIdQuery.executeQuery();
@@ -375,7 +540,12 @@ public enum SimulationDao {
 		return null;
 	}
 	
-	//Store a new tag in the database by specified tag id
+	/**
+	 * Store a new tag in the database by specified tag id
+	 * @param tagId tag_id (Integer)
+	 * @param tag tag (String)
+	 * @throws SQLException database not reachable
+	 */
 	public void storeTag(Integer tagId, String tag) throws SQLException {
 		sqlQueries.storeTagQuery.setInt(1, tagId);
 		sqlQueries.storeTagQuery.setString(2, tag);
@@ -383,26 +553,45 @@ public enum SimulationDao {
 		
 	}
 	
-	//Store a new connection between a simulation and a tag in the database
+	/**
+	 * Store a new connection between a simulation and a tag in the database
+	 * @param tagId tag_id (Integer)
+	 * @param simId simulation id (int)
+	 * @throws SQLException database not reachable
+	 */
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
 		sqlQueries.storeSimTagQuery.setInt(1, tagId);
 		sqlQueries.storeSimTagQuery.setInt(2, simId);
 		if(storeData) sqlQueries.storeSimTagQuery.executeUpdate();
 	}
 	
-	//Check if a tag id exists
+	/**
+	 * Check if a tag id exists
+	 * @param tagId tag_id (int)
+	 * @return boolean
+	 * @throws SQLException database not reachable
+	 */
 	public boolean doesTagIdExist(int tagId) throws SQLException {
 		sqlQueries.doesTagIdExistQuery.setInt(1, tagId);
 		return sqlQueries.doesTagIdExistQuery.executeQuery().next();
 	}
 	
-	//Check if a simulation id exists
+	/**
+	 * Check if a simulation id exists
+	 * @param simId simulation id (int)
+	 * @return boolean
+	 * @throws SQLException database not reachable
+	 */
 	public boolean doesSimIdExist(int simId) throws SQLException {
 		sqlQueries.doesSimIdExistQuery.setInt(1, simId);
 		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
 	}
 	
-	//Get all existing tags
+	/**
+	 * Get all existing tags
+	 * @return List<String tag>
+	 * @throws SQLException database not reachable
+	 */
 	public List<String> getTags() throws SQLException {
 		ResultSet rs = sqlQueries.getAllTagsQuery.executeQuery();	
 		List<String> tags = new ArrayList<>();
@@ -413,13 +602,23 @@ public enum SimulationDao {
 		return tags;
 	}
 	
-	//Remove all tags from a simulation
+	/**
+	 * Remove all tags from a simulation
+	 * @param simId simulation id (int)
+	 * @throws SQLException database not reachable
+	 */
 	public void removeAllSimulationTags(int simId) throws SQLException {
 		sqlQueries.removeAllSimulationTagsQuery.setInt(1, simId);
 		sqlQueries.removeAllSimulationTagsQuery.execute();
 	}
 	
-	//Convert an uploaded XML file to a JSON file for storing the the database
+	/**
+	 * Convert an uploaded XML file to a JSON file for storing the the database
+	 * @param file xml file
+	 * @return PGobject with type JSON and value the xml file in json format
+	 * @throws IOException conversion failed
+	 * @throws SQLException database not reachable
+	 */
 	public PGobject convertFileToPGobject(File file) throws IOException, SQLException {
 		String xmlString = "";
 		BufferedReader in = new BufferedReader(new FileReader(file));
@@ -436,7 +635,9 @@ public enum SimulationDao {
 		return result;
 	}
 	
-	//Exception that gets thrown if a specified id is not found
+	/**
+	 * Exception that gets thrown if a specified id is not found
+	 */
 	public class IDNotFound extends Exception {
 		private static final long serialVersionUID = 4280320385143360167L;
 		

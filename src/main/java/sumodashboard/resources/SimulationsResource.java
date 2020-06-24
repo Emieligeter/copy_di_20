@@ -2,7 +2,6 @@ package sumodashboard.resources;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.http.HttpHeaders;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,9 @@ import sumodashboard.model.MetaData;
 import sumodashboard.model.SumoFilesDTO;
 import sumodashboard.services.FileReadService;
 
-//Class responsible for all requests to /rest/simulations
+/**
+ * Class responsible for all requests to /rest/simulations
+ */
 @Path("/simulations")
 public class SimulationsResource {
 	@Context
@@ -41,11 +42,14 @@ public class SimulationsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
-	//Get metadata of all simulations
+	/**
+	 * Get metadata of all simulations
+	 * @return Response
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return  Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
 			List<MetaData> simulations = SimulationDao.instance.getSimulations();
@@ -73,7 +77,7 @@ public class SimulationsResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFiles(@FormDataParam("uploadFile") InputStream inputStream,
 			@FormDataParam("uploadFile") FormDataBodyPart bodyPart) throws Exception {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 
 		//Read the inputstream and make a DTO object
 		SumoFilesDTO dto = FileReadService.readInputStream(inputStream, bodyPart);
@@ -117,7 +121,11 @@ public class SimulationsResource {
 		return Response.ok("Files uploaded successfully").build();
 	}
 	
-	//Redirect all requests to /rest/simulations/id/{id}
+	/**
+	 * Redirect all requests to /rest/simulations/id/{id}
+	 * @param id simulation id given in the url
+	 * @return instance of simulationResource
+	 */
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, requestContext, id);

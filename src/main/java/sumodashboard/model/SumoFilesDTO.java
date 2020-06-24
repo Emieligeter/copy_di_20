@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Data transfer object for sumo files
+ */
 @Getter
 @Setter
 @AllArgsConstructor //Makes a constructor with all variables as parameters

@@ -1,4 +1,4 @@
-
+/*Search bar for looking through files*/
 #fileSearch {
   background-position: 10px 12px;
   background-repeat: no-repeat;
@@ -9,8 +9,8 @@
   margin-bottom: 12px;
 }
 
+/*List of SUMO files*/
 #sumoFiles {
-  /* Remove default list styling */
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -19,6 +19,7 @@
   border-top: 1px solid #ddd;
 }
 
+/*Element of list of SUMO files*/
 #sumoFiles li a {
   border: 1px solid #ddd;
   margin-top: -1px;
@@ -26,21 +27,24 @@
   text-decoration: none;
   font-size: 14px;
   color: black;
-  display: block; /* Make it into a block element to fill the whole list */
+  display: block;
   list-style-type: none;
 }
 
+/**/
 #editor {
 	overflow:scroll; 
 	height:300px;
 	width:100%
 }
 
+/**/
 #editArea {
 	position:absolute;
     width: 100%;
 }
 
+/**/
 #textEditor, #chart {
     padding-top: 10px;
 	position: absolute; 
@@ -58,13 +62,15 @@
 	width:400px
 }
 
+/*Box to select variables on home page*/
 #varSelect {
-    outline: auto;
+    padding: 10px 20px 10px 30px;
 }
 
+/*Box to edit chart appearance on home page*/
 #editChartStyle {
-    margin-top: 50px;
-    outline: auto;
+    margin-top: 40px;
+    padding: 10px 10px 20px 25px;
 }
 
 .list-group {
@@ -132,6 +138,10 @@
     border: 1px solid #343a40;
 }
 
+.card-body {
+	padding: 20px 20px 5px 20px;
+}
+
 .stdForm p {
 	margin-bottom: 0px;
 	margin-top: 8px;
@@ -149,9 +159,19 @@
 	margin-top: 200px;
 }
 
+#newTagButton {
+	margin-left: 15px;
+	margin-bottom: 10px;
+}
+
 input[type=checkbox], input[type=radio] {
     box-sizing: border-box;
     margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+input[type=checkbox][disabled] + label {
+	    color: #999999;
 }
 
 #exportSection {

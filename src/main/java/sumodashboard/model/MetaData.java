@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Object containing all metadata for a simulation
+ */
 @XmlRootElement
 @NoArgsConstructor
 @AllArgsConstructor

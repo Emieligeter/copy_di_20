@@ -22,19 +22,18 @@ function dataSwitch(type) {
 			getData(type, "transferredvehicles");
 			break;
 		case runningVehicles:
-			var path = "runningvehicles";
-			getData(type, path);
+			getData(type, "runningvehicles");
 			break;
 		case edgeFrequencyInitial:
-			var path = "edgefrequencyinitial"
-			getData(type, path);
-		default: 
-			;
+			getData(type, "edgefrequencyinitial");
+			break;
+		case routeLengthInitial:
+			getData(type, "routelengthinitial");
 			break;
 		}
 	}
-
 }
+
 
 function dataSndSwitch(paramID) {
 	var element = document.getElementById("first-choice")
@@ -114,7 +113,7 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
 	var xhr = new XMLHttpRequest();
 	var url = urlInit + simID + "/" + path + "?" + paramName + "=" + paramID;
-	openXhrGETRequest(xhr, url);
+	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			handleDataResponse(this.responseText, dataType + " of " + paramID);
@@ -135,7 +134,7 @@ function getData(dataType, path) {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			if (dataType === edgeFrequencyInitial) {
+			if (fstDropDownOptions['pie'].includes(dataType)) {
 				handleChartDataResponse(this.responseText, dataType);
 			} else {
 				handleDataResponse(this.responseText, dataType);

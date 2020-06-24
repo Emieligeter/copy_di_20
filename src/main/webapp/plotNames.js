@@ -10,3 +10,4 @@ var arrivedVehicles = "Cumulative number of arrived vehicles";
 var transferredVehicles = "Number of transferred vehicles";
 var runningVehicles = "Number of running vehicles";
 var edgeFrequencyInitial = "Edge appearence frequency in initial routes"
+var routeLengthInitial = "Initial route length per vehicle"
