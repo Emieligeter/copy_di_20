@@ -82,11 +82,29 @@ public class SQLQueries {
     	final String schemaName = "project";
         try {
             getAllSimulationsQuery = connection.prepareStatement("" +
-                    "SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags " + 
-                    "FROM " + schemaName + ".tags, " + schemaName + ".simulations sim, " + schemaName + ".simulation_tags st " + 
-                    "WHERE sim.simid = st.simid " + 
-                    "AND st.tagid = tags.tagid " + 
-                    "GROUP BY sim.simid");
+                    "SELECT DISTINCT sim.simid, sim.date, sim.name, sim.date, sim.description, sim.researcher, " + 
+                    "CASE  " + 
+                    "  WHEN EXISTS ( " + 
+                    "    SELECT sim.simid  " + 
+                    "    FROM project.simulation_tags  " + 
+                    "    WHERE sim.simid = simulation_tags.simid) " + 
+                    "  THEN q1.tags " + 
+                    "  ELSE null " + 
+                    "END as tags " + 
+                    "FROM project.simulations sim, (  " + 
+                    "  SELECT sim.simid, STRING_AGG(tags.value, ', ') AS tags " + 
+                    "  FROM project.tags, project.simulations sim, project.simulation_tags st " + 
+                    "  WHERE sim.simid = st.simid " + 
+                    "  AND st.tagid = tags.tagid " + 
+                    "  GROUP BY sim.simid ) q1  " + 
+                    "WHERE CASE  " + 
+                    "  WHEN EXISTS ( " + 
+                    "    SELECT sim.simid  " + 
+                    "    FROM project.simulation_tags  " + 
+                    "    WHERE sim.simid = simulation_tags.simid) " + 
+                    "  THEN q1.simid = sim.simid " + 
+                    "  ELSE TRUE " + 
+                    "END");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
