@@ -13,7 +13,7 @@ $("#modifyMetadata").submit(function(event) {
     	} else {
     		tags += ", " + $(this).attr('id');
     	}
-    });;
+    });
     //Body of the PUT request
     var body = "{\"name\": \"" + newMetadata.elements[0].value + 
     "\", \"date\": \"" + newMetadata.elements[1].value + 
@@ -74,6 +74,33 @@ function processTags(tags) {
 	    } else {
 	    	$("#" + checkboxes[i].id).prop('checked', false);
 	    }
+	}
+}
+
+function createTag() {
+	var newTag = $("#newTag").val();
+	if (newTag.includes('"') || newTag === "") {
+		$("#createTagSpan").html("Error: tag cannot be empty or contain \"");
+	} else {
+		$.ajax({
+	  		url : 'rest/tags',
+	  		method: 'POST',
+	  		dataType: "text",
+	  		data: newTag,
+	  	    headers: {
+	  	    	"Authorization": "Bearer 12345",
+	  	    	"Content-Type": "application/json"
+			},
+	  	    success : function(response){
+	  	    	loadTags();
+	  	    	$("#newTag").toggle();
+	  			$("#newTagButton").html("+ New tag");
+	  	    },
+	  		error : function(response){
+	  	    	$("#updateResults").html("Error occured, code: " + response.status); 
+	  	    	console.error("Create new tag response:\n" + JSON.stringify(response));
+	  	    }
+	    });
 	}
 }
 

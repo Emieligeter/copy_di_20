@@ -1,12 +1,12 @@
 /** This file contains all functions regarding the modification page. */
 
-//Uploads a SUMO file to the database
+// Uploads a SUMO file to the database
 $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
     var files = $('#uploadFiles')[0];
     var fd = new FormData(files);
     $("#server-results").html("Server is processing, feel free to close this window.")
-    //POST request
+    // POST request
   	$.ajax({
   		url : 'rest/simulations/upload',
   		type: 'POST',
@@ -26,8 +26,9 @@ $("#uploadFiles").submit(function(event){
     });
 })
 
-//Loads all distinct tags that exist in the database
+// Loads all distinct tags that exist in the database
 function loadTags() {
+	$("#tagList").empty();
 	var tagList = document.getElementById("tagList");
 	$.ajax({
   		url : '/sumo-dashboard/rest/tags',
@@ -36,7 +37,7 @@ function loadTags() {
   	    	"Authorization": "Bearer 12345"
 		},
   	    success : function(data){
-  	    	//Create a checkbox element and corresponding label for every tag
+  	    	// Create a checkbox element and corresponding label for every tag
 			for (var i = 0; i < data.length; i++) {
 				var div = document.createElement("div");
 				div.class = "form-check";
@@ -53,7 +54,7 @@ function loadTags() {
 				tag.innerHTML = data[i];
 				div.appendChild(checkBox);
 				div.appendChild(tag);
-				//Add tag to form
+				// Add tag to form
 				tagList.appendChild(div);
 			}
   	    },
@@ -64,12 +65,22 @@ function loadTags() {
     });
 }
 
-//Reloads the list of files, so the updated metadata is shown
+// Reloads the list of files, so the updated metadata is shown
 $("#closeSubmitData").click(function() {
 	var id = getSelectedID();
 	$('#sumoFiles').empty();
 	loadFiles();
 	console.log("ul li[id='" + id + "']");
 	$("ul li[id='" + id + "']").children().click();
+})
+
+//Shows input to create a new tag when new tag button is clicked
+$("#newTagButton").click(function() {
+	if ($("#newTagButton").html() === "+ New tag") {
+		$("#newTag").toggle();
+		$("#newTagButton").html("Create");
+	} else {
+		createTag();
+	}
 })
 

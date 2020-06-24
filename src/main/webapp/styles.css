@@ -102,13 +102,7 @@
   height: 100%;
 }
 
-#modifPageButton {
-	position: absolute;
-	left: 5px;
-	bottom: 5px;
-}
-
-#mainPageButtons {
+#modifPageButton, #mainPageButtons {
 	position: absolute;
 	left: 5px;
 	bottom: 5px;
@@ -136,6 +130,7 @@
 	margin: 10px;
     width: 100%;
     border: 1px solid #343a40;
+    padding: 10px;
 }
 
 .card-body {
@@ -159,11 +154,6 @@
 	margin-top: 200px;
 }
 
-#newTagButton {
-	margin-left: 15px;
-	margin-bottom: 10px;
-}
-
 input[type=checkbox], input[type=radio] {
     box-sizing: border-box;
     margin-right: 5px;
@@ -173,6 +163,33 @@ input[type=checkbox], input[type=radio] {
 input[type=checkbox][disabled] + label {
 	    color: #999999;
 }
+
+#newTagDiv {
+	width: 50%;
+	float: right;
+}
+
+#newTag {
+	margin: 0px;
+	padding: 2px;
+	display: none;
+}
+
+#newTagButton {
+	margin-left: 15px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+}
+
+#tagSpanDiv {
+	margin-left: 10px;
+	margin-bottom: 5px;
+	width: 50%;
+	font-size: 15px;
+	float: right;
+}
+
 
 #exportSection {
     padding-top: 50px;

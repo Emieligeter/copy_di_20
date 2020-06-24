@@ -540,6 +540,15 @@ public enum SimulationDao {
 		return null;
 	}
 	
+	public void createTag(String tag) throws SQLException {
+		int tagId;
+		do {
+			tagId = MetaDataIO.generateId(4);
+		} while (SimulationDao.instance.doesTagIdExist(tagId));
+		System.out.println("generated tagId: " + tagId);
+		SimulationDao.instance.storeTag(tagId, tag);
+	}
+	
 	/**
 	 * Store a new tag in the database by specified tag id
 	 * @param tagId tag_id (Integer)
