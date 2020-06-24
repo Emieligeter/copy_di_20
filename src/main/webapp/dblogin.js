@@ -1,6 +1,9 @@
 function login() {
-    var url = document.getElementsByName("url").value;
-    var username = document.getElementsByName("user").value;
-    var password = document.getElementsByName("password").value;
+    // document.getElementById("dblogin").action="/dblogin"
+    // var dblogjv = Java.type("java.sumodashboard.dao.dblogin")
+    // print(dblogjv.doPost(request, response))
+    // var dbl = new Packages.sumodashboard.dao.dblogin
+    // var db = dbl.doPost
+
 
 }
