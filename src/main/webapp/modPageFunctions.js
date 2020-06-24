@@ -5,7 +5,7 @@ $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
     var files = $('#uploadFiles')[0];
     var fd = new FormData(files);
-    $("#server-results").html("Server is processing, feel free to close this window.")
+    $("#uploadResults").html("Server is processing, feel free to close this window.")
     //POST request
   	$.ajax({
   		url : 'rest/simulations/upload',
@@ -25,6 +25,12 @@ $("#uploadFiles").submit(function(event){
   	    }
     });
 })
+
+$('#resetUploadForm').click(function(event) {
+	event.preventDefault();
+	$("input[name='uploadFile']").val('');
+})
+
 
 //Loads all distinct tags that exist in the database
 function loadTags() {

@@ -2,47 +2,48 @@
 
 <html lang=”en”>
 <head>
-	<title>SUMO Dashboard</title>
-	<meta charset="UTF-8">
-	<meta name="viewport"
-		content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-	<link rel="shortcut icon" href="favicon.ico" >
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet"
-		href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-		crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css"
-		href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css" />
-	<link rel="stylesheet" type="text/css" href="styles.css">
-	
-	<link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
-		<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-		crossorigin="anonymous"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-		
-	<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
+<title>SUMO Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+<link rel="shortcut icon" href="favicon.ico">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+	integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+	crossorigin="anonymous">
+<link rel="stylesheet" type="text/css"
+	href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css" />
+<link rel="stylesheet" type="text/css" href="styles.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+	integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+	integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+	integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+	crossorigin="anonymous"></script>
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css"
+	rel="stylesheet">
 
-		
-	<script type="text/javascript" src="plotNames.js"></script>
-	<script type="text/javascript" src="chartFunctions.js"></script>
-	<script type="text/javascript" src="selectVariablesFunctions.js"></script>
-	<script type="text/javascript" src="reportFunctions.js"></script>
-	<script type="text/javascript" src="dataRequests.js"></script>
-	<script type="text/javascript" src="sumoList.js"></script>
-	<script type="text/javascript" src="loginPage.js"></script>
-	<script>
+<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
+
+
+<script type="text/javascript" src="plotNames.js"></script>
+<script type="text/javascript" src="chartFunctions.js"></script>
+<script type="text/javascript" src="selectVariablesFunctions.js"></script>
+<script type="text/javascript" src="reportFunctions.js"></script>
+<script type="text/javascript" src="dataRequests.js"></script>
+<script type="text/javascript" src="sumoList.js"></script>
+
+
+<script>
 		window.onload=loadFstDropDownOptions();
 		window.onload = $('#editor').wysiwyg();
 	</script>
@@ -51,13 +52,13 @@
 <body onload="loadFiles()">
 
 	<div class="jumbotron text-center" id="topBorder">
-  		<h1 class="display-4">Dashboard</h1>
-  		<div id="mainPageButtons">
+		<h1 class="display-4">Dashboard</h1>
+		<div id="mainPageButtons">
   			<button id="LogOut" onclick="logout()" class="btn btn-danger">Log Out</button> 
   			<button id="toModifList" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
 		</div>
 	</div>
-	<div class="container-fluid" >
+	<div class="container-fluid">
 		<div class="row" id="mainRow">
 			<div id="fileSelect" class="col-2">
 				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
@@ -102,7 +103,6 @@
 				     				<label class="btn btn-primary active form-check-label">
 				       					<input class="form-check-input" type="radio" style="opacity: 0" checked autocomplete="off" name="editChart" value="title"> Title
 				     				</label>
-
 				
 				     				<label class="btn btn-primary form-check-label">
 				      					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" name="editChart" value="y-axis"> Y-axis
@@ -141,8 +141,7 @@
 			<button id="printReport" class="btn btn-success col-1" onClick="printDiv('report')"> Print report </button>	
 					
 		</div>
-		<div id="report">
-		</div>
+		<div id="report"></div>
 		<iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>						
 	</div>
 

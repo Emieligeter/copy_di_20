@@ -20,7 +20,6 @@ $("#modifyMetadata").submit(function(event) {
     "\", \"description\": \"" + newMetadata.elements[3].value + 
     "\", \"researcher\": \"" + newMetadata.elements[2].value + 
     "\", \"tags\": \"" + tags + "\"}";
-    console.log(body);
     $.ajax({
   		url : url,
   		type: 'PUT',
