@@ -36,6 +36,8 @@ public class SQLQueries {
     /**Check if a simulation id exists*/
     public PreparedStatement doesSimIdExistQuery;
     
+    public PreparedStatement summaryStats;
+    
 
     /**Get the edge appearance frequency of a specified edge over time*/
     public PreparedStatement edgeAppearanceFrequencyQuery;
@@ -76,16 +78,35 @@ public class SQLQueries {
     public PreparedStatement createNewUser;
     /**Account queries: get hashed password*/
     public PreparedStatement getHashedPass;
+    public PreparedStatement getUserByName;
 
     public SQLQueries(Connection connection) {
     	final String schemaName = "project";
         try {
             getAllSimulationsQuery = connection.prepareStatement("" +
-                    "SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags " + 
-                    "FROM " + schemaName + ".tags, " + schemaName + ".simulations sim, " + schemaName + ".simulation_tags st " + 
-                    "WHERE sim.simid = st.simid " + 
-                    "AND st.tagid = tags.tagid " + 
-                    "GROUP BY sim.simid");
+                    "SELECT DISTINCT sim.simid, sim.date, sim.name, sim.date, sim.description, sim.researcher, " + 
+                    "CASE  " + 
+                    "  WHEN EXISTS ( " + 
+                    "    SELECT sim.simid  " + 
+                    "    FROM project.simulation_tags  " + 
+                    "    WHERE sim.simid = simulation_tags.simid) " + 
+                    "  THEN q1.tags " + 
+                    "  ELSE null " + 
+                    "END as tags " + 
+                    "FROM project.simulations sim, (  " + 
+                    "  SELECT sim.simid, STRING_AGG(tags.value, ', ') AS tags " + 
+                    "  FROM project.tags, project.simulations sim, project.simulation_tags st " + 
+                    "  WHERE sim.simid = st.simid " + 
+                    "  AND st.tagid = tags.tagid " + 
+                    "  GROUP BY sim.simid ) q1  " + 
+                    "WHERE CASE  " + 
+                    "  WHEN EXISTS ( " + 
+                    "    SELECT sim.simid  " + 
+                    "    FROM project.simulation_tags  " + 
+                    "    WHERE sim.simid = simulation_tags.simid) " + 
+                    "  THEN q1.simid = sim.simid " + 
+                    "  ELSE TRUE " + 
+                    "END");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -208,6 +229,22 @@ public class SQLQueries {
                     "SELECT * " +
                     "FROM " + schemaName + ".simulations " +
                     "WHERE simid = ?");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            summaryStats = connection.prepareStatement("" +
+                    "SELECT simid, timestamp, summary_statistics" +
+                    "FROM" +
+                    "(" +
+                    "SELECT simid, timestamp, (state -> 'snapshot' ->> 'delay') as delay" +
+                    "FROM project.states" +
+                    "WHERE json_typeof(state -> 'snapshot' -> 'delay') = 'object') as summary_statistics " +
+                    "WHERE simid = ?" +
+                    "GROUP BY timestamp " +
+                    "ORDER BY simid, timestamp ASC ");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -533,8 +570,8 @@ public class SQLQueries {
         			
 		try {
         	getHashedPass = connection.prepareStatement("" 
-        			+ "SELECT *" 
-        			+ "FROM project.account " 
+        			+ "SELECT password " 
+        			+ "FROM "+ schemaName + ".account " 
         			+ "WHERE username = ?");  
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -542,11 +579,21 @@ public class SQLQueries {
         }
         try {
         	createNewUser = connection.prepareStatement(                   
-        			"INSERT INTO project.account (username, password, email, created_on, last_login)" +
-                    "VALUES(?, ?, ?, ?::date ,?::date)");
+        			"INSERT INTO project.account (username, password, email, created_on)" +
+                    "VALUES(?, ?, ?, ?::date)");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();            
+        }
+        
+        try {
+        	getUserByName = connection.prepareStatement(
+        			"SELECT * " + 
+        			"FROM project.account " +
+        			"WHERE username = ? ");
+        } catch (SQLException e) {
+        	System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();  
         }
 	}
 }

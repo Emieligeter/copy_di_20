@@ -212,3 +212,11 @@ input[type=checkbox][disabled] + label {
     color: grey;
 }
 
+#uploadModal .modal-footer {
+    margin: 0px;
+}
+
+#uploadFiles button {
+    float: right;
+}
+

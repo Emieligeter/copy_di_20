@@ -71,7 +71,7 @@ public class MetaDataIO {
 		UUID uuid = UUID.randomUUID();
 		String str = uuid.toString().substring(0, length-1);
 		str = String.valueOf(random.nextInt(9) +1) + str.replaceAll("[^0-9.]", String.valueOf((random).nextInt(9) +1));
-		System.out.println("generated id = " + Integer.parseInt(str));
+		System.out.println("New simulation: generated id = " + Integer.parseInt(str));
 		return Integer.parseInt(str);
 	}
 	
@@ -89,7 +89,6 @@ public class MetaDataIO {
 			if (tag.equals("")) continue;
 			
 			Integer tagId = simDao.getTagId(tag);
-			System.out.println("tag: " + tag + " , tagId: " + tagId);
 			
 			if (tagId == null) {
 				simDao.createTag(tag);

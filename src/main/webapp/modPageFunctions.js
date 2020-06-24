@@ -5,8 +5,8 @@ $("#uploadFiles").submit(function(event){
   	event.preventDefault(); // prevent default action
     var files = $('#uploadFiles')[0];
     var fd = new FormData(files);
-    $("#server-results").html("Server is processing, feel free to close this window.")
-    // POST request
+    $("#uploadResults").html("Server is processing, feel free to close this window.")
+    //POST request
   	$.ajax({
   		url : 'rest/simulations/upload',
   		type: 'POST',
@@ -26,7 +26,12 @@ $("#uploadFiles").submit(function(event){
     });
 })
 
-// Loads all distinct tags that exist in the database
+$('#resetUploadForm').click(function(event) {
+	event.preventDefault();
+	$("input[name='uploadFile']").val('');
+})
+
+//Loads all distinct tags that exist in the database
 function loadTags() {
 	$("#tagList").empty();
 	var tagList = document.getElementById("tagList");
@@ -61,6 +66,8 @@ function loadTags() {
   		error : function(response){
   			alert("Error occured when receiving tags, status: " + response.status);
 			console.error("Load tags response:\n" + JSON.stringify(response));
+  			if(response.status == 401) location.href="loginPage.html"
+
   	    }
     });
 }

@@ -32,13 +32,12 @@ function dataSwitch(type) {
 			break;
 		}
 	}
-
 }
+
 
 function dataSndSwitch(paramID) {
 	var element = document.getElementById("first-choice")
 	dataType = element.options[element.selectedIndex].value;
-	console.log(dataType + ", " + paramID + " @dataRequest");
 	switch (dataType) {
 	case edgeFrequency:
 		getDataWithParam(dataType, "edgefrequency", "edge", paramID);
@@ -67,7 +66,6 @@ function fileClick(id) {
 
 function handleDataResponse(JSONResponse, label) {
 	var response = JSON.parse(JSONResponse);
-	console.log(response);
 	const length = Object.keys(response).length;
 	
 	const sorted = [];
@@ -75,18 +73,15 @@ function handleDataResponse(JSONResponse, label) {
 		sorted.push({key: key, value: response[key]});
 	}
 	sorted.sort((a,b) => a.key - b.key);
-	console.log(sorted);
 	
 	var result = "[";
 	for (var i = 0; i < sorted.length; i++) {
 		result += "{ \"x\": " + sorted[i].key + ", \"y\": " + sorted[i].value + " },";
-		console.log(sorted[i]);
 	}
 	result = result.substring(0, result.length -1);
 	result += "]";
-	console.log(result);
 	changeGraphData(result, label);
-	}
+}
 
 function handleChartDataResponse(JSONResponse, dataType) {
 	var response = JSON.parse(JSONResponse);
@@ -135,7 +130,6 @@ function getData(dataType, path) {
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
 	var pathName = path;
-	console.log(pathName);
 	var url = urlInit + simid + "/" + pathName;
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
