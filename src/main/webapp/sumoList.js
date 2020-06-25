@@ -39,7 +39,6 @@ function loadFiles() {
 	}
 	//Request all sumo files
 	httpReq.open("GET", "/sumo-dashboard/rest/simulations", true);
-	httpReq.setRequestHeader("Authorization", "Bearer " + "12345"); 
 	httpReq.send();
 }
 

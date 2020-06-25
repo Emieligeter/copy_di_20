@@ -25,7 +25,6 @@ $("#modifyMetadata").submit(function(event) {
   		type: 'PUT',
   		data: body,
   	    headers: {
-  	    	"Authorization": "Bearer 12345",
   	    	"Content-Type": "application/json"
 		},
   	    success: function(response){
@@ -43,9 +42,6 @@ function fileClick(id) {
 	$.ajax({
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',
-  	    headers: {
-  	    	"Authorization": "Bearer 12345"
-		},
   	    success : function(data){
   	    	$("#newTitle").attr("value", data.name);
   			$("#newDate").attr("value", data.date);
@@ -89,7 +85,6 @@ function createTag() {
 	  		dataType: "text",
 	  		data: newTag,
 	  	    headers: {
-	  	    	"Authorization": "Bearer 12345",
 	  	    	"Content-Type": "application/json"
 			},
 	  	    success : function(response){
@@ -112,9 +107,6 @@ $("#deleteSimButton").click(function() {
 	$.ajax({
 		url: url,
 		type: "DELETE",
-		headers: {
-  	    	"Authorization": "Bearer 12345"
-		},
 		success: function(){
 			location.reload();
 		},

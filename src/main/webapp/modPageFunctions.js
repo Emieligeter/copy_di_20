@@ -13,9 +13,6 @@ $("#uploadFiles").submit(function(event){
   		data: fd,
   		contentType: false, 
   	    processData: false,
-  	    headers: {
-  	    	"Authorization": "Bearer 12345"
-		},
   	    success : function(response){
   	    	$("#uploadResults").html(response); 
   	    },
@@ -38,9 +35,6 @@ function loadTags() {
 	$.ajax({
   		url : '/sumo-dashboard/rest/tags',
   		type: 'GET',
-  	    headers: {
-  	    	"Authorization": "Bearer 12345"
-		},
   	    success : function(data){
   	    	// Create a checkbox element and corresponding label for every tag
 			for (var i = 0; i < data.length; i++) {

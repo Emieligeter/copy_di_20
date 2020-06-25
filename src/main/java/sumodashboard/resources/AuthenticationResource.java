@@ -50,6 +50,7 @@ public class AuthenticationResource {
 	private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
 
     private static final String AUTHENTICATION_SCHEME = "Bearer";
+    private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
 	
 	@POST
 	@Path("/login")
@@ -108,30 +109,35 @@ public class AuthenticationResource {
     }
 	
 	private static boolean validateToken(String token) {
-		System.out.println("validating token: " + token);
+		
 		try {
-		if(token != null) {
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("jwtauth")
-                    .build(); //Reusable verifier instance
-            DecodedJWT jwt = verifier.verify(token);
-            //Get the userId from token claim.
-            String username = jwt.getClaim("username").asString();
-
-            return true;
-        }
-    } catch (JWTVerificationException e){
-    	System.out.println("validation failed");
-        e.printStackTrace();
-    }
-    return false;
+			if(token != null) {
+	            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+	            JWTVerifier verifier = JWT.require(algorithm)
+	                    .withIssuer("jwtauth")
+	                    .build(); //Reusable verifier instance
+	            DecodedJWT jwt = verifier.verify(token);
+	
+	            return true;
+	        }
+	    } catch (JWTVerificationException e){
+	    	System.out.println("validation failed");
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
 	
 	//Check if a rest request with a token is authorized
 	public static boolean isAuthorized(ContainerRequestContext requestContext) {
-		Map<String, Cookie> cookies = requestContext.getCookies();		
-		//Get the token from the authorization header
+		//First check authorization header
+        String authorization = requestContext.getHeaderString("Authorization");
+        if (authorization != null && authorization.startsWith(AUTHENTICATION_SCHEME + " ")) {
+            String token = authorization.substring(AUTHENTICATION_SCHEME.length()).trim();
+            return (token.equals(API_TOKEN));
+        }
+        
+        //If no bearer token has been submitted, check cookies
+		Map<String, Cookie> cookies = requestContext.getCookies();
         if(cookies.get("session-id") != null) {
         	return validateToken(cookies.get("session-id").getValue());
         }
