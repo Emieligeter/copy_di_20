@@ -69,24 +69,24 @@ public class TestSimulationResource {
 		Simulation initialState = (Simulation)r1.getEntity();
 		Simulation newState = new Simulation(firstSimulationId, "xxx", "1980-08-08", "yyy", "zzz", "x, y, z", "{val: x}", "{val: y}", "{val: z}");
 		
-		//update state correctly
+		//update simulation correctly
 		Response r2 = simulationResource.updateSimulationMetadata(newState);
 		Assertions.assertEquals(200, r2.getStatus());
 		
-		//Check current state variables
+		//Check current simulation variables
 		Response r3 = simulationResource.getSimulation();
 		Assertions.assertEquals(newState, (Simulation) r3.getEntity());
 
-		//update state with name override values
+		//update simulation with name override values
 		Response r4 = simulationResource.updateSimulationMetadata(new Simulation(firstSimulationId, "xyz", null, null, null, null, null, null, null));
 		Assertions.assertEquals(200, r4.getStatus());
 		
-		//Check current state variables
+		//Check current simulation variables
 		Response r5 = simulationResource.getSimulation();
 		newState.setName("xyz");
 		Assertions.assertEquals(newState, (Simulation) r5.getEntity());
 		
-		//update state of invalid simulation id
+		//update metadata of invalid simulation id
 		Response r6 = new SimulationResource(uriInfo, request, requestContext, -5).updateSimulationMetadata(newState);
 		Assertions.assertEquals(400, r6.getStatus());
 		

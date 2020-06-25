@@ -66,17 +66,18 @@
 				</div>
 
 				<!-- Upload window -->
-				<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+				<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog"
+					aria-labelledby="uploadModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="uploadModalLabel">Upload files</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<form id="uploadFiles" enctype="multipart/form-data">
+							<form id="uploadFiles" enctype="multipart/form-data">
+								<div class="modal-header">
+									<h5 class="modal-title" id="uploadModalLabel">Upload files</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
 									<table align="center" cellpadding="0" cellspacing="0">
 										<tr>
 											<td>Select Zip File :</td>
@@ -89,19 +90,24 @@
 												name="uploadFile" webkitdirectory mozdirectory size="100"></td>
 										</tr>
 										<tr>
-											<td><input type="submit" class="btn btn-primary"></input></td>
-											<td id="uploadResults"></td>
+											<td></td>
+											<td><button type="button" class="btn btn-secondary"
+													id="resetUploadForm">🚮</button></td>
 										</tr>
 									</table>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							</div>
+								</div>
+								<div class="modal-footer row">
+									<input type="submit" class="btn btn-primary col-3"></input>
+									<div class="col" id="uploadResults"></div>
+									<button type="button" class="btn btn-secondary col-3"
+										data-dismiss="modal">Close</button>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
 			</div>
+
 			<!-- Update metadata -->
 			<div class="col-sm-6">
 				<h3>Edit metadata</h3>
