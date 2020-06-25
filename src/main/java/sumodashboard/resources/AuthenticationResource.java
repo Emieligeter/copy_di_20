@@ -209,5 +209,15 @@ public class AuthenticationResource {
 		return Response.ok("User created succesfully").build();
 	}
 	
+	//These setters and getters are used in the test class
+	public void setStoreData(boolean storeData) {
+		this.storeData = storeData;
+	}
+	public String getApiToken() {
+		return API_TOKEN;
+	}
+	public String getAuthenticationScheme() {
+		return AUTHENTICATION_SCHEME;
+	}
 
 }
