@@ -26,6 +26,7 @@ $("#uploadFiles").submit(function(event){
     });
 })
 
+//Resets the form for uploading a file
 $('#resetUploadForm').click(function(event) {
 	event.preventDefault();
 	$("input[name='uploadFile']").val('');
@@ -41,7 +42,7 @@ function loadTags() {
   	    headers: {
   	    	"Authorization": "Bearer 12345"
 		},
-  	    success : function(data){
+  	    success: function(data){
   	    	// Create a checkbox element and corresponding label for every tag
 			for (var i = 0; i < data.length; i++) {
 				var div = document.createElement("div");
