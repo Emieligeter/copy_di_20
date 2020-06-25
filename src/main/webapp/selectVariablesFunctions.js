@@ -57,7 +57,7 @@ fstDropDownOptions['pie'] = [edgeFrequencyInitial];
 fstDropDownOptions['bar'] = [edgeFrequencyInitial];
 
 //change the first drop down menu to a new set of options, corresponding to the graphtype
-function changeFirstChoice(chartType) {
+function changeFirstChoice() {
 	var menu = document.getElementById("first-choice");
 	var newOptions = fstDropDownOptions[chartType];
 	editDropDown(menu, newOptions);

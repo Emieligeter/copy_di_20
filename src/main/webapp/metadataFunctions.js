@@ -3,7 +3,7 @@
 //Updates metadata in the database
 $("#modifyMetadata").submit(function(event) {
 	event.preventDefault();
-    var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + getSelectedID();
+    var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
     var newMetadata = document.getElementById("modifyMetadata");
     //Retrieve all tags that have a checked checkbox
     var tags = "";
@@ -39,6 +39,7 @@ $("#modifyMetadata").submit(function(event) {
 
 //When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
+	console.log("woww");
 	$.ajax({
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',
@@ -74,9 +75,11 @@ function processTags(tags) {
 	}
 }
 
+//Creates a new tag in the database
 function createTag() {
 	var newTag = $("#newTag").val();
-	if (newTag.includes('"') || newTag === "") {
+	//Empty tags or tags containing a quotation mark or apostrophe are not allowed
+	if (newTag.includes('"') || newTag === "" || newTag.includes("'")) {
 		$("#createTagSpan").html("Error: tag cannot be empty or contain \"");
 	} else {
 		$.ajax({
@@ -99,6 +102,11 @@ function createTag() {
 	    });
 	}
 }
+
+//Resets the values of the metadata form
+$("#resetMetadataForm").click(function() {
+	fileClick(getSelectedID());
+})
 
 //Deletes the currently selected simulation file from the database
 $("#deleteSimButton").click(function() {

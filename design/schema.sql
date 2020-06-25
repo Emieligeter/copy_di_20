@@ -1,3 +1,11 @@
+CREATE TABLE project.account (
+	userID INT PRIMARY KEY,
+	username TEXT,
+	password STRING,
+	email STRING,
+	created_on TIMESTAMP
+);
+
 CREATE TABLE project.simulations (
   simID INT PRIMARY KEY,
   name TEXT,

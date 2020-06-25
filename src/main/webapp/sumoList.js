@@ -70,6 +70,5 @@ $(document).on('click', 'ul li a', function() {
 
 //returns the id of the current selected SUMO file
 function getSelectedID() {
-	console.log("getSelectedID()" + $("a").filter(".active").parent().attr("id"));
 	return $("a").filter(".active").parent().attr("id");
 }

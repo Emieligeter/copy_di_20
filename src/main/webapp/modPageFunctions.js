@@ -13,6 +13,9 @@ $("#uploadFiles").submit(function(event){
   		data: fd,
   		contentType: false, 
   	    processData: false,
+  	    headers: {
+  	    	"Authorization": "Bearer 12345"
+		},
   	    success : function(response){
   	    	$("#uploadResults").html(response); 
   	    },
@@ -23,6 +26,7 @@ $("#uploadFiles").submit(function(event){
     });
 })
 
+//Resets the form for uploading a file
 $('#resetUploadForm').click(function(event) {
 	event.preventDefault();
 	$("input[name='uploadFile']").val('');
@@ -35,7 +39,10 @@ function loadTags() {
 	$.ajax({
   		url : '/sumo-dashboard/rest/tags',
   		type: 'GET',
-  	    success : function(data){
+  	    headers: {
+  	    	"Authorization": "Bearer 12345"
+		},
+  	    success: function(data){
   	    	// Create a checkbox element and corresponding label for every tag
 			for (var i = 0; i < data.length; i++) {
 				var div = document.createElement("div");

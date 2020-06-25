@@ -31,20 +31,17 @@
   list-style-type: none;
 }
 
-/**/
 #editor {
 	overflow:scroll; 
 	height:300px;
 	width:100%
 }
 
-/**/
 #editArea {
 	position:absolute;
     width: 100%;
 }
 
-/**/
 #textEditor, #chart {
     padding-top: 10px;
 	position: absolute; 
@@ -73,21 +70,25 @@
     padding: 10px 10px 20px 25px;
 }
 
+/*List of files*/
 .list-group {
     max-height: 600px;
     overflow-y:scroll;
 }
 
+/*Top border on modification page*/
 @media (min-width: 576px) {
 	.jumbotron {
 	    padding: 1rem 2rem;
 	}
 }
 
+/*Top border on dashboard page*/
 #topBorder {
 	padding: 2rem 2rem;
 }
 
+/*Top border in general*/
 .jumbotron {
     padding: 1rem 2rem;
     margin-bottom: 1rem;
@@ -108,11 +109,13 @@
 	bottom: 5px;
 }
 
+/*Input bar of form*/
 .stdForm input {
 	width: 100%;
 	margin: 10px;
 }
 
+/*Text area of form*/
 .stdForm textarea {
 	border-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
     border-top-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
@@ -137,6 +140,7 @@
 	padding: 20px 20px 5px 20px;
 }
 
+/*Text element in form*/
 .stdForm p {
 	margin-bottom: 0px;
 	margin-top: 8px;
@@ -154,12 +158,14 @@
 	margin-top: 200px;
 }
 
+/*Checkbox*/
 input[type=checkbox], input[type=radio] {
     box-sizing: border-box;
     margin-right: 5px;
     margin-bottom: 10px;
 }
 
+/*When a checkbox is set to disabled*/
 input[type=checkbox][disabled] + label {
 	    color: #999999;
 }
@@ -188,8 +194,8 @@ input[type=checkbox][disabled] + label {
 	width: 50%;
 	font-size: 15px;
 	float: right;
+	color: #999999;
 }
-
 
 #exportSection {
     padding-top: 50px;
@@ -220,3 +226,7 @@ input[type=checkbox][disabled] + label {
     float: right;
 }
 
+#dbLoginDiv {
+	margin: 0 auto;
+	text-align: left;
+}
