@@ -1,6 +1,6 @@
+
+//This script is taken from the following repository
 /* http://github.com/mindmup/bootstrap-wysiwyg */
-/*global jQuery, $, FileReader*/
-/*jslint browser:true*/
 
 (function ($) {
 	'use strict';

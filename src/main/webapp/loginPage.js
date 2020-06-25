@@ -1,4 +1,4 @@
-
+//Posts username + password to login endpoint. A cookie with a JWT is returned and the user is redirected
 $("#login").submit(function( event ) {
 	event.preventDefault();
 	clearResponse()
@@ -32,6 +32,7 @@ $("form#createNew").on("input", function() {
 ($("input[name='pw2']").get(0).setCustomValidity($("input[name='pw1']").val() != $("input[name='pw2']").val() ? "Passwords do not match." : ""));
 });
 
+//Form to create new user. username, pasword and email are sent to the backend. Response is returned and displayed under form
 $("form#createNew").submit(function( event ) {
 	event.preventDefault();
 	clearResponse();
@@ -57,6 +58,7 @@ $("form#createNew").submit(function( event ) {
     });
   });
 
+//Before every request the <p> under the form is cleared to make room for new messages
 function clearResponse(){
 	$("#createPage #server-response.success").html('');
 	$('#createPage #server-response.error').html('');
