@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-
+/**
+ * Class for serializing account data
+ */
 @Getter
 @Setter
 @XmlRootElement
