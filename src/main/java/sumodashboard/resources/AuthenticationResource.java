@@ -117,8 +117,6 @@ public class AuthenticationResource {
 	                    .withIssuer("jwtauth")
 	                    .build(); //Reusable verifier instance
 	            DecodedJWT jwt = verifier.verify(token);
-	            //Get the userId from token claim.
-	            String username = jwt.getClaim("username").asString();
 	
 	            return true;
 	        }
@@ -139,8 +137,7 @@ public class AuthenticationResource {
         }
         
         //If no bearer token has been submitted, check cookies
-		Map<String, Cookie> cookies = requestContext.getCookies();		
-
+		Map<String, Cookie> cookies = requestContext.getCookies();
         if(cookies.get("session-id") != null) {
         	return validateToken(cookies.get("session-id").getValue());
         }

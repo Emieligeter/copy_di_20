@@ -186,3 +186,14 @@ function handleOptionListResponse(JSONResponse, listType) {
 		break;
 	}
 }
+
+$('#LogOut').click(function() {
+	console.log("test");
+	$.ajax({
+		url: 'rest/auth/logout',
+		type: 'POST',
+		success: function(response) {
+			location.href = "loginPage.html";
+		}
+	});
+});
