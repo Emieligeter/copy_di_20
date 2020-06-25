@@ -25,16 +25,7 @@ $("#login").submit(function( event ) {
     });
   });
 
-function logout(){
-	
-	$.ajax({
-		url: 'rest/auth/logout',
-		type: 'POST',
-		success: function(response) {
-			location.href = "loginPage.html";
-		}
-	});
-};
+
 //InputValidation for confirm password
 $("form#createNew").on("input", function() {
 ($("input[name='pw2']").get(0).setCustomValidity($("input[name='pw1']").val() != $("input[name='pw2']").val() ? "Passwords do not match." : ""));

@@ -32,19 +32,9 @@
 	href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css"
 	rel="stylesheet">
 
-<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
-
-
-<script type="text/javascript" src="plotNames.js"></script>
-<script type="text/javascript" src="chartFunctions.js"></script>
-<script type="text/javascript" src="selectVariablesFunctions.js"></script>
-<script type="text/javascript" src="reportFunctions.js"></script>
-<script type="text/javascript" src="dataRequests.js"></script>
-<script type="text/javascript" src="sumoList.js"></script>
 
 
 <script>
-		window.onload=loadFstDropDownOptions();
 		window.onload = $('#editor').wysiwyg();
 	</script>
 </head>
@@ -54,7 +44,7 @@
 	<div class="jumbotron text-center" id="topBorder">
 		<h1 class="display-4">Dashboard</h1>
 		<div id="mainPageButtons">
-  			<button id="LogOut" onclick="logout()" class="btn btn-danger">Log Out</button> 
+  			<button id="LogOut" class="btn btn-danger">Log Out</button> 
   			<button id="toModifList" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
 		</div>
 	</div>
@@ -157,5 +147,16 @@
 	</div>
 
 		
+	<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	
+	
+	<script type="text/javascript" src="plotNames.js"></script>
+	<script type="text/javascript" src="chartFunctions.js"></script>
+	<script type="text/javascript" src="selectVariablesFunctions.js"></script>
+	<script type="text/javascript" src="reportFunctions.js"></script>
+	<script type="text/javascript" src="dataRequests.js"></script>
+	<script type="text/javascript" src="sumoList.js"></script>
+	
 </body>
 </html>
