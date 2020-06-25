@@ -58,12 +58,15 @@ function dataSndSwitch(paramID) {
 	}
 }
 
-//response to a sumo file being selected, load all options lists
+//response to a sumo file being selected, load all options lists and reset chart if neccesary
 function fileClick(id) {
+	if (!addDataSetBoolean) {
+		resetChart();
+	}
 	getOptionList("lane", "lanelist");
 	getOptionList("vehicle", "vehiclelist");
 	getOptionList("edge", "edgelist");
-	//TODO update graph;
+	//if 'add dataset' is not clicked, reset chart
 }
 
 //parse the response of the request to a sorted list of datapoints for the graph
