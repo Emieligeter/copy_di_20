@@ -42,6 +42,9 @@ public class SimulationsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
+	public SimulationsResource() {
+	}
+	
 	/**
 	 * Constructor used for testing purposes
 	 */
