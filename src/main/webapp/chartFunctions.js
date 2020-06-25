@@ -22,13 +22,15 @@ function addDataSet() {
 
 //function that is called for the "reset" button
 function resetChart() {
-	data = [];
-	label = [];
-	chart.data.datasets=[{label: label[0], data: data[0], fill: false}];
-	chart.data.labels = [];
-	dataSetNumber = 0;
-	//reset all data, but leave title and axis labels
-	chart.update();
+	if (this.chart !== undefined) {
+		data = [];
+		label = [];
+		chart.data.datasets=[{label: label[0], data: data[0], fill: false}];
+		chart.data.labels = [];
+		dataSetNumber = 0;
+		//reset all data, but leave title and axis labels
+		chart.update();
+	}
 }
 
 //function called for any of the chart type buttons
