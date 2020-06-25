@@ -52,7 +52,13 @@ public class AuthenticationResource {
     private static final String AUTHENTICATION_SCHEME = "Bearer";
     private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
 
-	
+	/**
+	 * Login endpoint. A username and password are received as a json and serialized as {@link Credentials}.
+	 * These credentials are used to authenticate the user
+	 * If the authentication is successful a {@link NewCookie} is created with a {@link JWT} as body
+	 * @param creds credentials of the user in 
+	 * @return Response
+	 */
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -74,6 +80,11 @@ public class AuthenticationResource {
 		}
 	}
 	
+	/**
+	 * When this endpoint is called a {@link Response} is sent with a {@link NewCookie} with name "session-id"
+	 * This overwrites the valid {@link JWT} so the user can't reach the other enpoints anymore
+	 * @return Response
+	 */
 	@POST
 	@Path("/logout")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -85,14 +96,27 @@ public class AuthenticationResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}
 	}
-
+	
+	/**
+	 * First gets the hashed password associated with the username. Then uses {@link Argon2} algorithm
+	 * to very the provided password with the hashed password
+	 * @param username
+	 * @param password
+	 * @throws AuthenticationException
+	 * @throws SQLException
+	 */
 	private void authenticate(String username, String password) throws AuthenticationException, SQLException {
 		String hashedPass = accountDAO.getHashedPassword(username);
 		boolean passMatch = argon2.verify(hashedPass, password);
 		if(!passMatch) throw new AuthenticationException("Password incorrect");
 	}
 
-
+	/**
+	 * Creates a {@link JWT} using the username. Uses {@link HMAC256} {@link Algorithm}
+	 * with {@link SECRET_KEY} and certain expiry and issuer parameters
+	 * @param username
+	 * @return {@link JWT} as string, null if an exception occurs
+	 */
 	private static String createToken(String username ) {
 		try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
@@ -110,8 +134,8 @@ public class AuthenticationResource {
         return null;
     }
 	
+	//Check if token is valid and if the user exists in the database
 	private static boolean validateToken(String token) {
-		
 		try {
 		if(token != null) {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
@@ -152,6 +176,13 @@ public class AuthenticationResource {
         return false;
 	}
 	
+	/**
+	 * Creates a user based on the {@link Account} parameters. The {@link Argon2} algorithm is used to hash the password with a salt
+	 * The user is stored through the {@link AccountDAO} class
+	 * @param acc
+	 * @return Resonse
+	 * @throws SQLException
+	 */
 	@POST
 	@Path("/createUser")
 	@Consumes(MediaType.APPLICATION_JSON)
