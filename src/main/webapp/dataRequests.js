@@ -190,6 +190,7 @@ function handleOptionListResponse(JSONResponse, listType) {
 	}
 }
 
+//Logs the user out by calling logout endpoint, then redirects to the home page
 $('#LogOut').click(function() {
 	console.log("test");
 	$.ajax({
