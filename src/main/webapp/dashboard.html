@@ -75,6 +75,7 @@
 					<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
 					<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
 					<button id="PieChart" class="btn btn-outline-primary" onclick="setChartType('pie')">Pie Chart</button> 
+					<button id="sumStatsButton" class="btn btn-outline-primary" onclick="setChartType('sumStats')">Summary Statistics</button> 
 					<button id="TextElement" class="btn btn-outline-primary" onclick="setChartType('textElement')">Text Element</button> 
 					<button id="addToReport" class="btn btn-success" onclick="chartToReport()">Add chart to report</button>
 					
@@ -84,7 +85,6 @@
 				<div id="editArea">
 				
 					<div id="chart" class="row">
-					
 						<canvas id="reportElement" class="col-9"></canvas>
 						<div id="paramSelect" class="col-3">	
 							<div id="varSelect" class="col card">	
@@ -143,6 +143,9 @@
 					</div>
 					<div id="textEditor" class="row">
 						<iframe id="textFrame" src="textEditor.html" class="col"></iframe>
+					</div>
+					<div id="summaryStatistics" class="row">
+						<p id="sumStats"><p>
 					</div>
 				</div>
 

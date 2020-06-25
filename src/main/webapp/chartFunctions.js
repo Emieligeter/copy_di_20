@@ -22,6 +22,7 @@ function addDataSet() {
 
 //function that is called for the "reset" button
 function resetChart() {
+	if (this.chart !== undefined) {
 	data = [];
 	label = [];
 	chart.data.datasets=[{label: label[0], data: data[0], fill: false}];
@@ -29,6 +30,12 @@ function resetChart() {
 	dataSetNumber = 0;
 	//reset all data, but leave title and axis labels
 	chart.update();
+	}
+}
+
+//fill in the numbers gotten by the datarequest 'getSummaryStatistics'
+function viewSummaryStatistics(sumStatsString) {
+	document.getElementById('summaryStatistics').innerHTML = sumStatsString;
 }
 
 //function called for any of the chart type buttons
@@ -47,7 +54,7 @@ function updateChart() {
 	var canvas = document.getElementById('reportElement');
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	if(chartType !== "textElement") {
+	if(chartType !== "textElement" && chartType !== "sumStats") {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	chart = new Chart(ctx, {
 		type : chartType,

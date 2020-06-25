@@ -190,6 +190,36 @@ function handleOptionListResponse(JSONResponse, listType) {
 	}
 }
 
+//request the summary statistics
+function getSummaryStatistics() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var pathName = "summarystatistics";
+	var url = urlInit + simid + "/" + pathName;
+	openXhrGETRequest(xhr, url, true);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			handleSummaryStatisticsResponse(this.responseText);
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting summary statistics, status: " + this.status);
+			console.error("Get summary statistics response:\n" + JSON.stringify(this.responseText));
+		}
+	}
+	xhr.send();
+}
+
+function handleSummaryStatisticsResponse(JSONresponse) {
+	var response = JSON.parse(JSONresponse);
+	console.log(response);
+	var result = "<p id=\"sumStats\"><strong>Summary Statistics</strong><br>";
+	result += "Number of edges: " + response.edges + "<br>";
+	result += "Number of junctions: " + response.junctions + "<br>";
+	result += "Number of vehicles: " + response.vehicles + "<br>";
+	result += "<p>";
+	viewSummaryStatistics(result);
+}
+
 //Logs the user out by calling logout endpoint, then redirects to the home page
 $('#LogOut').click(function() {
 	console.log("test");

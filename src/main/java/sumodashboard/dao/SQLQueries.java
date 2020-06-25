@@ -36,7 +36,8 @@ public class SQLQueries {
     /**Check if a simulation id exists*/
     public PreparedStatement doesSimIdExistQuery;
     
-    public PreparedStatement summaryStats;
+    /**Get the number of edges, junctions and vehicles in a simulation*/
+    public PreparedStatement summaryStatistics;
     
 
     /**Get the edge appearance frequency of a specified edge over time*/
@@ -235,16 +236,13 @@ public class SQLQueries {
         }
         
         try {
-            summaryStats = connection.prepareStatement("" +
-                    "SELECT simid, timestamp, summary_statistics" +
-                    "FROM" +
-                    "(" +
-                    "SELECT simid, timestamp, (state -> 'snapshot' ->> 'delay') as delay" +
-                    "FROM project.states" +
-                    "WHERE json_typeof(state -> 'snapshot' -> 'delay') = 'object') as summary_statistics " +
-                    "WHERE simid = ?" +
-                    "GROUP BY timestamp " +
-                    "ORDER BY simid, timestamp ASC ");
+            summaryStatistics = connection.prepareStatement("" +
+            		"SELECT json_array_length(routes -> 'routes' -> 'vehicle') AS vehicles, " +
+            		"json_array_length(net -> 'net' -> 'edge') AS allEdges, " +
+            		"json_array_length(net -> 'net' -> 'junction') AS junction " +
+            		"FROM project.simulations " +
+            		"WHERE simid = ?"
+            		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();

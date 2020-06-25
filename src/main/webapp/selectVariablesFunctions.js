@@ -58,22 +58,26 @@ fstDropDownOptions['bar'] = [edgeFrequencyInitial];
 
 //change the first drop down menu to a new set of options, corresponding to the graphtype
 function changeFirstChoice() {
-	var menu = document.getElementById("first-choice");
-	var newOptions = fstDropDownOptions[chartType];
-	editDropDown(menu, newOptions);
-	if(chartType != 'textElement') {   
-		//Hide editor, show variable selector
+	if (chartType === 'textElement') {   
+		//Show editor, hide variable selector, hide summary statistics
+		document.getElementById("chart").style.visibility="hidden";  
+		document.getElementById("textEditor").style.visibility="visible";
+		document.getElementById("summaryStatistics").style.visibility="hidden";  
+	} else if (chartType === 'sumStats') {
+		//Hide editor, hide variable selector, show summary statistics
+		document.getElementById("chart").style.visibility="hidden";  
+		document.getElementById("textEditor").style.visibility="hidden";
+		document.getElementById("summaryStatistics").style.visibility="visible";
+		getSummaryStatistics();
+	} else {
+		//Hide editor and summary statistics, show variable selector
 		document.getElementById("chart").style.visibility="visible";  
-		document.getElementById("textEditor").style.visibility="hidden";  
-		
+		document.getElementById("textEditor").style.visibility="hidden";
+		document.getElementById("summaryStatistics").style.visibility="hidden";  
+		//edit drop down menu
 		var menu = document.getElementById("first-choice");
 		var newOptions = fstDropDownOptions[chartType];
 		editDropDown(menu, newOptions);
-	} else {
-		//Show editor, hide variable selector
-		document.getElementById("chart").style.visibility="hidden";  
-		document.getElementById("textEditor").style.visibility="visible";
-		
 	}
 }
 
