@@ -92,6 +92,7 @@ public class MetaDataIO {
 			
 			if (tagId == null) {
 				simDao.createTag(tag);
+				tagId = simDao.getTagId(tag);
 			} 
 			
 			simDao.storeSimTag(tagId, simId);
