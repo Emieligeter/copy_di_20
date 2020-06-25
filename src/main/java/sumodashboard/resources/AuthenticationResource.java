@@ -49,7 +49,7 @@ public class AuthenticationResource {
 	private Argon2 argon2 = Argon2Factory.create(Argon2Types.ARGON2id);
 	private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
 
-    private static final String AUTHENTICATION_SCHEME = "Bearer";
+	private static final String AUTHENTICATION_SCHEME = "Bearer";
 	
 	@POST
 	@Path("/login")
@@ -61,7 +61,7 @@ public class AuthenticationResource {
 		
 		try {
 			authenticate(username, password);	
-			String token = createToken(username, 8000);
+			String token = createToken(username);
 			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, 300, false, false);
 			System.out.println("Token created: " + token);
 			return Response.ok("login successful").cookie(cookie).build();
@@ -90,17 +90,18 @@ public class AuthenticationResource {
 		if(!passMatch) throw new AuthenticationException("Password incorrect");
 	}
 
-	private static String createToken(String username, long ttlMillis) {
+
+	private static String createToken(String username ) {
 		try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             Date expirationDate = Date.from(ZonedDateTime.now().plusHours(24).toInstant());
             Date issuedAt = Date.from(ZonedDateTime.now().toInstant());
             return JWT.create()
-                    .withIssuedAt(issuedAt) // Issue date.
-                    .withExpiresAt(expirationDate) // Expiration date.
-                    .withClaim("username", username) // User id - here we can put anything we want, but for the example userId is appropriate.
-                    .withIssuer("jwtauth") // Issuer of the token.
-                    .sign(algorithm); // And the signing algorithm.
+                    .withIssuedAt(issuedAt) 
+                    .withExpiresAt(expirationDate) 
+                    .withClaim("username", username) 
+                    .withIssuer("sumoDashboard") 
+                    .sign(algorithm); 
         } catch (JWTCreationException e) {
            	e.printStackTrace();
         }
@@ -113,13 +114,12 @@ public class AuthenticationResource {
 		if(token != null) {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("jwtauth")
+                    .withIssuer("sumoDashboard")
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             //Get the userId from token claim.
             String username = jwt.getClaim("username").asString();
-            System.out.println(username);
-            Account acc = accountDAO.getUserByName(username);
+            String user = accountDAO.getUserByName(username);
             
             return true;
         }

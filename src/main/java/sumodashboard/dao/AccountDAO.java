@@ -52,10 +52,10 @@ public class  AccountDAO {
 		sqlQueries.createNewUser.setDate(4, new java.sql.Date(new Date().getTime()));
 		sqlQueries.createNewUser.executeUpdate();
 	}
-	public Account getUserByName(String username) throws SQLException {
+	public String getUserByName(String username) throws SQLException {
 		sqlQueries.getUserByName.setString(1, username);
 		ResultSet rs = sqlQueries.getUserByName.executeQuery();
 		rs.next();
-		return new Account(rs.getString("username"), null, rs.getString("email"));
+		return rs.getString("username");
 	}
 }
