@@ -121,7 +121,7 @@ public class AuthenticationResource {
             DecodedJWT jwt = verifier.verify(token);
             //Get the userId from token claim.
             String username = jwt.getClaim("username").asString();
-            String user = accountDAO.getUserByName(username);
+            accountDAO.getUserByName(username);
             
             return true;
         }
