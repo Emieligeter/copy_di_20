@@ -51,6 +51,7 @@ public class AuthenticationResource {
 
     private static final String AUTHENTICATION_SCHEME = "Bearer";
     private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
+
 	
 	@POST
 	@Path("/login")
@@ -62,7 +63,7 @@ public class AuthenticationResource {
 		
 		try {
 			authenticate(username, password);	
-			String token = createToken(username, 8000);
+			String token = createToken(username);
 			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, 300, false, false);
 			System.out.println("Token created: " + token);
 			return Response.ok("login successful").cookie(cookie).build();
@@ -91,17 +92,18 @@ public class AuthenticationResource {
 		if(!passMatch) throw new AuthenticationException("Password incorrect");
 	}
 
-	private static String createToken(String username, long ttlMillis) {
+
+	private static String createToken(String username ) {
 		try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             Date expirationDate = Date.from(ZonedDateTime.now().plusHours(24).toInstant());
             Date issuedAt = Date.from(ZonedDateTime.now().toInstant());
             return JWT.create()
-                    .withIssuedAt(issuedAt) // Issue date.
-                    .withExpiresAt(expirationDate) // Expiration date.
-                    .withClaim("username", username) // User id - here we can put anything we want, but for the example userId is appropriate.
-                    .withIssuer("jwtauth") // Issuer of the token.
-                    .sign(algorithm); // And the signing algorithm.
+                    .withIssuedAt(issuedAt) 
+                    .withExpiresAt(expirationDate) 
+                    .withClaim("username", username) 
+                    .withIssuer("sumoDashboard") 
+                    .sign(algorithm); 
         } catch (JWTCreationException e) {
            	e.printStackTrace();
         }
@@ -111,20 +113,26 @@ public class AuthenticationResource {
 	private static boolean validateToken(String token) {
 		
 		try {
-			if(token != null) {
-	            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-	            JWTVerifier verifier = JWT.require(algorithm)
-	                    .withIssuer("jwtauth")
-	                    .build(); //Reusable verifier instance
-	            DecodedJWT jwt = verifier.verify(token);
-	
-	            return true;
-	        }
-	    } catch (JWTVerificationException e){
-	    	System.out.println("validation failed");
-	        e.printStackTrace();
-	    }
-	    return false;
+		if(token != null) {
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("sumoDashboard")
+                    .build(); //Reusable verifier instance
+            DecodedJWT jwt = verifier.verify(token);
+            //Get the userId from token claim.
+            String username = jwt.getClaim("username").asString();
+            String user = accountDAO.getUserByName(username);
+            
+            return true;
+        }
+    } catch (JWTVerificationException e){
+    	System.out.println("validation failed");
+        e.printStackTrace();
+    } catch (SQLException e) {
+		System.out.println("User doesnt exist");
+		e.printStackTrace();
+	}
+    return false;
 	}
 	
 	//Check if a rest request with a token is authorized

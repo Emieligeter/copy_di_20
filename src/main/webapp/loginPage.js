@@ -6,6 +6,7 @@ $("#login").submit(function( event ) {
 	var password = $("#login #inputPassword").val().trim();
 	var credentials = {"username": username,
  			 			"password": password}
+
 	var serverResp = $("#login #server-response");
 	$.ajax({
   		url : 'rest/auth/login',
@@ -47,7 +48,11 @@ $("form#createNew").submit(function( event ) {
   	    	$("#createPage #server-response.success").html(response);
   	   },
   	   error : function(response) {
+  		   if(response.status == 409) {
   		   $('#createPage #server-response.error').html(response.responseText);
+  		   } else {
+  			 $('#createPage #server-response.error').html("Something went wrong, try again later");
+  		   }
   	   }
     });
   });
