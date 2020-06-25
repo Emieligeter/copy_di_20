@@ -118,18 +118,13 @@ public class AuthenticationResource {
             DecodedJWT jwt = verifier.verify(token);
             //Get the userId from token claim.
             String username = jwt.getClaim("username").asString();
-            System.out.println(username);
-            Account acc = accountDAO.getUserByName(username);
-            
+
             return true;
         }
     } catch (JWTVerificationException e){
     	System.out.println("validation failed");
         e.printStackTrace();
-    } catch (SQLException e) {
-		System.out.println("User doesnt exist");
-		e.printStackTrace();
-	}
+    }
     return false;
 	}
 	
