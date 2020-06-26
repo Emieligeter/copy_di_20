@@ -1,1 +1,1 @@
-https://app.swaggerhub.com/apis-docs/Sumo-team-1/SUMO-team-1/v3
+https://app.swaggerhub.com/apis-docs/Sumo-team-1/SUMO-team-1/v4
