@@ -398,7 +398,7 @@ public class SQLQueries {
         
         try {
             avgRouteLengthQuery = connection.prepareStatement("" +
-                    "SELECT timestamp, AVG(LENGTH(edgeRoute)-LENGTH(REPLACE(edgeRoute,' ','')) +1) AS avgCount " +
+                    "SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,' ','')) +1) AS avgCount " +
                     "FROM  " +
                     "	( " +
                     "	SELECT simid, timestamp, state -> 'snapshot' -> 'route' ->> 'edges' AS route " +

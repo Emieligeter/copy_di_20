@@ -51,7 +51,6 @@ public enum SimulationDao {
 	 * Start the connection to the database
 	 */
 	private void startDBConnection() {
-//		new dblogin();
 		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
 		final String username = "dab_di19202b_333";
 		final String password = "zyU3/uAIyZgigF+A";

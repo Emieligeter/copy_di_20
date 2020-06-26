@@ -163,7 +163,7 @@ function getData(dataType, path) {
 		}
 		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
-			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
+			console.error("Get data response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();

@@ -225,8 +225,3 @@ input[type=checkbox][disabled] + label {
 #uploadFiles button {
     float: right;
 }
-
-#dbLoginDiv {
-	margin: 0 auto;
-	text-align: left;
-}
