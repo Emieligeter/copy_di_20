@@ -6,8 +6,8 @@ var label = [];
 var options = {};
 options["line"] = {scales: {xAxes: [{type: 'linear', display: true, scaleLabel: {display: true}}]}};
 options["scatter"] = {}; 
-options["bar"] = {legend: {display: false}};
-options["pie"] = {legend: {display: false}};
+options["bar"] = {};
+options["pie"] = {};
 
 //the number of the newest dataset
 var dataSetNumber = 0;
@@ -40,6 +40,7 @@ function viewSummaryStatistics(sumStatsString) {
 
 //function called for any of the chart type buttons
 function setChartType(type) {
+	resetChart();
 	chartType = type;
 	//edit the drop down menu options
 	changeFirstChoice(type);

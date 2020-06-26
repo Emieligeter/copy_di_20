@@ -1,14 +1,16 @@
 
 //The charttype is checked. If chart type is:
 //- textelement, call copyText to get the text content of the editor and place it in the report section
-//- not textelement, call the copychart function and copy contents of canvas to report section
+//- summary statistics, call copyTest to get the statistics and place it in the report section
+//- anything else, call the copychart function and copy contents of canvas to report section
 function chartToReport() {
 	var elementCopy;
 	if(chartType == 'textElement') {
 		var editor = $('#textFrame').contents().find('#editor');
 		elementCopy = copyText(editor.cleanHtml());
 		editor.clearHtml();
-
+	} else if (chartType === 'sumStats') {
+		elementCopy = copyText(document.getElementById('sumStats').innerHTML);
 	} else {
 		elementCopy = copyCanvas(document.getElementById('reportElement'));
 	}
