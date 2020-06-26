@@ -129,7 +129,6 @@ public enum SimulationDao {
 		sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(3, simulation_id);
-		sqlQueries.removeSimulationQuery.execute();
 
 		if (sqlQueries.removeSimulationQuery.executeUpdate() == 0) {
 			connection.rollback();
@@ -600,6 +599,11 @@ public enum SimulationDao {
 		return null;
 	}
 	
+	/**
+	 * Create a new tag in the database
+	 * @param tag tag name
+	 * @throws SQLException database not reachable
+	 */
 	public void createTag(String tag) throws SQLException {
 		int tagId;
 		do {

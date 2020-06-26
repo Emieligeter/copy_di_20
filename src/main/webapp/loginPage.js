@@ -21,6 +21,7 @@ $("#login").submit(function( event ) {
 				$("#loginPage #server-response.error").html("Username or password invalid");
 			} else {
 				$("#loginPage #server-response.error").html("Something went wrong");
+				console.log(response.responseText);
 			}
 		}
     });
@@ -53,6 +54,7 @@ $("form#createNew").submit(function( event ) {
   		   $('#createPage #server-response.error').html(response.responseText);
   		   } else {
   			 $('#createPage #server-response.error').html("Something went wrong, try again later");
+  			 console.log(response.responseText);
   		   }
   	   }
     });

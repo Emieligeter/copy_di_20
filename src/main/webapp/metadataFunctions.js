@@ -8,6 +8,7 @@ $("#modifyMetadata").submit(function(event) {
     //Retrieve all tags that have a checked checkbox
     var tags = "";
     $('input:checkbox:checked').each(function () {
+    	//First tag in the list should not have a comma at the start
     	if (tags === "") {
     		tags += $(this).attr('id')
     	} else {
@@ -72,7 +73,14 @@ function fileClick(id) {
 //Displays the tags of a simulation
 function processTags(tags) {
 	var checkboxes = $('input[type=checkbox]').get();
-	var tagList = tags.split(', ');
+	var tagList;
+	if (tags != null) {
+		tagList = tags.split(', ');
+	}
+	else {
+		tagList = [];
+	}
+	
 	for(var i = 0; i < checkboxes.length; i++) {
 	    checkboxes[i].disabled = false;
 	    if (tagList.includes(checkboxes[i].id)) {
