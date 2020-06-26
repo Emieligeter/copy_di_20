@@ -116,7 +116,7 @@ function openXhrGETRequest(xhr, url, wait) {
 //Send a datarequest with a parameter
 function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
-	if (simid == null) {
+	if (simID === null) {
 		alert("Please select a simulation first.");
 		return;
 	}
@@ -142,7 +142,7 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 //send a datarequest without a parameter
 function getData(dataType, path) {
 	var simid = getSelectedID();
-	if (simid == null) {
+	if (simid === null) {
 		alert("Please select a simulation first.");
 		return;
 	}
