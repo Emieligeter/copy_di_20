@@ -8,6 +8,7 @@ $("#modifyMetadata").submit(function(event) {
     //Retrieve all tags that have a checked checkbox
     var tags = "";
     $('input:checkbox:checked').each(function () {
+    	//First tag in the list should not have a comma at the start
     	if (tags === "") {
     		tags += $(this).attr('id')
     	} else {
@@ -39,7 +40,6 @@ $("#modifyMetadata").submit(function(event) {
 
 //When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
-	console.log("woww");
 	$.ajax({
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',

@@ -608,6 +608,11 @@ public enum SimulationDao {
 		return null;
 	}
 	
+	/**
+	 * Create a new tag in the database
+	 * @param tag tag name
+	 * @throws SQLException database not reachable
+	 */
 	public void createTag(String tag) throws SQLException {
 		int tagId;
 		do {
