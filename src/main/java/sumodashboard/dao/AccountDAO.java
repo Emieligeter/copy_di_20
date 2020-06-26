@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.security.sasl.AuthenticationException;
 
-import sumodashboard.model.Account;
-
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;

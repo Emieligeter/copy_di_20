@@ -1,7 +1,6 @@
 package sumodashboard.resources;
 
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
@@ -18,26 +17,12 @@ import sumodashboard.dao.AccountDAO;
 import sumodashboard.model.Account;
 import sumodashboard.model.Credentials;
 
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-
-import io.jsonwebtoken.*;
-
-import java.util.Date;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.Claims;
 
 @Path("/auth")
 public class AuthenticationResource {

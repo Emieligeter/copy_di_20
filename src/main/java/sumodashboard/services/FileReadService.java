@@ -42,8 +42,7 @@ public class FileReadService {
 		
 		if (fileList.size() == 1 && fileList.get(0).contains(".zip")) {
 			return handleZip(convertToZipStream(stream));
-		} else {
-			checkFileList(fileList);		
+		} else {		
 			return handleFiles(stream, bodyPart);
 		}
 	}
@@ -121,15 +120,6 @@ public class FileReadService {
 		stream.close();
 
 		return new SumoFilesDTO(files, stateFiles);
-	}
-	
-	/**
-	 * Check if the uploaded files are correct
-	 * @param fileList List<String file>
-	 * @throws IOException
-	 */
-	public static void checkFileList(List<String> fileList) throws IOException {
-		// TODO Checks on correctness of files
 	}
 	
 	/**
