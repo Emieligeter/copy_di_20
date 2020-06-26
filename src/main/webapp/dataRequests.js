@@ -123,7 +123,10 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 		if (this.readyState == 4 && this.status == 200) {
 			handleGraphDataResponse(this.responseText, dataType + " of " + paramID);
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
@@ -146,7 +149,10 @@ function getData(dataType, path) {
 				handleGraphDataResponse(this.responseText, dataType);
 			}
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
@@ -164,7 +170,10 @@ function getOptionList(listType, path) {
 		if (this.readyState == 4 && this.status == 200) {
 			handleOptionListResponse(this.responseText, listType);
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
@@ -201,7 +210,10 @@ function getSummaryStatistics() {
 		if (this.readyState == 4 && this.status == 200) {
 			handleSummaryStatisticsResponse(this.responseText);
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting summary statistics, status: " + this.status);
 			console.error("Get summary statistics response:\n" + JSON.stringify(this.responseText));
 		}
@@ -228,6 +240,10 @@ $('#LogOut').click(function() {
 		type: 'POST',
 		success: function(response) {
 			location.href = "loginPage.html";
+		},
+		error: function(response){
+			$("#uploadResults").html("Error occured, code: " + response.status); 
+  	    	console.error("Upload files response:\n" + JSON.stringify(response));
 		}
 	});
 });

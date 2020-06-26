@@ -17,8 +17,13 @@ $("#uploadFiles").submit(function(event){
   	    	$("#uploadResults").html(response); 
   	    },
   		error : function(response){
-  	    	$("#uploadResults").html("Error occured, code: " + response.status); 
-  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  			if (response.status == 401) {
+  				location.href = "loginPage.html";
+  			}
+  			else {
+	  	    	$("#uploadResults").html("Error occured, code: " + response.status); 
+	  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  			}
   	    }
     });
 })
@@ -59,9 +64,13 @@ function loadTags() {
 			}
   	    },
   		error : function(response){
-  			alert("Error occured when receiving tags, status: " + response.status);
-			console.error("Load tags response:\n" + JSON.stringify(response));
-  			if(response.status == 401) location.href="loginPage.html"
+  			if (response.status == 401) {
+  				location.href = "loginPage.html";
+  			}
+  			else {
+	  			alert("Error occured when receiving tags, status: " + response.status);
+				console.error("Load tags response:\n" + JSON.stringify(response));
+  			}
 
   	    }
     });

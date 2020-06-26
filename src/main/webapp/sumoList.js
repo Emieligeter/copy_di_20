@@ -30,11 +30,13 @@ function loadFiles() {
 			  sumoFiles.appendChild(liElem);
 		  }
 	  }
-	  if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 		  var response = this.responseText;
 		  console.error("Load files response:\n" + response);
 		  alert("Load files request failed with status: " + this.status);
-		  if(this.status == 401) location.href ="loginPage.html"
 	  }
 	}
 	//Request all sumo files
