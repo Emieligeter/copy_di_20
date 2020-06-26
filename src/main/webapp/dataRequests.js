@@ -116,6 +116,11 @@ function openXhrGETRequest(xhr, url, wait) {
 //Send a datarequest with a parameter
 function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+
 	var xhr = new XMLHttpRequest();
 	var url = urlInit + simID + "/" + path + "?" + paramName + "=" + paramID;
 	openXhrGETRequest(xhr, url, true);
@@ -123,7 +128,10 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 		if (this.readyState == 4 && this.status == 200) {
 			handleGraphDataResponse(this.responseText, dataType + " of " + paramID);
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
@@ -134,6 +142,11 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 //send a datarequest without a parameter
 function getData(dataType, path) {
 	var simid = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+	
 	var xhr = new XMLHttpRequest();
 	var pathName = path;
 	var url = urlInit + simid + "/" + pathName;
@@ -146,7 +159,10 @@ function getData(dataType, path) {
 				handleGraphDataResponse(this.responseText, dataType);
 			}
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
@@ -157,6 +173,11 @@ function getData(dataType, path) {
 //send a request to get the lanelist, vehiclelist or edgelist
 function getOptionList(listType, path) {
 	var simid = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+	
 	var xhr = new XMLHttpRequest();
 	var url = urlInit + simid + "/" + path;
 	openXhrGETRequest(xhr, url, false);
@@ -164,7 +185,10 @@ function getOptionList(listType, path) {
 		if (this.readyState == 4 && this.status == 200) {
 			handleOptionListResponse(this.responseText, listType);
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
@@ -193,6 +217,11 @@ function handleOptionListResponse(JSONResponse, listType) {
 //request the summary statistics
 function getSummaryStatistics() {
 	var simid = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+	
 	var xhr = new XMLHttpRequest();
 	var pathName = "summarystatistics";
 	var url = urlInit + simid + "/" + pathName;
@@ -211,7 +240,6 @@ function getSummaryStatistics() {
 
 function handleSummaryStatisticsResponse(JSONresponse) {
 	var response = JSON.parse(JSONresponse);
-	console.log(response);
 	var result = "<p id=\"sumStats\"><strong>Summary Statistics</strong><br>";
 	result += "Number of edges: " + response.edges + "<br>";
 	result += "Number of junctions: " + response.junctions + "<br>";
@@ -222,12 +250,15 @@ function handleSummaryStatisticsResponse(JSONresponse) {
 
 //Logs the user out by calling logout endpoint, then redirects to the home page
 $('#LogOut').click(function() {
-	console.log("test");
 	$.ajax({
 		url: 'rest/auth/logout',
 		type: 'POST',
 		success: function(response) {
 			location.href = "loginPage.html";
+		},
+		error: function(response){
+			$("#uploadResults").html("Error occured, code: " + response.status); 
+  	    	console.error("Upload files response:\n" + JSON.stringify(response));
 		}
 	});
 });
