@@ -23,11 +23,11 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>loginServlet</servlet-name>
+		<servlet-name>dblogin</servlet-name>
 		<servlet-class>sumodashboard.dao.dblogin</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>loginServlet</servlet-name>
+		<servlet-name>dblogin</servlet-name>
 		<url-pattern>/loginServlet/</url-pattern>
 	</servlet-mapping>
 

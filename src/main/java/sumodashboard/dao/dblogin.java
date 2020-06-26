@@ -14,8 +14,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
 
-@Path("/loginServlet")
-@WebServlet("/loginServlet")
+//@Path("/loginServlet/")
+//@WebServlet("/loginServlet/")
 public class dblogin extends HttpServlet {
      Connection connection;
 @Context HttpServletRequest request;
@@ -28,6 +28,7 @@ public class dblogin extends HttpServlet {
 
         try {
             connection = DriverManager.getConnection(url, username, password);
+            connection.setAutoCommit(false);
         } catch (SQLException e) {
             System.err.println("SQL Exception when starting connection to database:");
             System.err.println(e.getLocalizedMessage());
