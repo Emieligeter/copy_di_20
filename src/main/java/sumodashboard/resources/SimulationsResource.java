@@ -42,6 +42,9 @@ public class SimulationsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
+	//Used to disable storage when testing
+	private boolean storeData = true;
+
 	public SimulationsResource() {
 	}
 	
@@ -113,18 +116,19 @@ public class SimulationsResource {
 				meta.getDate(),
 				files.get("net.net.xml"), 
 				files.get("routes.rou.xml"), 
-				files.get("simulation.sumocfg"));
+				files.get("simulation.sumocfg"),
+				storeData);
 
 		//Store all state files in 'states' table
 		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
 			Integer timeStamp = sf.getKey();
 			File file = sf.getValue();
-			simDao.storeState(simId, timeStamp, file);
+			if(storeData)simDao.storeState(simId, timeStamp, file, storeData);
 		}
 		
 		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
 		String tags = meta.getTags();
-		MetaDataIO.addTagsToSimulation(simId, tags);
+		if(storeData)MetaDataIO.addTagsToSimulation(simId, tags);
 		
 		// Delete files after use
 		files.forEach((key, file) -> file.delete());
@@ -141,5 +145,9 @@ public class SimulationsResource {
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, requestContext, id);
+	}
+	
+	public void setStoreData(boolean storeData) {
+		this.storeData = storeData;
 	}
 }
