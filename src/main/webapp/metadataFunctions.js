@@ -32,8 +32,13 @@ $("#modifyMetadata").submit(function(event) {
   	    	$("#updateResults").html("Updated metadata successfully!"); 
   	    },
   		error: function(response){
-  	    	$("#updateResults").html("Error occured, code: " + response.status); 
-  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  			if (response.status == 401) {
+  				location.href = "loginPage.html";
+  			}
+  			else {
+  				$("#updateResults").html("Error occured, code: " + response.status); 
+  	  	    	console.error("Upload files response:\n" + JSON.stringify(response));
+  			}
   	    }
     });
 });
@@ -53,9 +58,13 @@ function fileClick(id) {
   			$("#updateResults").html("");
   	    },
   		error : function(response){
-  			alert("Error occured when receiving simulation, code: " + response.status);
-			console.error("Load simulation response:\n" + JSON.stringify(response));
-  			if(response.status == 401) location.href="loginPage.html"
+  			if (response.status == 401) {
+  				location.href = "loginPage.html";
+  			}
+  			else {
+	  			alert("Error occured when receiving simulation, code: " + response.status);
+				console.error("Load simulation response:\n" + JSON.stringify(response));
+  			}
 
 		}
     });	
@@ -64,7 +73,14 @@ function fileClick(id) {
 //Displays the tags of a simulation
 function processTags(tags) {
 	var checkboxes = $('input[type=checkbox]').get();
-	var tagList = tags.split(', ');
+	var tagList;
+	if (tags != null) {
+		tagList = tags.split(', ');
+	}
+	else {
+		tagList = [];
+	}
+	
 	for(var i = 0; i < checkboxes.length; i++) {
 	    checkboxes[i].disabled = false;
 	    if (tagList.includes(checkboxes[i].id)) {
@@ -96,8 +112,13 @@ function createTag() {
 	  			$("#newTagButton").html("+ New tag");
 	  	    },
 	  		error : function(response){
-	  	    	$("#updateResults").html("Error occured, code: " + response.status); 
-	  	    	console.error("Create new tag response:\n" + JSON.stringify(response));
+	  			if (response.status == 401) {
+	  				location.href = "loginPage.html";
+	  			}
+	  			else {
+		  	    	$("#updateResults").html("Error occured, code: " + response.status); 
+		  	    	console.error("Create new tag response:\n" + JSON.stringify(response));
+	  			}
 	  	    }
 	    });
 	}
@@ -119,10 +140,13 @@ $("#deleteSimButton").click(function() {
 			location.reload();
 		},
   		error : function(response){
-  			alert("Error occured when deleting simulation, code: " + response.status);
-			console.error("Delete simulation response:\n" + JSON.stringify(response));
-  			if(response.status == 401) location.href="loginPage.html"
-
+  			if (response.status == 401) {
+  				location.href = "loginPage.html";
+  			}
+  			else {
+	  			alert("Error occured when deleting simulation, code: " + response.status);
+				console.error("Delete simulation response:\n" + JSON.stringify(response));
+  			}
   	    }
 	});
 })

@@ -150,10 +150,8 @@ public class AuthenticationResource {
             return true;
         }
     } catch (JWTVerificationException e){
-    	System.out.println("validation failed");
         e.printStackTrace();
     } catch (SQLException e) {
-		System.out.println("User doesnt exist");
 		e.printStackTrace();
 	}
     return false;

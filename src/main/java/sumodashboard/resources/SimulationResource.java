@@ -53,7 +53,7 @@ public class SimulationResource {
 			Response response;
 			
 			if (simulation == null) {
-				response = Response.status(400).entity("Invalid ID, does not exist").build();
+				response = Response.status(400).entity("Invalid ID, does not exist: " + ID).build();
 			}
 			else {
 				response = Response.status(200).entity(simulation).build();

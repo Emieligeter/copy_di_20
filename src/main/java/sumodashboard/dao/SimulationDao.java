@@ -28,33 +28,33 @@ import org.postgresql.util.PGobject;
  */
 public enum SimulationDao {
 	instance;
-	private boolean storeData = true;
 	
 	private Connection connection;
 	private SQLQueries sqlQueries;
 	
 	/**
 	 * Constructor sets up the connection to the database
+	 * @throws SQLException 
 	 */
 	private SimulationDao() {
 		try {
 			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
+			startDBConnection();
+		} catch (Exception e) {
 			System.err.println("Class org.postgresql.Driver not found in method SimulationDao.init(), check dependencies.");
 		}
-		startDBConnection();
+		
 		sqlQueries = new SQLQueries(connection);
 	}
 	
 	/**
 	 * Start the connection to the database
 	 */
-	private void startDBConnection() throws SQLException {
+	private void startDBConnection() {
 //		new dblogin();
 		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
 		final String username = "dab_di19202b_333";
 		final String password = "zyU3/uAIyZgigF+A";
-
 
 		try {
 			connection = DriverManager.getConnection(url, username, password);
@@ -126,24 +126,20 @@ public enum SimulationDao {
 	public void removeSimulation(int simulation_id) throws SQLException, IDNotFound {
 		connection.setAutoCommit(false);
 
-
 		sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(3, simulation_id);
-		sqlQueries.removeSimulationQuery.execute();
-		connection.commit();
 
-		if (connection != null) {
-			try {
-				System.err.print("Transaction is being rolled back");
-				connection.rollback();
-			} catch(SQLException excep) {
-			}
-			connection.setAutoCommit(true);
 		if (sqlQueries.removeSimulationQuery.executeUpdate() == 0) {
+			connection.rollback();
+			connection.setAutoCommit(true);
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
 		}
-	}
+
+		connection.commit();
+		connection.setAutoCommit(true);
+		
+	   }
 	
 	/**
 	 * Updates metadata of specified simulation, with the specified fields of the simulation object
@@ -159,18 +155,11 @@ public enum SimulationDao {
 		sqlQueries.updateMetadataQuery.setString(3, simulation.getDescription());
 		sqlQueries.updateMetadataQuery.setString(4, simulation.getResearcher());
 		sqlQueries.updateMetadataQuery.setInt(5, simulation_id);
-		sqlQueries.updateMetadataQuery.execute();
-		connection.commit();
-			if (connection != null) {
-				try {
-					System.err.print("Transaction is being rolled back");
-					connection.rollback();
-				} catch(SQLException excep) {
-				}
-				connection.setAutoCommit(true);
+		
 		if (sqlQueries.updateMetadataQuery.executeUpdate() == 0) {
+			connection.rollback();
+			connection.setAutoCommit(true);
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
-
 		}
 		
 		if (simulation.getTags() != null) {			
@@ -181,6 +170,9 @@ public enum SimulationDao {
 			//Add tags specified
 			MetaDataIO.addTagsToSimulation(simulation_id, simulation.getTags());
 		}
+		
+		connection.commit();
+		connection.setAutoCommit(true);
 	}
 	
 	/**
@@ -531,7 +523,6 @@ public enum SimulationDao {
 			int routeLength = resultSet.getInt("routeLength");
 			dataPoints.put(vehicle, routeLength);
 		}
-		System.out.println(dataPoints);
 		return dataPoints;
 	}	
 	
@@ -547,7 +538,7 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 * @throws IOException conversion failed
 	 */
-	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config) throws SQLException, IOException {
+	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config, boolean storeData) throws SQLException, IOException {
 		connection.setAutoCommit(false);
 		sqlQueries.storeSimulationQuery.setInt(1, simId);
 		sqlQueries.storeSimulationQuery.setString(2, name);
@@ -556,15 +547,16 @@ public enum SimulationDao {
 		sqlQueries.storeSimulationQuery.setObject(5, convertFileToPGobject(net));
 		sqlQueries.storeSimulationQuery.setObject(6, convertFileToPGobject(routes));
 		sqlQueries.storeSimulationQuery.setObject(7, convertFileToPGobject(config));
-		if(storeData) sqlQueries.storeSimulationQuery.executeUpdate();
-		connection.commit();
-					if (connection != null) {
-						try {
-							System.err.print("Transaction is being rolled back");
-							connection.rollback();
-						} catch(SQLException excep) {
-						}
-						connection.setAutoCommit(true);
+
+		if(storeData) {
+			if (sqlQueries.storeSimulationQuery.executeUpdate() == 0) {
+				connection.rollback();
+			} else {
+			connection.commit();
+			}
+		}
+		connection.setAutoCommit(true);
+
 	}
 	
 	/**
@@ -575,23 +567,22 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 * @throws IOException conversion failed
 	 */
-	public void storeState(Integer simId, Integer timeStamp, File stateFile) throws SQLException, IOException {
+	public void storeState(Integer simId, Integer timeStamp, File stateFile, boolean storeData) throws SQLException, IOException {
 		connection.setAutoCommit(false);
-
 		sqlQueries.storeStateQuery.setInt(1, simId);
 		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
 		sqlQueries.storeStateQuery.setObject(3, convertFileToPGobject(stateFile));
-		if(storeData) sqlQueries.storeStateQuery.executeUpdate();
-		connection.commit();
-						if (connection != null) {
-							try {
-								System.err.print("Transaction is being rolled back");
-								connection.rollback();
-							} catch(SQLException excep) {
-							}
-							connection.setAutoCommit(true);
-		
+
+		if(storeData) {
+			if (sqlQueries.storeStateQuery.executeUpdate() == 0) {
+				connection.rollback();
+			} else {
+				connection.commit();
+			}
+		}
+		connection.setAutoCommit(true);		
 	}
+
 	
 	/**
 	 * Get the id for a given tag
@@ -631,7 +622,7 @@ public enum SimulationDao {
 	public void storeTag(Integer tagId, String tag) throws SQLException {
 		sqlQueries.storeTagQuery.setInt(1, tagId);
 		sqlQueries.storeTagQuery.setString(2, tag);
-		if(storeData) sqlQueries.storeTagQuery.executeUpdate();
+		sqlQueries.storeTagQuery.executeUpdate();
 		
 	}
 	
@@ -644,7 +635,7 @@ public enum SimulationDao {
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
 		sqlQueries.storeSimTagQuery.setInt(1, tagId);
 		sqlQueries.storeSimTagQuery.setInt(2, simId);
-		if(storeData) sqlQueries.storeSimTagQuery.executeUpdate();
+		sqlQueries.storeSimTagQuery.executeUpdate();
 	}
 	
 	/**
@@ -688,21 +679,19 @@ public enum SimulationDao {
 	 * Remove all tags from a simulation
 	 * @param simId simulation id (int)
 	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
 	 */
-	public void removeAllSimulationTags(int simId) throws SQLException {
+	public void removeAllSimulationTags(int simId) throws SQLException, IDNotFound {
 		connection.setAutoCommit(false);
 		sqlQueries.removeAllSimulationTagsQuery.setInt(1, simId);
-		sqlQueries.removeAllSimulationTagsQuery.execute();
+		if (sqlQueries.removeAllSimulationTagsQuery.executeUpdate() == 0) {
+			connection.rollback();
+			connection.setAutoCommit(true);
+			throw new IDNotFound("Could not find simulation id: " + simId);
+		}
 		connection.commit();
-						if (connection != null) {
-							try {
-								System.err.print("Transaction is being rolled back");
-								connection.rollback();
-							} catch(SQLException excep) {
-							}
-							connection.setAutoCommit(true);
+		connection.setAutoCommit(true);
 	}
-	
 	/**
 	 * Convert an uploaded XML file to a JSON file for storing the the database
 	 * @param file xml file

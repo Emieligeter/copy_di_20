@@ -89,21 +89,21 @@ public class SQLQueries {
                     "CASE  " + 
                     "  WHEN EXISTS ( " + 
                     "    SELECT sim.simid  " + 
-                    "    FROM project.simulation_tags  " + 
+                    "    FROM " + schemaName + ".simulation_tags  " + 
                     "    WHERE sim.simid = simulation_tags.simid) " + 
                     "  THEN q1.tags " + 
                     "  ELSE null " + 
                     "END as tags " + 
-                    "FROM project.simulations sim, (  " + 
+                    "FROM " + schemaName + ".simulations sim, (  " + 
                     "  SELECT sim.simid, STRING_AGG(tags.value, ', ') AS tags " + 
-                    "  FROM project.tags, project.simulations sim, project.simulation_tags st " + 
+                    "  FROM " + schemaName + ".tags, " + schemaName + ".simulations sim, " + schemaName + ".simulation_tags st " + 
                     "  WHERE sim.simid = st.simid " + 
                     "  AND st.tagid = tags.tagid " + 
                     "  GROUP BY sim.simid ) q1  " + 
                     "WHERE CASE  " + 
                     "  WHEN EXISTS ( " + 
                     "    SELECT sim.simid  " + 
-                    "    FROM project.simulation_tags  " + 
+                    "    FROM " + schemaName + ".simulation_tags  " + 
                     "    WHERE sim.simid = simulation_tags.simid) " + 
                     "  THEN q1.simid = sim.simid " + 
                     "  ELSE TRUE " + 
@@ -115,12 +115,31 @@ public class SQLQueries {
 
         try {
             getSimulationQuery = connection.prepareStatement("" +
-            		"SELECT sim.simid, sim.name, sim.date, sim.description, sim.researcher, STRING_AGG(tags.value, ', ') AS tags, sim.net, sim.routes, sim.config " +
-                    "FROM " + schemaName + ".tags, " + schemaName + ".simulations sim, " + schemaName + ".simulation_tags st " +
-                    "WHERE sim.simid = st.simid " + 
-                    "AND st.tagid = tags.tagid " + 
-                    "AND sim.simid = ? " +
-                    "GROUP BY sim.simid");
+            		"SELECT sim.simid, sim.date, sim.name, sim.date, sim.description, sim.researcher, " + 
+                    "CASE  " + 
+                    "  WHEN EXISTS ( " + 
+                    "    SELECT sim.simid  " + 
+                    "    FROM " + schemaName + ".simulation_tags  " + 
+                    "    WHERE sim.simid = simulation_tags.simid) " + 
+                    "  THEN q1.tags " + 
+                    "  ELSE null " + 
+                    "END as tags, sim.net, sim.routes, sim.config " + 
+                    "FROM " + schemaName + ".simulations sim, (  " + 
+                    "  SELECT sim.simid, STRING_AGG(tags.value, ', ') AS tags " + 
+                    "  FROM " + schemaName + ".tags, " + schemaName + ".simulations sim, " + schemaName + ".simulation_tags st " + 
+                    "  WHERE sim.simid = st.simid " + 
+                    "  AND st.tagid = tags.tagid " + 
+                    "  GROUP BY sim.simid ) q1  " + 
+                    "WHERE sim.simid = ? " + 
+                    "AND CASE  " + 
+                    "  WHEN EXISTS ( " + 
+                    "    SELECT sim.simid  " + 
+                    "    FROM " + schemaName + ".simulation_tags  " + 
+                    "    WHERE sim.simid = simulation_tags.simid) " + 
+                    "  THEN q1.simid = sim.simid " + 
+                    "  ELSE TRUE " + 
+                    "END " +
+                    "LIMIT 1");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
@@ -240,7 +259,7 @@ public class SQLQueries {
             		"SELECT json_array_length(routes -> 'routes' -> 'vehicle') AS vehicles, " +
             		"json_array_length(net -> 'net' -> 'edge') AS allEdges, " +
             		"json_array_length(net -> 'net' -> 'junction') AS junction " +
-            		"FROM project.simulations " +
+            		"FROM " + schemaName + ".simulations " +
             		"WHERE simid = ?"
             		);
         } catch (SQLException e) {
@@ -577,7 +596,7 @@ public class SQLQueries {
         }
         try {
         	createNewUser = connection.prepareStatement(                   
-        			"INSERT INTO project.account (username, password, email, created_on)" +
+        			"INSERT INTO " + schemaName + ".account (username, password, email, created_on)" +
                     "VALUES(?, ?, ?, ?::date)");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
@@ -587,7 +606,7 @@ public class SQLQueries {
         try {
         	getUserByName = connection.prepareStatement(
         			"SELECT * " + 
-        			"FROM project.account " +
+        			"FROM " + schemaName + ".account " +
         			"WHERE username = ? ");
         } catch (SQLException e) {
         	System.err.println("Couldn't prepare statement: ");
