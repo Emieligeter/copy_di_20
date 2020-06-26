@@ -128,7 +128,6 @@ public enum SimulationDao {
 		sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
 		sqlQueries.removeSimulationQuery.setInt(3, simulation_id);
-		sqlQueries.removeSimulationQuery.execute();
 
 		if (sqlQueries.removeSimulationQuery.executeUpdate() == 0) {
 			connection.rollback();

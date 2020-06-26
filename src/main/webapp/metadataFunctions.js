@@ -72,7 +72,14 @@ function fileClick(id) {
 //Displays the tags of a simulation
 function processTags(tags) {
 	var checkboxes = $('input[type=checkbox]').get();
-	var tagList = tags.split(', ');
+	var tagList;
+	if (tags != null) {
+		tagList = tags.split(', ');
+	}
+	else {
+		tagList = [];
+	}
+	
 	for(var i = 0; i < checkboxes.length; i++) {
 	    checkboxes[i].disabled = false;
 	    if (tagList.includes(checkboxes[i].id)) {
