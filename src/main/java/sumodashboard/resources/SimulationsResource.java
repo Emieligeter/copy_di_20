@@ -43,7 +43,7 @@ public class SimulationsResource {
 	ContainerRequestContext requestContext;
 	
 	//Used to disable storage when testing
-	public boolean storeData = false;
+	private boolean storeData = true;
 
 	public SimulationsResource() {
 	}
@@ -145,5 +145,9 @@ public class SimulationsResource {
 	@Path("id/{simulation}")
 	public SimulationResource getSimulation(@PathParam("simulation") int id) {
 		return new SimulationResource(uriInfo, request, requestContext, id);
+	}
+	
+	public void setStoreData(boolean storeData) {
+		this.storeData = storeData;
 	}
 }

@@ -83,8 +83,10 @@ public class TestSimulationsResource {
 		multiPart.bodyPart(filePart);
 		FormDataBodyPart bodyPart = (new FormDataBodyPart());
 		bodyPart.setParent(multiPart);
-		
-		Response res = new SimulationsResource(uriInfo, request, requestContext).uploadFiles(zipStream, bodyPart );
+		SimulationsResource simRes = new SimulationsResource(uriInfo, request, requestContext);
+		simRes.setStoreData(false);
+		Response res = simRes.uploadFiles(zipStream, bodyPart );
 		System.out.println(res.getStatus());
+		simRes.setStoreData(true);
 	}
 }
