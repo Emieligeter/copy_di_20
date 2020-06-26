@@ -44,7 +44,6 @@ $("#modifyMetadata").submit(function(event) {
 
 //When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
-	console.log("woww");
 	$.ajax({
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',

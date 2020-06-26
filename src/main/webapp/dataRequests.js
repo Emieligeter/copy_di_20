@@ -240,7 +240,6 @@ function getSummaryStatistics() {
 
 function handleSummaryStatisticsResponse(JSONresponse) {
 	var response = JSON.parse(JSONresponse);
-	console.log(response);
 	var result = "<p id=\"sumStats\"><strong>Summary Statistics</strong><br>";
 	result += "Number of edges: " + response.edges + "<br>";
 	result += "Number of junctions: " + response.junctions + "<br>";
@@ -251,7 +250,6 @@ function handleSummaryStatisticsResponse(JSONresponse) {
 
 //Logs the user out by calling logout endpoint, then redirects to the home page
 $('#LogOut').click(function() {
-	console.log("test");
 	$.ajax({
 		url: 'rest/auth/logout',
 		type: 'POST',

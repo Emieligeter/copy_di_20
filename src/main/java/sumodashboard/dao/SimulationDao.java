@@ -531,7 +531,6 @@ public enum SimulationDao {
 			int routeLength = resultSet.getInt("routeLength");
 			dataPoints.put(vehicle, routeLength);
 		}
-		System.out.println(dataPoints);
 		return dataPoints;
 	}	
 	

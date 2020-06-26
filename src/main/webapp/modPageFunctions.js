@@ -81,7 +81,6 @@ $("#closeSubmitData").click(function() {
 	var id = getSelectedID();
 	$('#sumoFiles').empty();
 	loadFiles();
-	console.log("ul li[id='" + id + "']");
 	$("ul li[id='" + id + "']").children().click();
 })
 
