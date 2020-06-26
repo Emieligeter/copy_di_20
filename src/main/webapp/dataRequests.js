@@ -116,6 +116,11 @@ function openXhrGETRequest(xhr, url, wait) {
 //Send a datarequest with a parameter
 function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+
 	var xhr = new XMLHttpRequest();
 	var url = urlInit + simID + "/" + path + "?" + paramName + "=" + paramID;
 	openXhrGETRequest(xhr, url, true);
@@ -137,6 +142,11 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 //send a datarequest without a parameter
 function getData(dataType, path) {
 	var simid = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+	
 	var xhr = new XMLHttpRequest();
 	var pathName = path;
 	var url = urlInit + simid + "/" + pathName;
@@ -163,6 +173,11 @@ function getData(dataType, path) {
 //send a request to get the lanelist, vehiclelist or edgelist
 function getOptionList(listType, path) {
 	var simid = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+	
 	var xhr = new XMLHttpRequest();
 	var url = urlInit + simid + "/" + path;
 	openXhrGETRequest(xhr, url, false);
