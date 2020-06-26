@@ -39,7 +39,6 @@ function loadFiles() {
 	}
 	//Request all sumo files
 	httpReq.open("GET", "/sumo-dashboard/rest/simulations", true);
-	httpReq.setRequestHeader("Authorization", "Bearer " + "12345"); 
 	httpReq.send();
 }
 
@@ -71,6 +70,5 @@ $(document).on('click', 'ul li a', function() {
 
 //returns the id of the current selected SUMO file
 function getSelectedID() {
-	console.log("getSelectedID()" + $("a").filter(".active").parent().attr("id"));
 	return $("a").filter(".active").parent().attr("id");
 }

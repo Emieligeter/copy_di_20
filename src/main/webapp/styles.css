@@ -31,20 +31,17 @@
   list-style-type: none;
 }
 
-/**/
 #editor {
 	overflow:scroll; 
 	height:300px;
 	width:100%
 }
 
-/**/
 #editArea {
 	position:absolute;
     width: 100%;
 }
 
-/**/
 #textEditor, #chart {
     padding-top: 10px;
 	position: absolute; 
@@ -73,21 +70,25 @@
     padding: 10px 10px 20px 25px;
 }
 
+/*List of files*/
 .list-group {
     max-height: 600px;
     overflow-y:scroll;
 }
 
+/*Top border on modification page*/
 @media (min-width: 576px) {
 	.jumbotron {
 	    padding: 1rem 2rem;
 	}
 }
 
+/*Top border on dashboard page*/
 #topBorder {
 	padding: 2rem 2rem;
 }
 
+/*Top border in general*/
 .jumbotron {
     padding: 1rem 2rem;
     margin-bottom: 1rem;
@@ -102,23 +103,19 @@
   height: 100%;
 }
 
-#modifPageButton {
+#modifPageButton, #mainPageButtons {
 	position: absolute;
 	left: 5px;
 	bottom: 5px;
 }
 
-#mainPageButtons {
-	position: absolute;
-	left: 5px;
-	bottom: 5px;
-}
-
+/*Input bar of form*/
 .stdForm input {
 	width: 100%;
 	margin: 10px;
 }
 
+/*Text area of form*/
 .stdForm textarea {
 	border-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
     border-top-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
@@ -136,12 +133,14 @@
 	margin: 10px;
     width: 100%;
     border: 1px solid #343a40;
+    padding: 10px;
 }
 
 .card-body {
 	padding: 20px 20px 5px 20px;
 }
 
+/*Text element in form*/
 .stdForm p {
 	margin-bottom: 0px;
 	margin-top: 8px;
@@ -159,19 +158,43 @@
 	margin-top: 200px;
 }
 
-#newTagButton {
-	margin-left: 15px;
-	margin-bottom: 10px;
-}
-
+/*Checkbox*/
 input[type=checkbox], input[type=radio] {
     box-sizing: border-box;
     margin-right: 5px;
     margin-bottom: 10px;
 }
 
+/*When a checkbox is set to disabled*/
 input[type=checkbox][disabled] + label {
 	    color: #999999;
+}
+
+#newTagDiv {
+	width: 50%;
+	float: right;
+}
+
+#newTag {
+	margin: 0px;
+	padding: 2px;
+	display: none;
+}
+
+#newTagButton {
+	margin-left: 15px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+}
+
+#tagSpanDiv {
+	margin-left: 10px;
+	margin-bottom: 5px;
+	width: 50%;
+	font-size: 15px;
+	float: right;
+	color: #999999;
 }
 
 #exportSection {
@@ -203,3 +226,7 @@ input[type=checkbox][disabled] + label {
     float: right;
 }
 
+#dbLoginDiv {
+	margin: 0 auto;
+	text-align: left;
+}

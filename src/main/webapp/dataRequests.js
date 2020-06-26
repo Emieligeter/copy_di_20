@@ -1,6 +1,7 @@
 var optionsWithSndChoice = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor];
-var urlInit = "http://localhost:8080/sumo-dashboard/rest/simulations/id/";
-//var urlInit = "http://env-di-team1.paas.hosted-by-previder.com/sumo-dashboard/rest/simulations/id/";
+var urlInit = "/sumo-dashboard/rest/simulations/id/";
+
+//wait for more input if necessary, if not, get data with the proper path
 function dataSwitch(type) {
 	if (optionsWithSndChoice.includes(type)) {
 		return; //we need more input before we can show the graph
@@ -34,7 +35,7 @@ function dataSwitch(type) {
 	}
 }
 
-
+//function called when a parameter is selected in second drop down menu. Gets data with proper path and parameter
 function dataSndSwitch(paramID) {
 	var element = document.getElementById("first-choice")
 	dataType = element.options[element.selectedIndex].value;
@@ -57,14 +58,19 @@ function dataSndSwitch(paramID) {
 	}
 }
 
+//response to a sumo file being selected, load all options lists and reset chart if neccesary
 function fileClick(id) {
+	if (!addDataSetBoolean) {
+		resetChart();
+	}
 	getOptionList("lane", "lanelist");
 	getOptionList("vehicle", "vehiclelist");
 	getOptionList("edge", "edgelist");
-	//TODO update graph;
+	//if 'add dataset' is not clicked, reset chart
 }
 
-function handleDataResponse(JSONResponse, label) {
+//parse the response of the request to a sorted list of datapoints for the graph
+function handleGraphDataResponse(JSONResponse, label) {
 	var response = JSON.parse(JSONResponse);
 	const length = Object.keys(response).length;
 	
@@ -83,17 +89,15 @@ function handleDataResponse(JSONResponse, label) {
 	changeGraphData(result, label);
 }
 
+//parse the response of the request to a list of labels and a corresponding list of data for the pie/bar chart
 function handleChartDataResponse(JSONResponse, dataType) {
 	var response = JSON.parse(JSONResponse);
 	var data = "[";
 	var labels = "[";
 	var i = 0;
 	for (var key in response) {
-		/*if (i < 5) {*/
 		labels += "\"" + key + "\", ";
 		data += response[key] + ", ";
-		//}
-		//i++;
 	}
 	labels = labels.substring(0, labels.length -2);
 	data = data.substring(0, data.length -2);
@@ -102,13 +106,14 @@ function handleChartDataResponse(JSONResponse, dataType) {
 	changeChartData(data, labels, dataType);	
 }
 
+//open the xmlHttpRequest
 function openXhrGETRequest(xhr, url, wait) {
 	xhr.open("GET", url, wait);
 	xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
     xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-    xhr.setRequestHeader('Authorization', 'Bearer 12345');
 }
 
+//Send a datarequest with a parameter
 function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
 	var xhr = new XMLHttpRequest();
@@ -116,7 +121,7 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			handleDataResponse(this.responseText, dataType + " of " + paramID);
+			handleGraphDataResponse(this.responseText, dataType + " of " + paramID);
 		}
 		if (this.readyState == 4 && this.status != 200) {
 			alert("Error occured when getting data, status: " + this.status);
@@ -126,6 +131,7 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 	xhr.send();
 }
 
+//send a datarequest without a parameter
 function getData(dataType, path) {
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
@@ -137,7 +143,7 @@ function getData(dataType, path) {
 			if (fstDropDownOptions['pie'].includes(dataType)) {
 				handleChartDataResponse(this.responseText, dataType);
 			} else {
-				handleDataResponse(this.responseText, dataType);
+				handleGraphDataResponse(this.responseText, dataType);
 			}
 		}
 		if (this.readyState == 4 && this.status != 200) {
@@ -148,6 +154,7 @@ function getData(dataType, path) {
 	xhr.send();
 }
 
+//send a request to get the lanelist, vehiclelist or edgelist
 function getOptionList(listType, path) {
 	var simid = getSelectedID();
 	var xhr = new XMLHttpRequest();
@@ -165,6 +172,7 @@ function getOptionList(listType, path) {
 	xhr.send();
 }
 
+//handle the response of a request for a list by saving the list to the drop down menu variables
 function handleOptionListResponse(JSONResponse, listType) {
 	var response = JSON.parse(JSONResponse);
 	switch (listType) {
@@ -181,3 +189,45 @@ function handleOptionListResponse(JSONResponse, listType) {
 		break;
 	}
 }
+
+//request the summary statistics
+function getSummaryStatistics() {
+	var simid = getSelectedID();
+	var xhr = new XMLHttpRequest();
+	var pathName = "summarystatistics";
+	var url = urlInit + simid + "/" + pathName;
+	openXhrGETRequest(xhr, url, true);
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			handleSummaryStatisticsResponse(this.responseText);
+		}
+		if (this.readyState == 4 && this.status != 200) {
+			alert("Error occured when getting summary statistics, status: " + this.status);
+			console.error("Get summary statistics response:\n" + JSON.stringify(this.responseText));
+		}
+	}
+	xhr.send();
+}
+
+function handleSummaryStatisticsResponse(JSONresponse) {
+	var response = JSON.parse(JSONresponse);
+	console.log(response);
+	var result = "<p id=\"sumStats\"><strong>Summary Statistics</strong><br>";
+	result += "Number of edges: " + response.edges + "<br>";
+	result += "Number of junctions: " + response.junctions + "<br>";
+	result += "Number of vehicles: " + response.vehicles + "<br>";
+	result += "<p>";
+	viewSummaryStatistics(result);
+}
+
+//Logs the user out by calling logout endpoint, then redirects to the home page
+$('#LogOut').click(function() {
+	console.log("test");
+	$.ajax({
+		url: 'rest/auth/logout',
+		type: 'POST',
+		success: function(response) {
+			location.href = "loginPage.html";
+		}
+	});
+});

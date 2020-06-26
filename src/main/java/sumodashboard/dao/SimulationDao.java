@@ -447,28 +447,31 @@ public enum SimulationDao {
 			double numberTransferredVehicles = resultSet.getDouble("numberOfTransferredVehicles");
 			graphPoints.put(timestamp, numberTransferredVehicles);
 		}
-<<<<<<< HEAD
-
-		public List<String> summaryStats(int simulation_id) throws SQLException, IDNotFound {
-		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-
-		sqlQueries.summaryStats.setInt(1, simulation_id);
-
-		ResultSet resultSet = sqlQueries.summaryStats.executeQuery();
-
-		List<String> summaryStats = new ArrayList<>();
-
-		while (resultSet.next()) {
-			double timestamp = resultSet.getDouble("timestamp");
-			String summary_statistics = resultSet.getString("summary_statistics");
-			String timeStamp = timestamp + "";
-			String sumstat = timeStamp + " " + summary_statistics;
-		}
-
-		return summaryStats;
-=======
+		
 		return graphPoints;
->>>>>>> 7c55499c7c611e260e00e4260a4f658bee810a3e
+	}
+	
+	/**
+	 * Get the summary statistics: number of vehicles, edges and junctions
+	 * @param simulation_id simulation id
+	 * @return Map<String label, Integer number>
+	 * @throws SQLException database is not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<String, Integer> getSummaryStatistics(int simulation_id) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		sqlQueries.summaryStatistics.setInt(1, simulation_id);
+		ResultSet resultSet = sqlQueries.summaryStatistics.executeQuery();
+		Map<String, Integer> summaryStatistics = new HashMap<>();
+		while (resultSet.next()) {
+			int vehicles = resultSet.getInt("vehicles");
+			int edges = resultSet.getInt("alledges");
+			int junctions = resultSet.getInt("junction");
+			summaryStatistics.put("vehicles", vehicles);
+			summaryStatistics.put("edges", edges);
+			summaryStatistics.put("junctions", junctions);
+		}
+		return summaryStatistics;
 	}
 	
 	/**
@@ -603,6 +606,15 @@ public enum SimulationDao {
 			return resultSet.getInt(1);
 		}
 		return null;
+	}
+	
+	public void createTag(String tag) throws SQLException {
+		int tagId;
+		do {
+			tagId = MetaDataIO.generateId(4);
+		} while (SimulationDao.instance.doesTagIdExist(tagId));
+		System.out.println("generated tagId: " + tagId);
+		SimulationDao.instance.storeTag(tagId, tag);
 	}
 	
 	/**

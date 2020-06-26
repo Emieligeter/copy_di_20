@@ -50,7 +50,15 @@ public class AuthenticationResource {
 	private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
 
     private static final String AUTHENTICATION_SCHEME = "Bearer";
-	
+    private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
+
+	/**
+	 * Login endpoint. A username and password are received as a json and serialized as {@link Credentials}.
+	 * These credentials are used to authenticate the user
+	 * If the authentication is successful a {@link NewCookie} is created with a {@link JWT} as body
+	 * @param creds credentials of the user in 
+	 * @return Response
+	 */
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -61,7 +69,7 @@ public class AuthenticationResource {
 		
 		try {
 			authenticate(username, password);	
-			String token = createToken(username, 8000);
+			String token = createToken(username);
 			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, 300, false, false);
 			System.out.println("Token created: " + token);
 			return Response.ok("login successful").cookie(cookie).build();
@@ -72,6 +80,11 @@ public class AuthenticationResource {
 		}
 	}
 	
+	/**
+	 * When this endpoint is called a {@link Response} is sent with a {@link NewCookie} with name "session-id"
+	 * This overwrites the valid {@link JWT} so the user can't reach the other enpoints anymore
+	 * @return Response
+	 */
 	@POST
 	@Path("/logout")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -83,43 +96,56 @@ public class AuthenticationResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}
 	}
-
+	
+	/**
+	 * First gets the hashed password associated with the username. Then uses {@link Argon2} algorithm
+	 * to very the provided password with the hashed password
+	 * @param username
+	 * @param password
+	 * @throws AuthenticationException
+	 * @throws SQLException
+	 */
 	private void authenticate(String username, String password) throws AuthenticationException, SQLException {
 		String hashedPass = accountDAO.getHashedPassword(username);
 		boolean passMatch = argon2.verify(hashedPass, password);
 		if(!passMatch) throw new AuthenticationException("Password incorrect");
 	}
 
-	private static String createToken(String username, long ttlMillis) {
+	/**
+	 * Creates a {@link JWT} using the username. Uses {@link HMAC256} {@link Algorithm}
+	 * with {@link SECRET_KEY} and certain expiry and issuer parameters
+	 * @param username
+	 * @return {@link JWT} as string, null if an exception occurs
+	 */
+	private static String createToken(String username ) {
 		try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             Date expirationDate = Date.from(ZonedDateTime.now().plusHours(24).toInstant());
             Date issuedAt = Date.from(ZonedDateTime.now().toInstant());
             return JWT.create()
-                    .withIssuedAt(issuedAt) // Issue date.
-                    .withExpiresAt(expirationDate) // Expiration date.
-                    .withClaim("username", username) // User id - here we can put anything we want, but for the example userId is appropriate.
-                    .withIssuer("jwtauth") // Issuer of the token.
-                    .sign(algorithm); // And the signing algorithm.
+                    .withIssuedAt(issuedAt) 
+                    .withExpiresAt(expirationDate) 
+                    .withClaim("username", username) 
+                    .withIssuer("sumoDashboard") 
+                    .sign(algorithm); 
         } catch (JWTCreationException e) {
            	e.printStackTrace();
         }
         return null;
     }
 	
+	//Check if token is valid and if the user exists in the database
 	private static boolean validateToken(String token) {
-		System.out.println("validating token: " + token);
 		try {
 		if(token != null) {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("jwtauth")
+                    .withIssuer("sumoDashboard")
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             //Get the userId from token claim.
             String username = jwt.getClaim("username").asString();
-            System.out.println(username);
-            Account acc = accountDAO.getUserByName(username);
+            accountDAO.getUserByName(username);
             
             return true;
         }
@@ -135,19 +161,33 @@ public class AuthenticationResource {
 	
 	//Check if a rest request with a token is authorized
 	public static boolean isAuthorized(ContainerRequestContext requestContext) {
-		Map<String, Cookie> cookies = requestContext.getCookies();		
-		//Get the token from the authorization header
+		//First check authorization header
+        String authorization = requestContext.getHeaderString("Authorization");
+        if (authorization != null && authorization.startsWith(AUTHENTICATION_SCHEME + " ")) {
+            String token = authorization.substring(AUTHENTICATION_SCHEME.length()).trim();
+            return (token.equals(API_TOKEN));
+        }
+        
+        //If no bearer token has been submitted, check cookies
+		Map<String, Cookie> cookies = requestContext.getCookies();
         if(cookies.get("session-id") != null) {
         	return validateToken(cookies.get("session-id").getValue());
         }
         return false;
 	}
 	
+	/**
+	 * Creates a user based on the {@link Account} parameters. The {@link Argon2} algorithm is used to hash the password with a salt
+	 * The user is stored through the {@link AccountDAO} class
+	 * @param acc
+	 * @return Resonse
+	 * @throws SQLException
+	 */
 	@POST
 	@Path("/createUser")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createNewUser(Account acc) throws SQLException {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		//if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		String username = acc.getUsername();
 		String password = acc.getPassword();
@@ -162,11 +202,22 @@ public class AuthenticationResource {
 			} else if(e.getMessage().contains("unique constraint \"account_username_key\"")) {
 				respMessage = "Username already in use";
 			}
+			e.printStackTrace();
 			return Response.status(Response.Status.CONFLICT).entity(respMessage).build();
 		}
 		if(!storeData) Response.ok("User created but not stored").build();
 		return Response.ok("User created succesfully").build();
 	}
 	
+	//These setters and getters are used in the test class
+	public void setStoreData(boolean storeData) {
+		this.storeData = storeData;
+	}
+	public String getApiToken() {
+		return API_TOKEN;
+	}
+	public String getAuthenticationScheme() {
+		return AUTHENTICATION_SCHEME;
+	}
 
 }

@@ -3,7 +3,7 @@
 //Updates metadata in the database
 $("#modifyMetadata").submit(function(event) {
 	event.preventDefault();
-    var url = "http://localhost:8080/sumo-dashboard/rest/simulations/id/" + getSelectedID();
+    var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
     var newMetadata = document.getElementById("modifyMetadata");
     //Retrieve all tags that have a checked checkbox
     var tags = "";
@@ -13,7 +13,7 @@ $("#modifyMetadata").submit(function(event) {
     	} else {
     		tags += ", " + $(this).attr('id');
     	}
-    });;
+    });
     //Body of the PUT request
     var body = "{\"name\": \"" + newMetadata.elements[0].value + 
     "\", \"date\": \"" + newMetadata.elements[1].value + 
@@ -25,7 +25,6 @@ $("#modifyMetadata").submit(function(event) {
   		type: 'PUT',
   		data: body,
   	    headers: {
-  	    	"Authorization": "Bearer 12345",
   	    	"Content-Type": "application/json"
 		},
   	    success: function(response){
@@ -40,12 +39,10 @@ $("#modifyMetadata").submit(function(event) {
 
 //When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
+	console.log("woww");
 	$.ajax({
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',
-  	    headers: {
-  	    	"Authorization": "Bearer 12345"
-		},
   	    success : function(data){
   	    	$("#newTitle").attr("value", data.name);
   			$("#newDate").attr("value", data.date);
@@ -78,6 +75,39 @@ function processTags(tags) {
 	}
 }
 
+//Creates a new tag in the database
+function createTag() {
+	var newTag = $("#newTag").val();
+	//Empty tags or tags containing a quotation mark or apostrophe are not allowed
+	if (newTag.includes('"') || newTag === "" || newTag.includes("'")) {
+		$("#createTagSpan").html("Error: tag cannot be empty or contain \"");
+	} else {
+		$.ajax({
+	  		url : 'rest/tags',
+	  		method: 'POST',
+	  		dataType: "text",
+	  		data: newTag,
+	  	    headers: {
+	  	    	"Content-Type": "application/json"
+			},
+	  	    success : function(response){
+	  	    	loadTags();
+	  	    	$("#newTag").toggle();
+	  			$("#newTagButton").html("+ New tag");
+	  	    },
+	  		error : function(response){
+	  	    	$("#updateResults").html("Error occured, code: " + response.status); 
+	  	    	console.error("Create new tag response:\n" + JSON.stringify(response));
+	  	    }
+	    });
+	}
+}
+
+//Resets the values of the metadata form
+$("#resetMetadataForm").click(function() {
+	fileClick(getSelectedID());
+})
+
 //Deletes the currently selected simulation file from the database
 $("#deleteSimButton").click(function() {
 	event.preventDefault(); // prevent default action
@@ -85,9 +115,6 @@ $("#deleteSimButton").click(function() {
 	$.ajax({
 		url: url,
 		type: "DELETE",
-		headers: {
-  	    	"Authorization": "Bearer 12345"
-		},
 		success: function(){
 			location.reload();
 		},

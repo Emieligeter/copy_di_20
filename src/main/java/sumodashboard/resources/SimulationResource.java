@@ -465,5 +465,25 @@ public class SimulationResource {
 		}
 	}
 	
-	
+	/**
+	 * Get the summary statistics: number of vehicles, edges and junctions
+	 * @return response
+	 */
+	@GET
+	@Path("/summarystatistics")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSummaryStatistics() {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		try {
+			Map<String, Integer> dataPoints = SimulationDao.instance.getSummaryStatistics(ID);
+			return Response.status(200).entity(dataPoints).build();
+			
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception when trying to get the summary statistics:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
 }

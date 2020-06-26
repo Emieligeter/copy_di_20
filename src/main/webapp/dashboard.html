@@ -31,6 +31,8 @@
 <link
 	href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css"
 	rel="stylesheet">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+	
 
 <script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
 
@@ -41,10 +43,11 @@
 <script type="text/javascript" src="reportFunctions.js"></script>
 <script type="text/javascript" src="dataRequests.js"></script>
 <script type="text/javascript" src="sumoList.js"></script>
+<script type="text/javascript" src="loginPage.js"></script>
+
 
 
 <script>
-		window.onload=loadFstDropDownOptions();
 		window.onload = $('#editor').wysiwyg();
 	</script>
 </head>
@@ -54,8 +57,8 @@
 	<div class="jumbotron text-center" id="topBorder">
 		<h1 class="display-4">Dashboard</h1>
 		<div id="mainPageButtons">
-  			<button id="LogOut" onclick="logout()" class="btn btn-danger">Log Out</button> 
-  			<button id="toModifList" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
+  			<button id="LogOut" class="btn btn-danger">Log Out</button> 
+  			<button id="toModifPage" class="btn btn-info text-left" onclick="location.href='modificationPage.html'">Edit Files</button>
 		</div>
 	</div>
 	<div class="container-fluid">
@@ -72,6 +75,7 @@
 					<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
 					<button id="BarChart" class="btn btn-outline-primary" onclick="setChartType('bar')">Bar Chart</button>
 					<button id="PieChart" class="btn btn-outline-primary" onclick="setChartType('pie')">Pie Chart</button> 
+					<button id="sumStatsButton" class="btn btn-outline-primary" onclick="setChartType('sumStats')">Summary Statistics</button> 
 					<button id="TextElement" class="btn btn-outline-primary" onclick="setChartType('textElement')">Text Element</button> 
 					<button id="addToReport" class="btn btn-success" onclick="chartToReport()">Add chart to report</button>
 					
@@ -81,7 +85,6 @@
 				<div id="editArea">
 				
 					<div id="chart" class="row">
-					
 						<canvas id="reportElement" class="col-9"></canvas>
 						<div id="paramSelect" class="col-3">	
 							<div id="varSelect" class="col card">	
@@ -113,22 +116,36 @@
 				     				</label>
 				     				
 				     				<label class="btn btn-primary form-check-label">
+				       					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" name="editChart" value="legend"> Legend
+				     				</label>
+				     				
+				     				<label class="btn btn-primary form-check-label">
 				       					<input class="form-check-input" type="radio" style="opacity: 0" autocomplete="off" style="opacity: 0" name="editChart" value="color"> Color
 				     				</label>
 			     				
 			     				</form>
 			     				<div id="enterData" class="row">
-				   					<input type="text" class="form-control" id="setTitleInput" placeholder="Chart 1">
+				   					<input type="text" class="form-control" id="setTitleInput" placeholder="Enter new value">
 									<button type="submit" class="btn btn-outline-success" onClick="editChartStyle('change')">Submit</button>		   			
-									<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Cancel</button>		   			
+									<button type="button" class="btn btn-outline-danger" onClick="editChartStyle('remove')">Remove</button>		   			
 								</div>
 			     			</div>
-			     			
-								 
+			     			<div class="col">
+				     			<div id="addLineOrReset" class="row">
+				     				<button type="button" class="btn btn-primary" onClick="addDataSet()">Add dataset</button>		   			
+									<button type="button" class="btn btn-danger" onClick="resetChart()">Reset chart</button>
+								</div>	
+								<div id="selectNewMsg" class="row" style = "display:none">
+									<p><em>Please select a simulation and plot to add to the chart. </em></p>
+								</div>
+			     			</div>	 
 						</div>
 					</div>
 					<div id="textEditor" class="row">
 						<iframe id="textFrame" src="textEditor.html" class="col"></iframe>
+					</div>
+					<div id="summaryStatistics" class="row">
+						<p id="sumStats"><p>
 					</div>
 				</div>
 
@@ -146,5 +163,16 @@
 	</div>
 
 		
+	<script type="text/javascript" src="bootstrap-wysiwyg.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	
+	
+	<script type="text/javascript" src="plotNames.js"></script>
+	<script type="text/javascript" src="chartFunctions.js"></script>
+	<script type="text/javascript" src="selectVariablesFunctions.js"></script>
+	<script type="text/javascript" src="reportFunctions.js"></script>
+	<script type="text/javascript" src="dataRequests.js"></script>
+	<script type="text/javascript" src="sumoList.js"></script>
+	
 </body>
 </html>

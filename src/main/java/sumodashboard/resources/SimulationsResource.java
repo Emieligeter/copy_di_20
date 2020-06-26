@@ -42,6 +42,18 @@ public class SimulationsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
+	public SimulationsResource() {
+	}
+	
+	/**
+	 * Constructor used for testing purposes
+	 */
+	public SimulationsResource(UriInfo uriInfo, Request request, ContainerRequestContext requestContext) {
+		this.uriInfo = uriInfo;
+		this.request = request;
+		this.requestContext = requestContext;
+	}
+	
 	/**
 	 * Get metadata of all simulations
 	 * @return Response
@@ -49,7 +61,7 @@ public class SimulationsResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSimulations() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return  Response.status(Response.Status.UNAUTHORIZED).build();
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
 			List<MetaData> simulations = SimulationDao.instance.getSimulations();
