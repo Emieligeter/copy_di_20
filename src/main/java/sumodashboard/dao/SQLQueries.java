@@ -282,7 +282,7 @@ public class SQLQueries {
 
         try {
             numberOfLaneTransitingVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT simid, timestamp, LENGTH(vehicles)-LENGTH(REPLACE(vehicles,'v','')) AS vehicleCount " +
+            		"SELECT simid, timestamp, coalesce(array_length(string_to_array(vehicles, ' '), 1), 0) AS vehicleCount " +
             		"FROM ( " +
             		"	SELECT simid, timestamp, lane ->> 'id' AS lane_id, lane -> 'vehicles' ->> 'value' AS vehicles " +
             		"	FROM ( " +
@@ -301,7 +301,7 @@ public class SQLQueries {
         
         try {
             vehicleRouteLengthQuery = connection.prepareStatement("" +
-            		"SELECT timestamp, (LENGTH(edgeRoute)-LENGTH(REPLACE(edgeRoute,'e',''))) AS routeLength " +
+            		"SELECT timestamp, (LENGTH(edgeRoute)-LENGTH(REPLACE(edgeRoute,' ','')) +1) AS routeLength " +
             		"FROM " +
             		"	( " +
             		"	SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'id') AS vehicle_id, (state -> 'snapshot' -> 'route' ->> 'edges') AS edgeRoute " +
@@ -379,7 +379,7 @@ public class SQLQueries {
         
         try {
             avgRouteLengthQuery = connection.prepareStatement("" +
-                    "SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,'e',''))) AS avgCount " +
+                    "SELECT timestamp, AVG(LENGTH(edgeRoute)-LENGTH(REPLACE(edgeRoute,' ','')) +1) AS avgCount " +
                     "FROM  " +
                     "	( " +
                     "	SELECT simid, timestamp, state -> 'snapshot' -> 'route' ->> 'edges' AS route " +
@@ -538,7 +538,7 @@ public class SQLQueries {
         
         try {
         	edgeAppearanceFrequencyInitialRouteQuery = connection.prepareStatement("" +
-        			"SELECT edge, array_length(string_to_array(concat(string_agg(edges, ' '), ' ~'), concat(edge, ' ')), 1) AS edgeFrequency " + 
+        			"SELECT edge, LENGTH(concat(string_agg(edges, ' '), ' ~'))-LENGTH(REPLACE(concat(string_agg(edges, ' '), ' ~'),' ','')) AS edgeFrequency " + 
         			"FROM ( " + 
         			"	SELECT DISTINCT unnest(string_to_array(edges, ' ')) AS edge, edges " + 
         			"	FROM ( " + 
