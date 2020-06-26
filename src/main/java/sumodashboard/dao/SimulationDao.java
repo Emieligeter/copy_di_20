@@ -28,21 +28,22 @@ import org.postgresql.util.PGobject;
  */
 public enum SimulationDao {
 	instance;
-	private boolean storeData = true;
 	
 	private Connection connection;
 	private SQLQueries sqlQueries;
 	
 	/**
 	 * Constructor sets up the connection to the database
+	 * @throws SQLException 
 	 */
 	private SimulationDao() {
 		try {
 			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
+			startDBConnection();
+		} catch (Exception e) {
 			System.err.println("Class org.postgresql.Driver not found in method SimulationDao.init(), check dependencies.");
 		}
-		startDBConnection();
+		
 		sqlQueries = new SQLQueries(connection);
 	}
 	
@@ -143,6 +144,7 @@ public enum SimulationDao {
 		if (sqlQueries.removeSimulationQuery.executeUpdate() == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
 		}
+	   }
 	}
 	
 	/**
@@ -181,6 +183,7 @@ public enum SimulationDao {
 			//Add tags specified
 			MetaDataIO.addTagsToSimulation(simulation_id, simulation.getTags());
 		}
+	}
 	}
 	
 	/**
@@ -556,7 +559,8 @@ public enum SimulationDao {
 		sqlQueries.storeSimulationQuery.setObject(5, convertFileToPGobject(net));
 		sqlQueries.storeSimulationQuery.setObject(6, convertFileToPGobject(routes));
 		sqlQueries.storeSimulationQuery.setObject(7, convertFileToPGobject(config));
-		if(storeData) sqlQueries.storeSimulationQuery.executeUpdate();
+
+		sqlQueries.storeSimulationQuery.executeUpdate();
 		connection.commit();
 					if (connection != null) {
 						try {
@@ -565,6 +569,7 @@ public enum SimulationDao {
 						} catch(SQLException excep) {
 						}
 						connection.setAutoCommit(true);
+					}
 	}
 	
 	/**
@@ -581,7 +586,8 @@ public enum SimulationDao {
 		sqlQueries.storeStateQuery.setInt(1, simId);
 		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
 		sqlQueries.storeStateQuery.setObject(3, convertFileToPGobject(stateFile));
-		if(storeData) sqlQueries.storeStateQuery.executeUpdate();
+
+		sqlQueries.storeStateQuery.executeUpdate();
 		connection.commit();
 						if (connection != null) {
 							try {
@@ -591,7 +597,8 @@ public enum SimulationDao {
 							}
 							connection.setAutoCommit(true);
 		
-	}
+						}
+		}
 	
 	/**
 	 * Get the id for a given tag
@@ -626,7 +633,7 @@ public enum SimulationDao {
 	public void storeTag(Integer tagId, String tag) throws SQLException {
 		sqlQueries.storeTagQuery.setInt(1, tagId);
 		sqlQueries.storeTagQuery.setString(2, tag);
-		if(storeData) sqlQueries.storeTagQuery.executeUpdate();
+		sqlQueries.storeTagQuery.executeUpdate();
 		
 	}
 	
@@ -639,7 +646,7 @@ public enum SimulationDao {
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
 		sqlQueries.storeSimTagQuery.setInt(1, tagId);
 		sqlQueries.storeSimTagQuery.setInt(2, simId);
-		if(storeData) sqlQueries.storeSimTagQuery.executeUpdate();
+		sqlQueries.storeSimTagQuery.executeUpdate();
 	}
 	
 	/**
@@ -696,8 +703,8 @@ public enum SimulationDao {
 							} catch(SQLException excep) {
 							}
 							connection.setAutoCommit(true);
+						}
 	}
-	
 	/**
 	 * Convert an uploaded XML file to a JSON file for storing the the database
 	 * @param file xml file

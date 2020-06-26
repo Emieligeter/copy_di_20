@@ -42,6 +42,9 @@ public class SimulationsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
+	//Used to disable storage when testing
+	public boolean storeData = false;
+
 	public SimulationsResource() {
 	}
 	
@@ -107,7 +110,7 @@ public class SimulationsResource {
 		} while(simDao.doesSimIdExist(simId)) ;
 		 
 		//Store a simulation in 'simulation' table
-		simDao.storeSimulation(
+		if(storeData) simDao.storeSimulation(
 				simId, meta.getName(), 
 				meta.getDescription(), 
 				meta.getDate(),
@@ -119,12 +122,12 @@ public class SimulationsResource {
 		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
 			Integer timeStamp = sf.getKey();
 			File file = sf.getValue();
-			simDao.storeState(simId, timeStamp, file);
+			if(storeData)simDao.storeState(simId, timeStamp, file);
 		}
 		
 		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
 		String tags = meta.getTags();
-		MetaDataIO.addTagsToSimulation(simId, tags);
+		if(storeData)MetaDataIO.addTagsToSimulation(simId, tags);
 		
 		// Delete files after use
 		files.forEach((key, file) -> file.delete());
