@@ -70,7 +70,7 @@ public class AuthenticationResource {
 		try {
 			authenticate(username, password);	
 			String token = createToken(username);
-			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, 300, false, false);
+			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, 300, false, true);
 			System.out.println("Token created: " + token);
 			return Response.ok("login successful").cookie(cookie).build();
 		} catch(AuthenticationException e) {
