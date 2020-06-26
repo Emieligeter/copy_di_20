@@ -3,6 +3,8 @@ package sumodashboard.dao;
 import java.sql.Connection;
 import java.util.Date;
 
+import javax.security.sasl.AuthenticationException;
+
 import sumodashboard.model.Account;
 
 import java.sql.DriverManager;
@@ -38,10 +40,10 @@ public class  AccountDAO {
 		}
 	}
 	
-	public String getHashedPassword(String username)  throws SQLException{
+	public String getHashedPassword(String username)  throws SQLException, AuthenticationException{
 		sqlQueries.getHashedPass.setString(1, username);
 		ResultSet rs = sqlQueries.getHashedPass.executeQuery();
-		rs.next();
+		if (!rs.next()) throw new AuthenticationException("Username not found");
 		return rs.getString("password");
 	}
 

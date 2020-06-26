@@ -190,7 +190,7 @@ public class AuthenticationResource {
 		String username = acc.getUsername();
 		String password = acc.getPassword();
 		String email = acc.getEmail();
-		String hashedPass = argon2.hash(4, 1024 * 1024, 8, password);
+		String hashedPass = argon2.hash(4, 128 * 1024, 8, password);
 		try {
 		if(storeData) accountDAO.createNewUser(username, hashedPass, email);
 		} catch(SQLException e) {			
