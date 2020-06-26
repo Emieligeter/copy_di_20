@@ -73,7 +73,6 @@ function fileClick(id) {
 function handleGraphDataResponse(JSONResponse, label) {
 	var response = JSON.parse(JSONResponse);
 	const length = Object.keys(response).length;
-	
 	const sorted = [];
 	for (var key in response) {
 		sorted.push({key: key, value: response[key]});
@@ -84,7 +83,7 @@ function handleGraphDataResponse(JSONResponse, label) {
 	for (var i = 0; i < sorted.length; i++) {
 		result += "{ \"x\": " + sorted[i].key + ", \"y\": " + sorted[i].value + " },";
 	}
-	result = result.substring(0, result.length -1);
+	if (result.length > 1) result = result.substring(0, result.length -1);
 	result += "]";
 	changeGraphData(result, label);
 }
