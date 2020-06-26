@@ -90,7 +90,7 @@ public class AuthenticationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response userLogout() {
 		try {
-			NewCookie cookie = new NewCookie("session-id","" , "/", null, null, 300, false, false);
+			NewCookie cookie = new NewCookie("session-id","" , "/", null, null, 300, true, true);
 			return Response.ok("logout successful").cookie(cookie).build();
 		}catch(Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
