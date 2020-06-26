@@ -202,6 +202,11 @@ function handleOptionListResponse(JSONResponse, listType) {
 //request the summary statistics
 function getSummaryStatistics() {
 	var simid = getSelectedID();
+	if (simid == null) {
+		alert("Please select a simulation first.");
+		return;
+	}
+	
 	var xhr = new XMLHttpRequest();
 	var pathName = "summarystatistics";
 	var url = urlInit + simid + "/" + pathName;
@@ -210,10 +215,7 @@ function getSummaryStatistics() {
 		if (this.readyState == 4 && this.status == 200) {
 			handleSummaryStatisticsResponse(this.responseText);
 		}
-		else if (this.readyState == 4 && this.status == 401) {
-			location.href ="loginPage.html";
-		}
-		else if (this.readyState == 4) {
+		if (this.readyState == 4 && this.status != 200) {
 			alert("Error occured when getting summary statistics, status: " + this.status);
 			console.error("Get summary statistics response:\n" + JSON.stringify(this.responseText));
 		}
