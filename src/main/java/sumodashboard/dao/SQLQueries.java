@@ -16,7 +16,7 @@ public class SQLQueries {
     /**Remove a simulation by ID*/
     public PreparedStatement removeSimulationQuery;
     /**Update simulation metadata*/
-    public PreparedStatement updateMetadataQuery;
+    public PreparedStatement updateSimulationQuery;
     /**Store a new simulation in the database*/
     public PreparedStatement storeSimulationQuery;
     /**Store a new state in the database*/
@@ -159,12 +159,15 @@ public class SQLQueries {
         }
         
         try {
-        	updateMetadataQuery = connection.prepareStatement(
+        	updateSimulationQuery = connection.prepareStatement(
         			"UPDATE " + schemaName + ".simulations SET " +
 	        			"name = coalesce(?, name), " +
 	        			"date = coalesce(TO_DATE(?, 'YYYY-MM-DD'), date), " +
 	        			"description = coalesce(?, description), " +
-	        			"researcher = coalesce(?, researcher) " +
+	        			"researcher = coalesce(?, researcher), " +
+	        			"net = coalesce(?::json, net), " +
+	        			"routes = coalesce(?::json, routes), " +
+	        			"config = coalesce(?::json, config) " +
         			"WHERE simid = ?");
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");

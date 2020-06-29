@@ -58,7 +58,7 @@ function dataSndSwitch(paramID) {
 	}
 }
 
-//response to a sumo file being selected, load all options lists and reset chart if neccesary
+//response to a sumo file being selected, load all options lists and reset chart if necessary
 function fileClick(id) {
 	if (!addDataSetBoolean) {
 		resetChart();

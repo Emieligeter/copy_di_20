@@ -35,11 +35,6 @@ public class TestSimulationResource {
 		request = Mockito.mock(Request.class);
 		requestContext = Mockito.mock(ContainerRequestContext.class);
 		Mockito.when(requestContext.getHeaderString("Authorization")).thenReturn(AUTHHEADER);
-		
-		//Generate query parameters
-		MultivaluedMap<String, String> queryParam = new MultivaluedHashMap<>();
-		queryParam.put("vehicle", Arrays.asList("v5"));
-		queryParam.put("lane", Arrays.asList("e5"));
 				
 		//Get the ID of the first simulation
 		ArrayList<MetaData> simulations = (ArrayList<MetaData>) new SimulationsResource(uriInfo, request, requestContext).getSimulations().getEntity();
@@ -67,7 +62,7 @@ public class TestSimulationResource {
 		//Get current metadata values
 		Response r1 = simulationResource.getSimulation();
 		Simulation initialState = (Simulation)r1.getEntity();
-		Simulation newState = new Simulation(firstSimulationId, "xxx", "1980-08-08", "yyy", "zzz", "x, y, z", "{val: x}", "{val: y}", "{val: z}");
+		Simulation newState = new Simulation(firstSimulationId, "xxx", "1980-08-08", "yyy", "zzz", "x, y, z", "{\"val\": \"x\"}", "{\"val\": \"y\"}", "{\"val\": \"z\"}");
 		
 		//update simulation correctly
 		Response r2 = simulationResource.updateSimulationMetadata(newState);
@@ -94,5 +89,87 @@ public class TestSimulationResource {
 		simulationResource.updateSimulationMetadata(initialState);
 	}
 	
+	@Test
+	public void testDeleteSimulation() {
+		Response wrongIdResponse = new SimulationResource(uriInfo, request, requestContext, -5).deleteSimulation();
+		Assertions.assertEquals(400, wrongIdResponse.getStatus());
+	}
 	
+	private void checkResponse(Response r, boolean IdExists) {
+		if (IdExists) {
+			Assertions.assertEquals(200, r.getStatus());
+			Assertions.assertNotNull(r.getEntity());
+		}
+		else {
+			Assertions.assertEquals(400, r.getStatus());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void checkAllStatistics(int simulationId, boolean IdExists) {
+		SimulationResource simulationResource = new SimulationResource(uriInfo, request, requestContext, simulationId); 
+		
+		//Test methods without query parameters
+		checkResponse(simulationResource.getAvgRouteLength(), IdExists);
+		checkResponse(simulationResource.getAvgSpeed(), IdExists);
+		checkResponse(simulationResource.getArrivedVehicles(), IdExists);
+		checkResponse(simulationResource.getTransferredVehicles(), IdExists);
+		checkResponse(simulationResource.getRunningVehicles(), IdExists);
+		checkResponse(simulationResource.getEdgeAppearanceFrequencyInitialRoute(), IdExists);
+		checkResponse(simulationResource.getInitRouteLengthPerVehicle(), IdExists);
+		checkResponse(simulationResource.getSummaryStatistics(), IdExists);
+		
+		//Test list methods
+		Response vehicleListResponse = simulationResource.getVehicleList();
+		checkResponse(vehicleListResponse, IdExists);
+		Response edgeListResponse = simulationResource.getEdgeList();
+		checkResponse(edgeListResponse, IdExists);
+		Response laneListResponse = simulationResource.getLaneList();
+		checkResponse(laneListResponse, IdExists);
+		
+		if (IdExists) {
+			//Generate correct query parameters
+			MultivaluedMap<String, String> correctQueryParam = new MultivaluedHashMap<>();
+			String firstVehicleId = ((ArrayList<String>) vehicleListResponse.getEntity()).get(0);
+			String firstEdgeId = ((ArrayList<String>) edgeListResponse.getEntity()).get(0);
+			String firstLaneId = ((ArrayList<String>) laneListResponse.getEntity()).get(0);
+			correctQueryParam.put("vehicle", Arrays.asList(firstVehicleId));
+			correctQueryParam.put("edge", Arrays.asList(firstEdgeId));
+			correctQueryParam.put("lane", Arrays.asList(firstLaneId));
+			Mockito.when(uriInfo.getQueryParameters()).thenReturn(correctQueryParam);	
+		}
+		else {
+			Mockito.when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<>());
+		}
+		
+		//Test methods with query parameters
+		checkResponse(simulationResource.getEdgeFrequency(), IdExists);
+		checkResponse(simulationResource.getLaneTransitingVehicles(), IdExists);
+		checkResponse(simulationResource.getVehicleRouteLength(), IdExists);
+		checkResponse(simulationResource.getVehicleSpeed(), IdExists);
+		checkResponse(simulationResource.getVehicleSpeedFactor(), IdExists);
+	}
+	
+	@Test
+	public void testAllStatistics() {
+		checkAllStatistics(firstSimulationId, true);
+	}
+	
+	@Test
+	public void testAllStatisticsForWrongId() {
+		checkAllStatistics(-5, false);
+	}
+	
+	@Test
+	public void testEmptyQueryParameter() {
+		SimulationResource simulationResource = new SimulationResource(uriInfo, request, requestContext, firstSimulationId); 
+		
+		//Test methods with query parameters, but without giving any
+		Mockito.when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<>());
+		checkResponse(simulationResource.getEdgeFrequency(), false);
+		checkResponse(simulationResource.getLaneTransitingVehicles(), false);
+		checkResponse(simulationResource.getVehicleRouteLength(), false);
+		checkResponse(simulationResource.getVehicleSpeed(), false);
+		checkResponse(simulationResource.getVehicleSpeedFactor(), false);
+	}
 }

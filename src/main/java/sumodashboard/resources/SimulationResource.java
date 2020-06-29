@@ -85,7 +85,7 @@ public class SimulationResource {
 			return Response.status(400).entity(i.getMessage()).build();
 			
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception when trying to update a simulation:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
 		}
 	}
@@ -105,7 +105,7 @@ public class SimulationResource {
 			return Response.status(400).entity(i.getMessage()).build();
 			
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception when trying to delete a simulation:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
 		}
 	}

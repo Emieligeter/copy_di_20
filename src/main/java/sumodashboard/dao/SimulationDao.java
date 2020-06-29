@@ -147,13 +147,16 @@ public enum SimulationDao {
 	 */
 	public void updateMetadata(int simulation_id, Simulation simulation) throws SQLException, IDNotFound {
 		connection.setAutoCommit(false);
-		sqlQueries.updateMetadataQuery.setString(1, simulation.getName());
-		sqlQueries.updateMetadataQuery.setString(2, simulation.getDate());
-		sqlQueries.updateMetadataQuery.setString(3, simulation.getDescription());
-		sqlQueries.updateMetadataQuery.setString(4, simulation.getResearcher());
-		sqlQueries.updateMetadataQuery.setInt(5, simulation_id);
+		sqlQueries.updateSimulationQuery.setString(1, simulation.getName());
+		sqlQueries.updateSimulationQuery.setString(2, simulation.getDate());
+		sqlQueries.updateSimulationQuery.setString(3, simulation.getDescription());
+		sqlQueries.updateSimulationQuery.setString(4, simulation.getResearcher());
+		sqlQueries.updateSimulationQuery.setString(5, simulation.getNet());
+		sqlQueries.updateSimulationQuery.setString(6, simulation.getRoutes());
+		sqlQueries.updateSimulationQuery.setString(7, simulation.getConfig());
+		sqlQueries.updateSimulationQuery.setInt(8, simulation_id);
 		
-		if (sqlQueries.updateMetadataQuery.executeUpdate() == 0) {
+		if (sqlQueries.updateSimulationQuery.executeUpdate() == 0) {
 			connection.rollback();
 			connection.setAutoCommit(true);
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
