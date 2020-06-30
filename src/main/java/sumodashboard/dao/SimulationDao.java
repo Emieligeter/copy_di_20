@@ -177,92 +177,6 @@ public enum SimulationDao {
 	}
 	
 	/**
-	 * Get a list of datapoints for the a statistic that requires a parameter, over time. For a specified simulation and parameter id.
-	 * @param simulation_id simulation id
-	 * @param statistic the name of the values column as returned by the sql query
-	 * @param param_id the specified value of the parameter
-	 * @param query the query that will be used for the request
-	 * @return Map<Double timestamp, Double value>
-	 * @throws SQLException database is not reachable
-	 * @throws IDNotFound simulation id does not exist
-	 */
-	private Map<Double, Double> getStatsWithParam(int simulation_id, String statistic, String param_id, PreparedStatement query) throws SQLException, IDNotFound {
-		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-		
-		query.setInt(2, simulation_id);
-		query.setString(1, param_id);
-		ResultSet resultSet = query.executeQuery();
-		
-		Map<Double, Double> graphPoints = new HashMap<Double, Double>();
-		while (resultSet.next()) {
-			double timeStamp = resultSet.getDouble("timestamp");
-			double value = resultSet.getDouble(statistic);
-			graphPoints.put(timeStamp, value);
-		}
-		return graphPoints;
-	}
-	
-	/**
-	 * Get a list of datapoints for the edge appearence frequency, over time. For a specified simulation and edge id.
-	 * @param simulation_id simulation id (int)
-	 * @param edge_id edge id
-	 * @return Map<Double timestamp, Double edgeFrequency>
-	 * @throws SQLException database is not reachable
-	 * @throws IDNotFound simulation id does not exist
-	 */
-	public Map<Double, Double> getEdgeAppearenceFrequency(int simulation_id, String edge_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "edgeFrequency", edge_id, sqlQueries.edgeAppearanceFrequencyQuery);
-	}
-	
-	/**
-	 * Get a list of datapoints for the lane transiting vehicles, over time. For a specified simulation and lane id.
-	 * @param simulation_id simulation id (int)
-	 * @param lane_id lane id
-	 * @return Map<Double timestamp, Double vehicleCount>
-	 * @throws SQLException database not reachable
-	 * @throws IDNotFound simulation id does not exist
-	 */
-	public Map<Double, Double> getLaneTransitingVehicles(int simulation_id, String lane_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "vehicleCount", lane_id, sqlQueries.numberOfLaneTransitingVehiclesQuery);
-	}
-	
-	/**
-	 * Get a list of datapoints for the route length of a single vehicle, over time. For a specified simulation and vehicle id.
-	 * @param simulation_id simulation id (int)
-	 * @param vehicle_id vehicle id
-	 * @return Map<Double timestamp, Double routeLength>
-	 * @throws SQLException database not reachable
-	 * @throws IDNotFound simulation id does not exist
-	 */
-	public Map<Double, Double> getVehicleRouteLength(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "routeLength", vehicle_id, sqlQueries.vehicleRouteLengthQuery);
-	}
-	
-	/**
-	 * Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
-	 * @param simulation_id simulation id (int)
-	 * @param vehicle_id vehicle id
-	 * @return Map<Double timestamp, Double vehicleSpeed>
-	 * @throws SQLException database not reachable
-	 * @throws IDNotFound simulation id does not exist
-	 */
-	public Map<Double, Double> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "vehicleSpeed", vehicle_id, sqlQueries.vehicleSpeedQuery);
-	}
-	
-	/**
-	 * Get a list of datapoints for the speedfactor of a single vehicle, over time. For a specified simulation and vehicle id.
-	 * @param simulation_id simulation id (int)
-	 * @param vehicle_id vehicle id
-	 * @return Map<Double timestamp, Double vehicleSpeedFactor>
-	 * @throws SQLException database not reachable
-	 * @throws IDNotFound simulation id does not exist
-	 */
-	public Map<Double, Double> getVehicleSpeedFactor(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "vehicleSpeedFactor", vehicle_id, sqlQueries.vehicleSpeedFactorQuery);
-	}
-	
-	/**
 	 * Get a list of datapoints for a statistic, over time. For a specified simulation id.
 	 * @param simulation_id simulation id (int)
 	 * @param statistic the name of the values column as returned by the sql query
@@ -353,6 +267,117 @@ public enum SimulationDao {
 	}
 	
 	/**
+	 * Get a list of datapoints for the a statistic that requires a parameter, over time. For a specified simulation and parameter id.
+	 * @param simulation_id simulation id
+	 * @param statistic the name of the values column as returned by the sql query
+	 * @param param_id the specified value of the parameter
+	 * @param query the query that will be used for the request
+	 * @return Map<Double timestamp, Double value>
+	 * @throws SQLException database is not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	private Map<Double, Double> getStatsWithParam(int simulation_id, String statistic, String param_id, PreparedStatement query) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		
+		query.setInt(2, simulation_id);
+		query.setString(1, param_id);
+		ResultSet resultSet = query.executeQuery();
+		
+		Map<Double, Double> graphPoints = new HashMap<Double, Double>();
+		while (resultSet.next()) {
+			double timeStamp = resultSet.getDouble("timestamp");
+			double value = resultSet.getDouble(statistic);
+			graphPoints.put(timeStamp, value);
+		}
+		return graphPoints;
+	}
+	
+	/**
+	 * Get a list of datapoints for the edge appearence frequency, over time. For a specified simulation and edge id.
+	 * @param simulation_id simulation id (int)
+	 * @param edge_id edge id
+	 * @return Map<Double timestamp, Double edgeFrequency>
+	 * @throws SQLException database is not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<Double, Double> getEdgeAppearenceFrequency(int simulation_id, String edge_id) throws SQLException, IDNotFound {
+		return getStatsWithParam(simulation_id, "edgeFrequency", edge_id, sqlQueries.edgeAppearanceFrequencyQuery);
+	}
+	
+	/**
+	 * Get a list of datapoints for the lane transiting vehicles, over time. For a specified simulation and lane id.
+	 * @param simulation_id simulation id (int)
+	 * @param lane_id lane id
+	 * @return Map<Double timestamp, Double vehicleCount>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<Double, Double> getLaneTransitingVehicles(int simulation_id, String lane_id) throws SQLException, IDNotFound {
+		return getStatsWithParam(simulation_id, "vehicleCount", lane_id, sqlQueries.numberOfLaneTransitingVehiclesQuery);
+	}
+	
+	/**
+	 * Get a list of datapoints for the route length of a single vehicle, over time. For a specified simulation and vehicle id.
+	 * @param simulation_id simulation id (int)
+	 * @param vehicle_id vehicle id
+	 * @return Map<Double timestamp, Double routeLength>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<Double, Double> getVehicleRouteLength(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
+		return getStatsWithParam(simulation_id, "routeLength", vehicle_id, sqlQueries.vehicleRouteLengthQuery);
+	}
+	
+	/**
+	 * Get a list of datapoints for the speed of a single vehicle, over time. For a specified simulation and vehicle id.
+	 * @param simulation_id simulation id (int)
+	 * @param vehicle_id vehicle id
+	 * @return Map<Double timestamp, Double vehicleSpeed>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<Double, Double> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
+		return getStatsWithParam(simulation_id, "vehicleSpeed", vehicle_id, sqlQueries.vehicleSpeedQuery);
+	}
+	
+	/**
+	 * Get a list of datapoints for the speedfactor of a single vehicle, over time. For a specified simulation and vehicle id.
+	 * @param simulation_id simulation id (int)
+	 * @param vehicle_id vehicle id
+	 * @return Map<Double timestamp, Double vehicleSpeedFactor>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<Double, Double> getVehicleSpeedFactor(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
+		return getStatsWithParam(simulation_id, "vehicleSpeedFactor", vehicle_id, sqlQueries.vehicleSpeedFactorQuery);
+	}
+	
+	/**
+	 * Get a list of labeled datapoints for a statistic. For a specified simulation id.
+	 * @param simulation_id simulation id (int)
+	 * @param label the name of the labels column as returned by the sql query
+	 * @param statistic the name of the values column as returned by the sql query
+	 * @param query the query that will be used for the request
+	 * @return Map<String label, Integer value>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	private Map<String, Integer> getLabeledStats(int simulation_id, String label, String statistic, PreparedStatement query) throws SQLException, IDNotFound  {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		
+		query.setInt(1, simulation_id);
+		ResultSet resultSet = query.executeQuery();
+		
+		Map<String, Integer> dataPoints = new HashMap<>();
+		while (resultSet.next()) {
+			String labelValue = resultSet.getString(label);
+			int num = resultSet.getInt(statistic);
+			dataPoints.put(labelValue, num);
+		}
+		return dataPoints;
+	}
+	
+	/**
 	 * Get information about all edges: how often they appear in the initial routes
 	 * @param simulation_id simulation id (int)
 	 * @return Map<String edge_id, Integer edgeFrequency>
@@ -360,16 +385,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<String, Integer> getEdgeAppearanceFrequencyInitialRoute(int simulation_id) throws SQLException, IDNotFound {
-		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-		sqlQueries.edgeAppearanceFrequencyInitialRouteQuery.setInt(1, simulation_id);
-		ResultSet resultSet = sqlQueries.edgeAppearanceFrequencyInitialRouteQuery.executeQuery();
-		Map<String, Integer> dataPoints = new HashMap<>();
-		while (resultSet.next()) {
-			String edge = resultSet.getString("edge");
-			int edgeFrequency = resultSet.getInt("edgeFrequency");
-			dataPoints.put(edge, edgeFrequency);
-		}
-		return dataPoints;
+		return getLabeledStats(simulation_id, "edge", "edgeFrequency", sqlQueries.edgeAppearanceFrequencyInitialRouteQuery);
 	}
 	
 	/**
@@ -380,16 +396,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<String, Integer> getInitRouteLengthVehicle(int simulation_id) throws SQLException, IDNotFound {
-		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-		sqlQueries.initialRouteLengthPerVehicleQuery.setInt(1, simulation_id);
-		ResultSet resultSet = sqlQueries.initialRouteLengthPerVehicleQuery.executeQuery();
-		Map<String, Integer> dataPoints = new HashMap<>();
-		while (resultSet.next()) {
-			String vehicle = resultSet.getString("vehicleId");
-			int routeLength = resultSet.getInt("routeLength");
-			dataPoints.put(vehicle, routeLength);
-		}
-		return dataPoints;
+		return getLabeledStats(simulation_id, "vehicleId", "routeLength", sqlQueries.initialRouteLengthPerVehicleQuery);
 	}	
 	
 	/**

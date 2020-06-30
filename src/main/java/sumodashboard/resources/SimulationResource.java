@@ -1,6 +1,7 @@
 package sumodashboard.resources;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -111,121 +112,30 @@ public class SimulationResource {
 	}
 	
 	/**
-	 * Get the edge appearance frequency over time
-	 * @return response
+	 * Interface used for passing a method as an argument to getStats()
 	 */
-	@GET
-	@Path("/edgefrequency")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getEdgeFrequency() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		String edgeID = uriInfo.getQueryParameters().getFirst("edge");
-		if (edgeID == null) {
-			return Response.status(400).entity("Please specifiy edge id using query parameter \"edge\"").build();
-		}		
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getEdgeAppearenceFrequency(ID, edgeID);
-			return Response.status(200).entity(graphPoints).build();
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get the appearence frequency for an edge:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}	
+	private interface StatsRequest {
+		Map<Double, Double> request() throws IDNotFound, SQLException;
 	}
 	
 	/**
-	 * Get the number of lane transiting vehicles over time
+	 * Get a statistic without a parameter
+	 * @param paramType the type of parameter required for the request
+	 * @param requestFunction ParameterizedStatsRequest class implementing the request to the Dao
 	 * @return response
 	 */
-	@GET
-	@Path("/lanetransitingvehicles")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getLaneTransitingVehicles() {
+	private Response getStats(StatsRequest requestFunction) {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		String laneID = uriInfo.getQueryParameters().getFirst("lane");
-		if (laneID == null) {
-			return Response.status(400).entity("Please specifiy lane id using query parameter \"lane\"").build();
-		}		
+		
 		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getLaneTransitingVehicles(ID, laneID);
+			Map<Double, Double> graphPoints = requestFunction.request();
 			return Response.status(200).entity(graphPoints).build();
+
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
+			
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get number of lane transiting vehicles for a lane:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}	
-	}
-	
-	/**
-	 * Get the route length for a specified vehicle over time
-	 * @return response
-	 */
-	@GET
-	@Path("/vehicleroutelength")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getVehicleRouteLength() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");
-		if (vehicleID == null) {
-			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
-		}		
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getVehicleRouteLength(ID, vehicleID);
-			return Response.status(200).entity(graphPoints).build();
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get route length for a vehicle:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
-	}
-	
-	/**
-	 * Get the speed for a specified vehicle over time
-	 * @return response
-	 */
-	@GET
-	@Path("/vehiclespeed")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getVehicleSpeed() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");	
-		if (vehicleID == null) {
-			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
-		}		
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getVehicleSpeed(ID, vehicleID);
-			return Response.status(200).entity(graphPoints).build();
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get speed over time for a vehicle:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
-	}
-	
-	/**
-	 * Get the speed factor for a specified vehicle over time
-	 * @return response
-	 */
-	@GET
-	@Path("/vehiclespeedfactor")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getVehicleSpeedFactor() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		String vehicleID = uriInfo.getQueryParameters().getFirst("vehicle");
-		if (vehicleID == null) {
-			return Response.status(400).entity("Please specifiy vehicle id using query parameter \"vehicle\"").build();
-		}		
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getVehicleSpeedFactor(ID, vehicleID);
-			return Response.status(200).entity(graphPoints).build();
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get the speedFactor over time for a vehicle:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
 		}	
 	}
@@ -238,18 +148,9 @@ public class SimulationResource {
 	@Path("/avgroutelength")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgRouteLength() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getAvgRouteLength(ID);
-			return Response.status(200).entity(graphPoints).build();
-
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg route length over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getStats(() -> {
+			return SimulationDao.instance.getAvgRouteLength(ID);
+		});
 	}
 	
 	/**
@@ -260,18 +161,9 @@ public class SimulationResource {
 	@Path("/avgspeed")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeed() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getAverageSpeed(ID);
-			return Response.status(200).entity(graphPoints).build();
-
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg speed over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getStats(() -> {
+			return SimulationDao.instance.getAverageSpeed(ID);
+		});
 	}
 	
 	/**
@@ -282,18 +174,9 @@ public class SimulationResource {
 	@Path("/avgspeedfactor")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeedFactor() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getAverageSpeedFactor(ID);
-			return Response.status(200).entity(graphPoints).build();
-
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get avg speedFactor over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getStats(() -> {
+			return SimulationDao.instance.getAverageSpeedFactor(ID);
+		});
 	}
 	
 	/**
@@ -304,16 +187,9 @@ public class SimulationResource {
 	@Path("/arrivedvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getArrivedVehicles() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getCumNumArrivedVehicles(ID);
-			return Response.status(200).entity(graphPoints).build();
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get cumulative number of arrived vehicles over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getStats(() -> {
+			return SimulationDao.instance.getCumNumArrivedVehicles(ID);
+		});
 	}
 	
 	/**
@@ -324,16 +200,9 @@ public class SimulationResource {
 	@Path("/transferredvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTransferredVehicles() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getNumTransferredVehicles(ID);
-			return Response.status(200).entity(graphPoints).build();
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get number of transferred vehicles over time:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getStats(() -> {
+			return SimulationDao.instance.getNumTransferredVehicles(ID);
+		});
 	}
 	
 	/**
@@ -344,16 +213,133 @@ public class SimulationResource {
 	@Path("/runningvehicles")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getRunningVehicles() {
+		return getStats(() -> {
+			return SimulationDao.instance.getNumRunningVehicles(ID);
+		});
+	}
+	
+	/**
+	 * Interface used for passing a method as an argument to getStatsWithParam()
+	 */
+	private interface ParameterizedStatsRequest {
+		Map<Double, Double> request(String paramID) throws IDNotFound, SQLException;
+	}
+	
+	/**
+	 * Get a statistic with parameter
+	 * @param paramType the type of parameter required for the request
+	 * @param requestFunction ParameterizedStatsRequest class implementing the request to the Dao
+	 * @return response
+	 */
+	private Response getStatsWithParam(String paramType, ParameterizedStatsRequest requestFunction) {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		String paramID = uriInfo.getQueryParameters().getFirst(paramType);
+		if (paramID == null) {
+			return Response.status(400).entity("Please specifiy " + paramType + " id using query parameter \"" + paramType + "\"").build();
+		}		
+		
+		return getStats(() -> {
+			return requestFunction.request(paramID);
+		});
+	}
+	
+	/**
+	 * Get the edge appearance frequency over time
+	 * @return response
+	 */
+	@GET
+	@Path("/edgefrequency")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEdgeFrequency() {
+		ParameterizedStatsRequest requestFunction = (paramID) -> {
+			return SimulationDao.instance.getEdgeAppearenceFrequency(ID, paramID);
+		};
+		return getStatsWithParam("edge", requestFunction);
+	}
+	
+	/**
+	 * Get the number of lane transiting vehicles over time
+	 * @return response
+	 */
+	@GET
+	@Path("/lanetransitingvehicles")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLaneTransitingVehicles() {
+		ParameterizedStatsRequest requestFunction = (paramID) -> {
+			return SimulationDao.instance.getLaneTransitingVehicles(ID, paramID);
+		};
+		return getStatsWithParam("lane", requestFunction);	
+	}
+	
+	/**
+	 * Get the route length for a specified vehicle over time
+	 * @return response
+	 */
+	@GET
+	@Path("/vehicleroutelength")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleRouteLength() {
+		ParameterizedStatsRequest requestFunction = (paramID) -> {
+			return SimulationDao.instance.getVehicleRouteLength(ID, paramID);
+		};
+		return getStatsWithParam("vehicle", requestFunction);
+	}
+	
+	/**
+	 * Get the speed for a specified vehicle over time
+	 * @return response
+	 */
+	@GET
+	@Path("/vehiclespeed")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleSpeed() {
+		ParameterizedStatsRequest requestFunction = (paramID) -> {
+			return SimulationDao.instance.getVehicleSpeed(ID, paramID);
+		};
+		return getStatsWithParam("vehicle", requestFunction);
+	}
+	
+	/**
+	 * Get the speed factor for a specified vehicle over time
+	 * @return response
+	 */
+	@GET
+	@Path("/vehiclespeedfactor")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVehicleSpeedFactor() {
+		ParameterizedStatsRequest requestFunction = (paramID) -> {
+			return SimulationDao.instance.getVehicleSpeedFactor(ID, paramID);
+		};
+		return getStatsWithParam("vehicle", requestFunction);
+	}
+	
+	/**
+	 * Interface used for passing a method as an argument to getStats()
+	 */
+	private interface LabeledStatsRequest {
+		Map<String, Integer> request() throws IDNotFound, SQLException;
+	}
+	
+	/**
+	 * Get a labeled statistic without a parameter
+	 * @param requestFunction StatsRequest class implementing the request to the Dao
+	 * @return response
+	 */
+	private Response getLabeledStats(LabeledStatsRequest requestFunction) {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		
 		try {
-			Map<Double, Double> graphPoints = SimulationDao.instance.getNumRunningVehicles(ID);
-			return Response.status(200).entity(graphPoints).build();
+			Map<String, Integer> dataPoints = requestFunction.request();
+			return Response.status(200).entity(dataPoints).build();
+
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
+			
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get number of running vehicles over time:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
-		}
+		}	
 	}
 	
 	/**
@@ -364,18 +350,9 @@ public class SimulationResource {
 	@Path("/edgefrequencyinitial")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeAppearanceFrequencyInitialRoute() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			Map<String, Integer> dataPoints = SimulationDao.instance.getEdgeAppearanceFrequencyInitialRoute(ID);
-			return Response.status(200).entity(dataPoints).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get the initial edge frequency per edge:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getLabeledStats(() -> {
+			return SimulationDao.instance.getEdgeAppearanceFrequencyInitialRoute(ID);
+		});
 	}
 	
 	/**
@@ -386,18 +363,37 @@ public class SimulationResource {
 	@Path("/routelengthinitial")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInitRouteLengthPerVehicle() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
+		return getLabeledStats(() -> {
+			return SimulationDao.instance.getInitRouteLengthVehicle(ID);
+		});
+	}
+	
+	/**
+	 * Interface used for passing a method as an argument to getStats()
+	 */
+	private interface ListRequest {
+		List<String> request() throws IDNotFound, SQLException;
+	}
+	
+	/**
+	 * Get a labeled statistic without a parameter
+	 * @param requestFunction StatsRequest class implementing the request to the Dao
+	 * @return response
+	 */
+	private Response getList(ListRequest requestFunction) {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		
 		try {
-			Map<String, Integer> dataPoints = SimulationDao.instance.getInitRouteLengthVehicle(ID);
-			return Response.status(200).entity(dataPoints).build();
-			
+			List<String> values = requestFunction.request();
+			return Response.status(200).entity(values).build();
+
 		} catch (IDNotFound i) {
 			return Response.status(400).entity(i.getMessage()).build();
 			
 		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get the inital route length per vehicle:\n" + e.getLocalizedMessage();
+			String errorMsg = "SQL Exception:\n" + e.getLocalizedMessage();
 			return Response.status(500).entity(errorMsg).build();
-		}
+		}	
 	}
 	
 	/**
@@ -408,18 +404,10 @@ public class SimulationResource {
 	@Path("/edgelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeList() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			List<String> edges = SimulationDao.instance.getEdgeList(ID);
-			return Response.status(200).entity(edges).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a edge list:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}	}
+		return getList(() -> {
+			return SimulationDao.instance.getEdgeList(ID);
+		});
+	}
 	
 	/**
 	 * Get a list of all lanes that appear in a simulation
@@ -429,18 +417,9 @@ public class SimulationResource {
 	@Path("/lanelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneList() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			List<String> lanes = SimulationDao.instance.getLaneList(ID);
-			return Response.status(200).entity(lanes).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a lane list:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getList(() -> {
+			return SimulationDao.instance.getLaneList(ID);
+		});
 	}
 	
 	/**
@@ -451,18 +430,9 @@ public class SimulationResource {
 	@Path("/vehiclelist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleList() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		try {
-			List<String> vehicles = SimulationDao.instance.getVehicleList(ID);
-			return Response.status(200).entity(vehicles).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get a vehicle list:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getList(() -> {
+			return SimulationDao.instance.getVehicleList(ID);
+		});
 	}
 	
 	/**
@@ -473,17 +443,8 @@ public class SimulationResource {
 	@Path("/summarystatistics")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSummaryStatistics() {
-		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
-		try {
-			Map<String, Integer> dataPoints = SimulationDao.instance.getSummaryStatistics(ID);
-			return Response.status(200).entity(dataPoints).build();
-			
-		} catch (IDNotFound i) {
-			return Response.status(400).entity(i.getMessage()).build();
-			
-		} catch (SQLException e) {
-			String errorMsg = "SQL Exception when trying to get the summary statistics:\n" + e.getLocalizedMessage();
-			return Response.status(500).entity(errorMsg).build();
-		}
+		return getLabeledStats(() -> {
+			return SimulationDao.instance.getSummaryStatistics(ID);
+		});
 	}
 }
