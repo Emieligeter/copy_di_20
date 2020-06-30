@@ -62,6 +62,10 @@ public class SQLQueries {
     public PreparedStatement numberOfTransferredVehiclesQuery;
     /**Get the number of running vehicles over time*/
     public PreparedStatement numberOfRunningVehiclesQuery;
+    /**Get the edge appearance frequency per edge in all initial routes in a simulation (for pie and bar chart)*/
+    public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
+    /**Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)*/
+    public PreparedStatement initialRouteLengthPerVehicleQuery;
     
     /**Get a list of all vehicles in a specified simulation*/
     public PreparedStatement vehicleListQuery;
@@ -69,11 +73,6 @@ public class SQLQueries {
     public PreparedStatement edgeListQuery;
     /**Get a list of all lanes in a specified simulation*/
     public PreparedStatement laneListQuery;
-    
-    /**Get the edge appearance frequency per edge in all initial routes in a simulation (for pie and bar chart)*/
-    public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
-    /**Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)*/
-    public PreparedStatement initialRouteLengthPerVehicleQuery;
 
     /**Account queries: create new user*/
     public PreparedStatement createNewUser;
@@ -537,28 +536,6 @@ public class SQLQueries {
         }
         
         try {
-            laneListQuery = connection.prepareStatement("" +
-            		"SELECT json_array_elements(net -> 'net' -> 'edge') -> 'lane' ->> 'id' AS lane_id " +
-            		"FROM " + schemaName + ".simulations " +
-            		"WHERE simid = ?"
-                    );
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-
-        try {
-            vehicleListQuery = connection.prepareStatement("" +
-            		"SELECT simid, (json_array_elements(routes -> 'routes' -> 'vehicle') ->> 'id') AS vehicleid " +
-            		"FROM " + schemaName + ".simulations " +
-            		"WHERE simid = ?"
-            		);
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
         	edgeAppearanceFrequencyInitialRouteQuery = connection.prepareStatement("" +
         			"SELECT edge, LENGTH(concat(string_agg(edges, ' '), ' ~'))-LENGTH(REPLACE(concat(string_agg(edges, ' '), ' ~'),' ','')) AS edgeFrequency " + 
         			"FROM ( " + 
@@ -583,6 +560,28 @@ public class SQLQueries {
         			"	FROM " + schemaName + ".simulations " +
         			"	WHERE simid = ? " +
         			") vehicles");
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            laneListQuery = connection.prepareStatement("" +
+            		"SELECT json_array_elements(net -> 'net' -> 'edge') -> 'lane' ->> 'id' AS lane_id " +
+            		"FROM " + schemaName + ".simulations " +
+            		"WHERE simid = ?"
+                    );
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+
+        try {
+            vehicleListQuery = connection.prepareStatement("" +
+            		"SELECT simid, (json_array_elements(routes -> 'routes' -> 'vehicle') ->> 'id') AS vehicleid " +
+            		"FROM " + schemaName + ".simulations " +
+            		"WHERE simid = ?"
+            		);
         } catch (SQLException e) {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
