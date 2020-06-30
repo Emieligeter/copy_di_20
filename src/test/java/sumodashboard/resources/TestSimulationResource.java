@@ -45,7 +45,6 @@ public class TestSimulationResource {
 	@Test
 	public void testGetSimulation() {
 		//Test with valid simulation id
-		System.out.println("test");
 		Response r1 = new SimulationResource(uriInfo, request, requestContext, firstSimulationId).getSimulation();
 		Assertions.assertEquals(200, r1.getStatus());
 		Assertions.assertTrue(r1.getEntity() instanceof Simulation);

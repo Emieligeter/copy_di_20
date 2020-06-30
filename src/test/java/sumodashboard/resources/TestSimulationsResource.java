@@ -29,7 +29,6 @@ public class TestSimulationsResource {
 	static Request request;
 	static ContainerRequestContext requestContext;
 	
-	@SuppressWarnings("unchecked")
 	@BeforeAll
 	public static void setUp() {
 		//Pretend to send request with ?vehicle=v5 and ?lane=e5 in URI

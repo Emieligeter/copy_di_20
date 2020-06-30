@@ -43,8 +43,9 @@ public class TestAuthenticationResource {
 	public static void teardown() throws MalformedURLException {
 		client.close();
 	}
+	
 	/**
-	 * Tests wether login endpoint is working. This tests uses the {@link Client}  object to send 
+	 * Tests whether login endpoint is working. This tests uses the {@link Client}  object to send 
 	 * a request to the URI and check if it returns the right cookie
 	 * @throws MalformedURLException
 	 */
@@ -63,7 +64,26 @@ public class TestAuthenticationResource {
 	}
 	
 	/**
-	 * Tests wether the createUser method is working correctly
+	 * Tests if the user does not receive a cookie when wrong credentials
+	 * are entered.
+	 * @throws MalformedURLException
+	 */
+	@Test
+	public void TestLoginWrongCredentials() throws MalformedURLException {
+		JSONObject jsonCreds = new JSONObject();
+		jsonCreds.put("username", testUsername);
+		jsonCreds.put("password", "abc");
+
+		WebTarget endPoint = target.path("/rest/auth/login");
+		try (Response resAuth = endPoint.request().post(Entity.entity(jsonCreds.toString(), MediaType.APPLICATION_JSON))) {
+			cookie = resAuth.getCookies().get("session-id");
+			Assertions.assertEquals(403, resAuth.getStatus());
+			Assertions.assertNull(cookie);
+		}
+	}
+	
+	/**
+	 * Tests whether the createUser method is working correctly
 	 * This test uses the {@link AuthenticationResource.storeData} variable to ensure no database entry is inserted when testing
 	 * @throws SQLException
 	 */

@@ -29,6 +29,18 @@ public class TagsResource {
 	@Context
 	ContainerRequestContext requestContext;
 	
+	public TagsResource() {
+	}
+	
+	/**
+	 * Constructor used for testing purposes
+	 */
+	public TagsResource(UriInfo uriInfo, Request request, ContainerRequestContext requestContext) {
+		this.uriInfo = uriInfo;
+		this.request = request;
+		this.requestContext = requestContext;
+	}
+	
 	/**
 	 * Get metadata of all simulations
 	 * @return response
