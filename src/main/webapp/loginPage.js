@@ -40,7 +40,9 @@ $("form#createNew").submit(function( event ) {
 	var credentials = 
 			{"username": $("form#createNew #inputUsername").val().trim(),
 			"password" : $("form#createNew #inputPassword").val().trim(),
-			"email"    : $("form#createNew #inputEmail").val().trim()};
+			"email"    : $("form#createNew #inputEmail").val().trim(),
+			"masterpass":$("form#createNew #masterPassword").val().trim() };
+	alert(JSON.stringify(credentials));
 	$.ajax({
   		url : 'rest/auth/createUser',
   		type: 'POST',
