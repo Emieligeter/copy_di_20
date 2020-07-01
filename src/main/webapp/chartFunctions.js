@@ -42,10 +42,21 @@ function viewSummaryStatistics(sumStatsString) {
 function setChartType(type) {
 	resetChart();
 	chartType = type;
-	if (chartType === 'line' || chartType === 'scatter') {
-		document.getElementById("addDataSetButton").style.display = "block";
-	} else {
+	//only show addDataSetButton if appropriate
+	if (chartType === 'bar' || chartType === 'pie') {
 		document.getElementById("addDataSetButton").style.display = "none";
+	} else {
+		document.getElementById("addDataSetButton").style.display = "block";
+	}
+	//only show the appropriate selectVariables buttons
+	if (chartType === 'pie') {
+		document.getElementById("xAxisButton").style.display = "none";
+		document.getElementById("yAxisButton").style.display = "none";
+		document.getElementById("legendButton").style.display = "none";
+	} else {
+		document.getElementById("xAxisButton").style.display = "block";
+		document.getElementById("yAxisButton").style.display = "block";
+		document.getElementById("legendButton").style.display = "block";
 	}
 	//edit the drop down menu options
 	changeFirstChoice(type);
