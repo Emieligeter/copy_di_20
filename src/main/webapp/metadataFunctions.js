@@ -15,6 +15,13 @@ $("#modifyMetadata").submit(function(event) {
     		tags += ", " + $(this).attr('id');
     	}
     });
+    
+    //Name input should not be empty
+    if (newMetadata.elements[0].value === "") {
+    	$("#updateResults").html("Error: The name of the file has not been specified");
+    	return;
+    }
+    
     //Body of the PUT request
     var body = "{\"name\": \"" + newMetadata.elements[0].value + 
     "\", \"date\": \"" + newMetadata.elements[1].value + 

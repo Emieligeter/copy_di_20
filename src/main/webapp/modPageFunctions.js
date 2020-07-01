@@ -85,6 +85,7 @@ $("#closeSubmitData").click(function() {
 })
 
 //Shows input to create a new tag when new tag button is clicked
+//Hides input when create is clicked
 $("#newTagButton").click(function() {
 	if ($("#newTagButton").html() === "+ New tag") {
 		$("#newTag").toggle();
