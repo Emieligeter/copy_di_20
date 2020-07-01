@@ -61,7 +61,8 @@
 }
 
 #fileSelect {
-	width:400px
+	width:400px;
+	height: 600px;
 }
 
 /*Box to select variables on home page*/
