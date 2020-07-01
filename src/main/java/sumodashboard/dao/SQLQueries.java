@@ -615,4 +615,18 @@ public class SQLQueries {
             e.printStackTrace();  
         }
 	}
+    
+    public static void main(String args[]) {
+    	System.out.println("SELECT simid, timestamp, coalesce(array_length(string_to_array(vehicles, ' '), 1), 0) AS vehicleCount " +
+            		"FROM ( " +
+            		"	SELECT simid, timestamp, lane ->> 'id' AS lane_id, lane -> 'vehicles' ->> 'value' AS vehicles " +
+            		"	FROM ( " +
+            		"		SELECT simid, timestamp, json_array_elements(state -> 'snapshot' -> 'lane') AS lane " +
+            		"		FROM " + "project" + ".states " +
+            		"		WHERE simid = ? " +
+            		"		) lanes " +
+            		") vehicles " +
+            		"WHERE lane_id = ? " +
+            		"ORDER BY timestamp ASC");
+    }
 }

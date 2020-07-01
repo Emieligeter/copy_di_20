@@ -63,13 +63,45 @@ public enum SimulationDao {
 		}
 	}
 	
+	private interface Transaction {
+		Object execute() throws SQLException;
+	}
+	
+	private Object makeTransaction(Transaction transaction) throws SQLException {
+		try {
+			try {
+				connection.setAutoCommit(false);
+				Object result = transaction.execute();
+				connection.commit();
+				connection.setAutoCommit(true);
+				return result;
+			} catch (SQLException e) {
+				connection.rollback();
+				connection.setAutoCommit(true);
+				throw e;
+			}
+		} catch (SQLException e) {
+			throw e;
+		}
+	}
+	
+	private ResultSet doQuery(Transaction transaction) throws SQLException {
+		return (ResultSet) makeTransaction(transaction);
+	}
+	
+	private int doUpdate(Transaction transaction) throws SQLException {
+		return (Integer) makeTransaction(transaction);
+	}
+	
 	/**
 	 * Get a List with all simulation metadata in the database
 	 * @return List<MetaData>
 	 * @throws SQLException database is not reachable
 	 */
 	public List<MetaData> getSimulations() throws SQLException {
-		ResultSet rs = sqlQueries.getAllSimulationsQuery.executeQuery();
+		ResultSet rs = doQuery(() -> {
+			return sqlQueries.getAllSimulationsQuery.executeQuery();
+		});
 		
 		List<MetaData> simulations = new ArrayList<>();
 		while (rs.next()) {
@@ -93,9 +125,10 @@ public enum SimulationDao {
 	 * @throws SQLException database is not reachable
 	 */
 	public Simulation getSimulation(int simulation_id) throws SQLException {
-		sqlQueries.getSimulationQuery.setInt(1, simulation_id);
-		
-		ResultSet rs = sqlQueries.getSimulationQuery.executeQuery();
+		ResultSet rs = doQuery(() -> {
+			sqlQueries.getSimulationQuery.setInt(1, simulation_id);
+			return sqlQueries.getSimulationQuery.executeQuery();
+		});
 		
 		if (!rs.next()) {
 			return null;
@@ -122,22 +155,17 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public void removeSimulation(int simulation_id) throws SQLException, IDNotFound {
-		connection.setAutoCommit(false);
+		int result = doUpdate(() -> {
+			sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
+			sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
+			sqlQueries.removeSimulationQuery.setInt(3, simulation_id);
+			return sqlQueries.removeSimulationQuery.executeUpdate();
+		});
 
-		sqlQueries.removeSimulationQuery.setInt(1, simulation_id);
-		sqlQueries.removeSimulationQuery.setInt(2, simulation_id);
-		sqlQueries.removeSimulationQuery.setInt(3, simulation_id);
-
-		if (sqlQueries.removeSimulationQuery.executeUpdate() == 0) {
-			connection.rollback();
-			connection.setAutoCommit(true);
+		if (result == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
-		}
-
-		connection.commit();
-		connection.setAutoCommit(true);
-		
-	   }
+		}		
+	}
 	
 	/**
 	 * Updates metadata of specified simulation, with the specified fields of the simulation object
@@ -147,33 +175,32 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public void updateMetadata(int simulation_id, Simulation simulation) throws SQLException, IDNotFound {
-		connection.setAutoCommit(false);
-		sqlQueries.updateSimulationQuery.setString(1, simulation.getName());
-		sqlQueries.updateSimulationQuery.setString(2, simulation.getDate());
-		sqlQueries.updateSimulationQuery.setString(3, simulation.getDescription());
-		sqlQueries.updateSimulationQuery.setString(4, simulation.getResearcher());
-		sqlQueries.updateSimulationQuery.setString(5, simulation.getNet());
-		sqlQueries.updateSimulationQuery.setString(6, simulation.getRoutes());
-		sqlQueries.updateSimulationQuery.setString(7, simulation.getConfig());
-		sqlQueries.updateSimulationQuery.setInt(8, simulation_id);
+		int result = doUpdate(() -> {
+			sqlQueries.updateSimulationQuery.setString(1, simulation.getName());
+			sqlQueries.updateSimulationQuery.setString(2, simulation.getDate());
+			sqlQueries.updateSimulationQuery.setString(3, simulation.getDescription());
+			sqlQueries.updateSimulationQuery.setString(4, simulation.getResearcher());
+			sqlQueries.updateSimulationQuery.setString(5, simulation.getNet());
+			sqlQueries.updateSimulationQuery.setString(6, simulation.getRoutes());
+			sqlQueries.updateSimulationQuery.setString(7, simulation.getConfig());
+			sqlQueries.updateSimulationQuery.setInt(8, simulation_id);
+			return sqlQueries.updateSimulationQuery.executeUpdate();
+		});
 		
-		if (sqlQueries.updateSimulationQuery.executeUpdate() == 0) {
-			connection.rollback();
-			connection.setAutoCommit(true);
+		if (result == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simulation_id);
 		}
 		
 		if (simulation.getTags() != null) {			
 			//Remove existing tags
-			sqlQueries.removeAllSimulationTagsQuery.setInt(1, simulation_id);
-			sqlQueries.removeAllSimulationTagsQuery.execute();
+			doUpdate(() -> {
+				sqlQueries.removeAllSimulationTagsQuery.setInt(1, simulation_id);
+				return sqlQueries.removeAllSimulationTagsQuery.executeUpdate();
+			});
 			
 			//Add tags specified
 			MetaDataIO.addTagsToSimulation(simulation_id, simulation.getTags());
 		}
-		
-		connection.commit();
-		connection.setAutoCommit(true);
 	}
 	
 	/**
@@ -188,13 +215,15 @@ public enum SimulationDao {
 	private Map<Double, Double> getStats(int simulation_id, String statistic, PreparedStatement query) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		
-		query.setInt(1, simulation_id);
-		ResultSet resultSet = query.executeQuery();
+		ResultSet rs = doQuery(() -> {
+			query.setInt(1, simulation_id);
+			return query.executeQuery();
+		});		
 		
 		Map<Double, Double> graphPoints = new HashMap<Double, Double>();
-		while (resultSet.next()) {
-			double timestamp = resultSet.getDouble("timestamp");
-			double value = resultSet.getDouble(statistic);
+		while (rs.next()) {
+			double timestamp = rs.getDouble("timestamp");
+			double value = rs.getDouble(statistic);
 			graphPoints.put(timestamp, value);
 		}
 		return graphPoints;
@@ -272,21 +301,32 @@ public enum SimulationDao {
 	 * @param statistic the name of the values column as returned by the sql query
 	 * @param param_id the specified value of the parameter
 	 * @param query the query that will be used for the request
+	 * @param simIdFirst is true if the simulationId appears in the preparedStatement
+	 * 	before the statistic value
 	 * @return Map<Double timestamp, Double value>
 	 * @throws SQLException database is not reachable
 	 * @throws IDNotFound simulation id does not exist
 	 */
-	private Map<Double, Double> getStatsWithParam(int simulation_id, String statistic, String param_id, PreparedStatement query) throws SQLException, IDNotFound {
+	private Map<Double, Double> getStatsWithParam(int simulation_id, String statistic, String param_id, PreparedStatement query, boolean simIdFirst) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		
-		query.setInt(2, simulation_id);
-		query.setString(1, param_id);
-		ResultSet resultSet = query.executeQuery();
+		ResultSet rs = doQuery(() -> {
+			if (simIdFirst) {
+				query.setInt(1, simulation_id);
+				query.setString(2, param_id);
+			}
+			else {
+				query.setString(1, param_id);
+				query.setInt(2, simulation_id);
+			}
+			
+			return query.executeQuery();
+		});
 		
 		Map<Double, Double> graphPoints = new HashMap<Double, Double>();
-		while (resultSet.next()) {
-			double timeStamp = resultSet.getDouble("timestamp");
-			double value = resultSet.getDouble(statistic);
+		while (rs.next()) {
+			double timeStamp = rs.getDouble("timestamp");
+			double value = rs.getDouble(statistic);
 			graphPoints.put(timeStamp, value);
 		}
 		return graphPoints;
@@ -301,7 +341,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<Double, Double> getEdgeAppearenceFrequency(int simulation_id, String edge_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "edgeFrequency", edge_id, sqlQueries.edgeAppearanceFrequencyQuery);
+		return getStatsWithParam(simulation_id, "edgeFrequency", edge_id, sqlQueries.edgeAppearanceFrequencyQuery, false);
 	}
 	
 	/**
@@ -313,7 +353,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<Double, Double> getLaneTransitingVehicles(int simulation_id, String lane_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "vehicleCount", lane_id, sqlQueries.numberOfLaneTransitingVehiclesQuery);
+		return getStatsWithParam(simulation_id, "vehicleCount", lane_id, sqlQueries.numberOfLaneTransitingVehiclesQuery, true);
 	}
 	
 	/**
@@ -325,7 +365,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<Double, Double> getVehicleRouteLength(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "routeLength", vehicle_id, sqlQueries.vehicleRouteLengthQuery);
+		return getStatsWithParam(simulation_id, "routeLength", vehicle_id, sqlQueries.vehicleRouteLengthQuery, true);
 	}
 	
 	/**
@@ -337,7 +377,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<Double, Double> getVehicleSpeed(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "vehicleSpeed", vehicle_id, sqlQueries.vehicleSpeedQuery);
+		return getStatsWithParam(simulation_id, "vehicleSpeed", vehicle_id, sqlQueries.vehicleSpeedQuery, true);
 	}
 	
 	/**
@@ -349,7 +389,7 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public Map<Double, Double> getVehicleSpeedFactor(int simulation_id, String vehicle_id) throws SQLException, IDNotFound {
-		return getStatsWithParam(simulation_id, "vehicleSpeedFactor", vehicle_id, sqlQueries.vehicleSpeedFactorQuery);
+		return getStatsWithParam(simulation_id, "vehicleSpeedFactor", vehicle_id, sqlQueries.vehicleSpeedFactorQuery, true);
 	}
 	
 	/**
@@ -365,13 +405,15 @@ public enum SimulationDao {
 	private Map<String, Integer> getLabeledStats(int simulation_id, String label, String statistic, PreparedStatement query) throws SQLException, IDNotFound  {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		
-		query.setInt(1, simulation_id);
-		ResultSet resultSet = query.executeQuery();
+		ResultSet rs = doQuery(() -> {		
+			query.setInt(1, simulation_id);
+			return query.executeQuery();
+		});
 		
 		Map<String, Integer> dataPoints = new HashMap<>();
-		while (resultSet.next()) {
-			String labelValue = resultSet.getString(label);
-			int num = resultSet.getInt(statistic);
+		while (rs.next()) {
+			String labelValue = rs.getString(label);
+			int num = rs.getInt(statistic);
 			dataPoints.put(labelValue, num);
 		}
 		return dataPoints;
@@ -411,12 +453,14 @@ public enum SimulationDao {
 	private List<String> getList(int simulation_id, String listName, PreparedStatement query) throws IDNotFound, SQLException {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		
-		query.setInt(1, simulation_id);
-		ResultSet resultSet = query.executeQuery();
+		ResultSet rs = doQuery(() -> {		
+			query.setInt(1, simulation_id);
+			return query.executeQuery();
+		});
 		
 		List<String> values = new ArrayList<>();
-		while (resultSet.next()) {
-			String value = resultSet.getString(listName);
+		while (rs.next()) {
+			String value = rs.getString(listName);
 			values.add(value);
 		}
 		return values;
@@ -464,13 +508,17 @@ public enum SimulationDao {
 	 */
 	public Map<String, Integer> getSummaryStatistics(int simulation_id) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
-		sqlQueries.summaryStatistics.setInt(1, simulation_id);
-		ResultSet resultSet = sqlQueries.summaryStatistics.executeQuery();
+		
+		ResultSet rs = doQuery(() -> {
+			sqlQueries.summaryStatistics.setInt(1, simulation_id);
+			return sqlQueries.summaryStatistics.executeQuery();
+		});
+		
 		Map<String, Integer> summaryStatistics = new HashMap<>();
-		while (resultSet.next()) {
-			int vehicles = resultSet.getInt("vehicles");
-			int edges = resultSet.getInt("alledges");
-			int junctions = resultSet.getInt("junction");
+		while (rs.next()) {
+			int vehicles = rs.getInt("vehicles");
+			int edges = rs.getInt("alledges");
+			int junctions = rs.getInt("junction");
 			summaryStatistics.put("vehicles", vehicles);
 			summaryStatistics.put("edges", edges);
 			summaryStatistics.put("junctions", junctions);
@@ -491,24 +539,19 @@ public enum SimulationDao {
 	 * @throws IOException conversion failed
 	 */
 	public void storeSimulation(Integer simId, String name, String description, String date, File net, File routes, File config, boolean storeData) throws SQLException, IOException {
-		connection.setAutoCommit(false);
-		sqlQueries.storeSimulationQuery.setInt(1, simId);
-		sqlQueries.storeSimulationQuery.setString(2, name);
-		sqlQueries.storeSimulationQuery.setString(3, date);
-		sqlQueries.storeSimulationQuery.setString(4, description);
-		sqlQueries.storeSimulationQuery.setObject(5, convertFileToPGobject(net));
-		sqlQueries.storeSimulationQuery.setObject(6, convertFileToPGobject(routes));
-		sqlQueries.storeSimulationQuery.setObject(7, convertFileToPGobject(config));
-
-		if(storeData) {
-			if (sqlQueries.storeSimulationQuery.executeUpdate() == 0) {
-				connection.rollback();
-			} else {
-			connection.commit();
-			}
-		}
-		connection.setAutoCommit(true);
-
+		PGobject netObj = convertFileToPGobject(net);
+		PGobject routesObj = convertFileToPGobject(routes);
+		PGobject configObj = convertFileToPGobject(config);
+		doUpdate(() -> {
+			sqlQueries.storeSimulationQuery.setInt(1, simId);
+			sqlQueries.storeSimulationQuery.setString(2, name);
+			sqlQueries.storeSimulationQuery.setString(3, date);
+			sqlQueries.storeSimulationQuery.setString(4, description);
+			sqlQueries.storeSimulationQuery.setObject(5, netObj);
+			sqlQueries.storeSimulationQuery.setObject(6, routesObj);
+			sqlQueries.storeSimulationQuery.setObject(7, configObj);
+			return sqlQueries.storeSimulationQuery.executeUpdate();
+		});
 	}
 	
 	/**
@@ -520,19 +563,13 @@ public enum SimulationDao {
 	 * @throws IOException conversion failed
 	 */
 	public void storeState(Integer simId, Integer timeStamp, File stateFile, boolean storeData) throws SQLException, IOException {
-		connection.setAutoCommit(false);
-		sqlQueries.storeStateQuery.setInt(1, simId);
-		sqlQueries.storeStateQuery.setFloat(2, timeStamp);
-		sqlQueries.storeStateQuery.setObject(3, convertFileToPGobject(stateFile));
-
-		if(storeData) {
-			if (sqlQueries.storeStateQuery.executeUpdate() == 0) {
-				connection.rollback();
-			} else {
-				connection.commit();
-			}
-		}
-		connection.setAutoCommit(true);		
+		PGobject stateFileObj = convertFileToPGobject(stateFile);
+		doUpdate(() -> {
+			sqlQueries.storeStateQuery.setInt(1, simId);
+			sqlQueries.storeStateQuery.setFloat(2, timeStamp);
+			sqlQueries.storeStateQuery.setObject(3, stateFileObj);
+			return sqlQueries.storeStateQuery.executeUpdate();
+		});	
 	}
 
 	
@@ -543,10 +580,13 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 */
 	public Integer getTagId(String tag) throws SQLException {
-		sqlQueries.getTagIdQuery.setString(1, tag);
-		ResultSet resultSet = sqlQueries.getTagIdQuery.executeQuery();
-		if(resultSet.next()) {
-			return resultSet.getInt(1);
+		ResultSet rs = doQuery(() -> {
+			sqlQueries.getTagIdQuery.setString(1, tag);
+			return sqlQueries.getTagIdQuery.executeQuery();
+		});
+		
+		if (rs.next()) {
+			return rs.getInt(1);
 		}
 		return null;
 	}
@@ -572,10 +612,11 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 */
 	public void storeTag(Integer tagId, String tag) throws SQLException {
-		sqlQueries.storeTagQuery.setInt(1, tagId);
-		sqlQueries.storeTagQuery.setString(2, tag);
-		sqlQueries.storeTagQuery.executeUpdate();
-		
+		doUpdate(() -> {
+			sqlQueries.storeTagQuery.setInt(1, tagId);
+			sqlQueries.storeTagQuery.setString(2, tag);
+			return sqlQueries.storeTagQuery.executeUpdate();
+		});		
 	}
 	
 	/**
@@ -585,9 +626,11 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 */
 	public void storeSimTag(Integer tagId, int simId) throws SQLException {
-		sqlQueries.storeSimTagQuery.setInt(1, tagId);
-		sqlQueries.storeSimTagQuery.setInt(2, simId);
-		sqlQueries.storeSimTagQuery.executeUpdate();
+		doUpdate(() -> {
+			sqlQueries.storeSimTagQuery.setInt(1, tagId);
+			sqlQueries.storeSimTagQuery.setInt(2, simId);
+			return sqlQueries.storeSimTagQuery.executeUpdate();
+		});
 	}
 	
 	/**
@@ -597,8 +640,11 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 */
 	public boolean doesTagIdExist(int tagId) throws SQLException {
-		sqlQueries.doesTagIdExistQuery.setInt(1, tagId);
-		return sqlQueries.doesTagIdExistQuery.executeQuery().next();
+		ResultSet rs = doQuery(() -> {
+			sqlQueries.doesTagIdExistQuery.setInt(1, tagId);
+			return sqlQueries.doesTagIdExistQuery.executeQuery();
+		});
+		return (rs.next());
 	}
 	
 	/**
@@ -608,8 +654,11 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 */
 	public boolean doesSimIdExist(int simId) throws SQLException {
-		sqlQueries.doesSimIdExistQuery.setInt(1, simId);
-		return sqlQueries.doesSimIdExistQuery.executeQuery().next();
+		ResultSet rs = doQuery(() -> {
+			sqlQueries.doesSimIdExistQuery.setInt(1, simId);
+			return sqlQueries.doesSimIdExistQuery.executeQuery();
+		});
+		return (rs.next());
 	}
 	
 	/**
@@ -618,7 +667,10 @@ public enum SimulationDao {
 	 * @throws SQLException database not reachable
 	 */
 	public List<String> getTags() throws SQLException {
-		ResultSet rs = sqlQueries.getAllTagsQuery.executeQuery();	
+		ResultSet rs = doQuery(() -> {
+			return sqlQueries.getAllTagsQuery.executeQuery();
+		});
+		
 		List<String> tags = new ArrayList<>();
 		while (rs.next()) {
 			String tag = rs.getString("tags");
@@ -634,15 +686,14 @@ public enum SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 */
 	public void removeAllSimulationTags(int simId) throws SQLException, IDNotFound {
-		connection.setAutoCommit(false);
-		sqlQueries.removeAllSimulationTagsQuery.setInt(1, simId);
-		if (sqlQueries.removeAllSimulationTagsQuery.executeUpdate() == 0) {
-			connection.rollback();
-			connection.setAutoCommit(true);
+		int result = doUpdate(() -> {
+			sqlQueries.removeAllSimulationTagsQuery.setInt(1, simId);
+			return sqlQueries.removeAllSimulationTagsQuery.executeUpdate();
+		});
+		
+		if (result == 0) {
 			throw new IDNotFound("Could not find simulation id: " + simId);
 		}
-		connection.commit();
-		connection.setAutoCommit(true);
 	}
 	/**
 	 * Convert an uploaded XML file to a JSON file for storing the the database
