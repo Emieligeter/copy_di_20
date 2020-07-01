@@ -13,7 +13,7 @@ import javax.ws.rs.core.*;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import de.mkammerer.argon2.Argon2Factory.Argon2Types;
-import sumodashboard.dao.AccountDAO;
+import sumodashboard.dao.AccountDao;
 import sumodashboard.model.Account;
 import sumodashboard.model.Credentials;
 
@@ -30,7 +30,6 @@ public class AuthenticationResource {
 	ContainerRequestContext requestContext;
 	
 	private boolean storeData = true;
-	private static AccountDAO accountDAO = new AccountDAO();
 	private Argon2 argon2 = Argon2Factory.create(Argon2Types.ARGON2id);
 	private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
 
@@ -91,7 +90,7 @@ public class AuthenticationResource {
 	 * @throws SQLException
 	 */
 	private void authenticate(String username, String password) throws AuthenticationException, SQLException {
-		String hashedPass = accountDAO.getHashedPassword(username);
+		String hashedPass = AccountDao.getHashedPassword(username);
 		boolean passMatch = argon2.verify(hashedPass, password);
 		if(!passMatch) throw new AuthenticationException("Password incorrect");
 	}
@@ -119,7 +118,11 @@ public class AuthenticationResource {
         return null;
     }
 	
-	//Check if token is valid and if the user exists in the database
+	/**
+	 * Check if token is valid and if the user exists in the database
+	 * @param token
+	 * @return boolean: is it valid?
+	 */
 	private static boolean validateToken(String token) {
 		try {
 		if(token != null) {
@@ -130,7 +133,7 @@ public class AuthenticationResource {
             DecodedJWT jwt = verifier.verify(token);
             //Get the userId from token claim.
             String username = jwt.getClaim("username").asString();
-            accountDAO.getUserByName(username);
+            AccountDao.getUserByName(username);
             
             return true;
         }
@@ -142,7 +145,11 @@ public class AuthenticationResource {
     return false;
 	}
 	
-	//Check if a rest request with a token is authorized
+	/**
+	 * Check if a rest request with a token is authorized
+	 * @param requestContext
+	 * @return boolean: is it authorized?
+	 */
 	public static boolean isAuthorized(ContainerRequestContext requestContext) {
 		//First check authorization header
         String authorization = requestContext.getHeaderString("Authorization");
@@ -161,7 +168,7 @@ public class AuthenticationResource {
 	
 	/**
 	 * Creates a user based on the {@link Account} parameters. The {@link Argon2} algorithm is used to hash the password with a salt
-	 * The user is stored through the {@link AccountDAO} class
+	 * The user is stored through the {@link AccountDao} class
 	 * @param acc
 	 * @return Resonse
 	 * @throws SQLException
@@ -177,7 +184,7 @@ public class AuthenticationResource {
 		String email = acc.getEmail();
 		String hashedPass = argon2.hash(4, 128 * 1024, 8, password);
 		try {
-		if(storeData) accountDAO.createNewUser(username, hashedPass, email);
+		if(storeData) AccountDao.createNewUser(username, hashedPass, email);
 		} catch(SQLException e) {			
 			String respMessage ="Unkown error occured, try again later";
 			if(e.getMessage().contains("unique constraint \"account_email_key\"")) {

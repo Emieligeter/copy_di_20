@@ -1,60 +1,61 @@
 package sumodashboard.dao;
 
-import java.sql.Connection;
 import java.util.Date;
 
 import javax.security.sasl.AuthenticationException;
 
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class  AccountDAO {
-	private Connection connection;
-	private SQLQueries sqlQueries;
+public class AccountDao {
+	private static DatabaseSetup db = DatabaseSetup.instance;
 	
-	public AccountDAO() {
-		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			System.err.println("Class org.postgresql.Driver not found in method SimulationDao.init(), check dependencies.");
-		}
+	/**
+	 * Get the hashed password of a user
+	 * @param username
+	 * @return the hash of the password
+	 * @throws SQLException
+	 * @throws AuthenticationException if the user is not found
+	 */
+	public static String getHashedPassword(String username)  throws SQLException, AuthenticationException {
+		ResultSet rs = db.doQuery(() -> {
+			db.getSqlQueries().getHashedPass.setString(1, username);
+			return db.getSqlQueries().getHashedPass.executeQuery();
+		});
 		
-		startDBConnection();
-		sqlQueries = new SQLQueries(connection);
-	}
-	
-	//Start the connection to the database
-	private void startDBConnection() {
-		final String url = "jdbc:postgresql://bronto.ewi.utwente.nl:5432/dab_di19202b_333";
-		final String username = "dab_di19202b_333";
-		final String password = "zyU3/uAIyZgigF+A";
-		
-		try {
-			connection = DriverManager.getConnection(url, username, password);
-		} catch (SQLException e) {
-			System.err.println("SQL Exception when starting connection to database:");
-			System.err.println(e.getLocalizedMessage());
-		}
-	}
-	
-	public String getHashedPassword(String username)  throws SQLException, AuthenticationException{
-		sqlQueries.getHashedPass.setString(1, username);
-		ResultSet rs = sqlQueries.getHashedPass.executeQuery();
 		if (!rs.next()) throw new AuthenticationException("Username not found");
 		return rs.getString("password");
 	}
-
-	public void createNewUser(String username, String hashedPass, String email) throws SQLException{
-		sqlQueries.createNewUser.setString(1, username);
-		sqlQueries.createNewUser.setString(2, hashedPass);
-		sqlQueries.createNewUser.setString(3, email);
-		sqlQueries.createNewUser.setDate(4, new java.sql.Date(new Date().getTime()));
-		sqlQueries.createNewUser.executeUpdate();
+	
+	/**
+	 * Create a new user
+	 * @param username 
+	 * @param hashedPass
+	 * @param email
+	 * @throws SQLException
+	 */
+	public static void createNewUser(String username, String hashedPass, String email) throws SQLException {
+		db.doUpdate(() -> {
+			db.getSqlQueries().createNewUser.setString(1, username);
+			db.getSqlQueries().createNewUser.setString(2, hashedPass);
+			db.getSqlQueries().createNewUser.setString(3, email);
+			db.getSqlQueries().createNewUser.setDate(4, new java.sql.Date(new Date().getTime()));
+			return db.getSqlQueries().createNewUser.executeUpdate();
+		});	
 	}
-	public synchronized String getUserByName(String username) throws SQLException {
-		sqlQueries.getUserByName.setString(1, username);
-		ResultSet rs = sqlQueries.getUserByName.executeQuery();
+	
+	/**
+	 * Get a username from the database if it exists
+	 * @param username
+	 * @return the username if it exists
+	 * @throws SQLException if the username does not exist
+	 */
+	public static synchronized String getUserByName(String username) throws SQLException {
+		ResultSet rs = db.doQuery(() -> {
+			db.getSqlQueries().getUserByName.setString(1, username);
+			return db.getSqlQueries().getUserByName.executeQuery();
+		});
+		
 		rs.next();
 		return rs.getString("username");
 	}
