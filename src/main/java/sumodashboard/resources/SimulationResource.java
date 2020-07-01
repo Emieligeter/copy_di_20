@@ -378,6 +378,10 @@ public class SimulationResource {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		String paramID = uriInfo.getQueryParameters().getFirst("timestamp");
+		if (paramID == null) {
+			return Response.status(400).entity("Please specifiy timestamp id using query parameter \"timestamp\"").build();
+		}
+		
 		try {
 			Map<String, Integer> dataPoints = SimulationDao.getRunningVsArrivedVehicles(ID, paramID);
 			return Response.status(200).entity(dataPoints).build();
