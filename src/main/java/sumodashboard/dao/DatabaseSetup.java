@@ -58,14 +58,11 @@ public enum DatabaseSetup {
 	private Object makeTransaction(Transaction transaction) throws SQLException {
 		try {
 			try {
-				connection.setAutoCommit(false);
 				Object result = transaction.execute();
 				connection.commit();
-				connection.setAutoCommit(true);
 				return result;
 			} catch (SQLException e) {
 				connection.rollback();
-				connection.setAutoCommit(true);
 				throw e;
 			}
 		} catch (SQLException e) {

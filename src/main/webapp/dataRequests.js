@@ -139,7 +139,7 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 			location.href ="loginPage.html";
 		}
 		else if (this.readyState == 4) {
-			alert("Error occured when getting data, status: " + this.status);
+			alert("Error occured when getting tags, status: " + this.status);
 			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
 		}
 	}
@@ -196,7 +196,7 @@ function getOptionList(listType, path) {
 			location.href ="loginPage.html";
 		}
 		else if (this.readyState == 4) {
-			alert("Error occured when getting data, status: " + this.status);
+			alert("Error occured when getting option list, status: " + this.status);
 			console.error("Get option list response:\n" + JSON.stringify(this.responseText));
 		}
 	}
@@ -238,9 +238,12 @@ function getSummaryStatistics() {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			handleSummaryStatisticsResponse(this.responseText);
+			handleOptionListResponse(this.responseText, listType);
 		}
-		if (this.readyState == 4 && this.status != 200) {
+		else if (this.readyState == 4 && this.status == 401) {
+			location.href ="loginPage.html";
+		}
+		else if (this.readyState == 4) {
 			alert("Error occured when getting summary statistics, status: " + this.status);
 			console.error("Get summary statistics response:\n" + JSON.stringify(this.responseText));
 		}
