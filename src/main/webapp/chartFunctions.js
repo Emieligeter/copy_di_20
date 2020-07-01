@@ -42,6 +42,11 @@ function viewSummaryStatistics(sumStatsString) {
 function setChartType(type) {
 	resetChart();
 	chartType = type;
+	if (chartType === 'line' || chartType === 'scatter') {
+		document.getElementById("addDataSetButton").style.display = "block";
+	} else {
+		document.getElementById("addDataSetButton").style.display = "none";
+	}
 	//edit the drop down menu options
 	changeFirstChoice(type);
 	updateChart();
