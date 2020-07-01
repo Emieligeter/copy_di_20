@@ -45,3 +45,11 @@ function printDiv(divId) {
     window.frames["print_frame"].window.focus();
     window.frames["print_frame"].window.print();
 }
+
+//Reset the report by emptying the report div
+function resetReport() {
+	reportDiv = document.getElementById('report');
+	while(reportDiv.firstChild) {
+	    reportDiv.removeChild(reportDiv.firstChild);
+	}
+}
