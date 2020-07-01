@@ -76,10 +76,11 @@ $(document).on('click', 'ul li a', function() {
 //Takes its metadata from the current inputs of the form
 function updateListElement(id) {
 	var newMetadata = document.getElementById("modifyMetadata");
-	$('#fileName').html(newMetadata.elements[0].value);
-	$('#fileDate').html("Date: " + newMetadata.elements[1].value);
-	$('#fileResearcher').html("Researcher: " + newMetadata.elements[2].value);
-	$('#fileTags').html("Tags: " + getTagsAsString());
+	var activeFile = $('#' + getSelectedID());
+	activeFile.children().children().children('#fileName').html(newMetadata.elements[0].value);
+	activeFile.children().children('#fileDate').html(newMetadata.elements[1].value);
+	activeFile.children().children('#fileResearcher').html("Researcher: " + newMetadata.elements[2].value);
+	activeFile.children().children('#fileTags').html("Tags: " + getTagsAsString());
 }
 
 //returns the id of the current selected SUMO file
