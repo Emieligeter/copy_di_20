@@ -1,4 +1,4 @@
-var optionsWithSndChoice = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor];
+var optionsWithSndChoice = [runningVsArrived, edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor];
 var urlInit = "/sumo-dashboard/rest/simulations/id/";
 
 //wait for more input if necessary, if not, get data with the proper path
@@ -55,18 +55,23 @@ function dataSndSwitch(paramID) {
 	case vehicleSpeedFactor:
 		getDataWithParam(dataType, "vehiclespeedfactor", "vehicle", paramID);
 		break;
+	case runningVsArrived:
+		console.log("Get runningVsArrived");
+		getDataWithParam(dataType, "arrivedvsrunning", "timestamp", paramID)
+		break;
 	}
 }
 
 //response to a sumo file being selected, load all options lists and reset chart if necessary
 function fileClick(id) {
+	//if 'add dataset' is not clicked, reset chart
 	if (!addDataSetBoolean) {
 		resetChart();
 	}
 	getOptionList("lane", "lanelist");
 	getOptionList("vehicle", "vehiclelist");
 	getOptionList("edge", "edgelist");
-	//if 'add dataset' is not clicked, reset chart
+	getOptionList("timestamp", "timestamplist");
 }
 
 //parse the response of the request to a sorted list of datapoints for the graph
@@ -98,8 +103,8 @@ function handleChartDataResponse(JSONResponse, dataType) {
 		labels += "\"" + key + "\", ";
 		data += response[key] + ", ";
 	}
-	labels = labels.substring(0, labels.length -2);
-	data = data.substring(0, data.length -2);
+	if (labels.length > 1) labels = labels.substring(0, labels.length -2);
+	if (data.length > 1) data = data.substring(0, data.length -2);
 	labels += "]";
 	data += "]";
 	changeChartData(data, labels, dataType);	
@@ -125,7 +130,11 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			handleGraphDataResponse(this.responseText, dataType + " of " + paramID);
+			if (fstDropDownOptions['pie'].includes(dataType)) {
+				handleChartDataResponse(this.responseText, dataType + " of " + paramID);
+			} else {
+				handleGraphDataResponse(this.responseText, dataType + " of " + paramID);
+			}
 		}
 		else if (this.readyState == 4 && this.status == 401) {
 			location.href ="loginPage.html";
@@ -169,7 +178,7 @@ function getData(dataType, path) {
 	xhr.send();
 }
 
-//send a request to get the lanelist, vehiclelist or edgelist
+//send a request to get the lanelist, vehiclelist or edgelist or timestamplist
 function getOptionList(listType, path) {
 	var simid = getSelectedID();
 	if (simid == null) {
@@ -189,7 +198,7 @@ function getOptionList(listType, path) {
 		}
 		else if (this.readyState == 4) {
 			alert("Error occured when getting data, status: " + this.status);
-			console.error("Load tags response:\n" + JSON.stringify(this.responseText));
+			console.error("Get option list response:\n" + JSON.stringify(this.responseText));
 		}
 	}
 	xhr.send();
@@ -209,6 +218,9 @@ function handleOptionListResponse(JSONResponse, listType) {
 		break;
 	case "edge":
 		secDropDownOptions[edgeFrequency] = response;
+		break;
+	case "timestamp":
+		secDropDownOptions[runningVsArrived] = response;
 		break;
 	}
 }

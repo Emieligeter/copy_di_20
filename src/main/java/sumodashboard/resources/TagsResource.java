@@ -51,7 +51,7 @@ public class TagsResource {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
-			List<String> tags = SimulationDao.instance.getTags();
+			List<String> tags = SimulationDao.getTags();
 			
 			Response response = Response.status(200).entity(tags).build();
 			return response;
@@ -72,7 +72,7 @@ public class TagsResource {
 	public Response createNewTag(String tag) {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.FORBIDDEN).build();
 		try {
-			SimulationDao.instance.createTag(tag);
+			SimulationDao.createTag(tag);
 			return Response.status(200).build();
 		} catch (SQLException e) {
 			String errorMsg = "SQL Exception when trying to get a simulation:\n" + e.getLocalizedMessage();
