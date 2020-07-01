@@ -97,10 +97,10 @@ function changeGraphData(data, label) {
 		this.label[dataSetNumber] = label;
 		chart.data.datasets.push({data: this.data[dataSetNumber], label: this.label[dataSetNumber], fill: false});
 	} else {
-	this.data[dataSetNumber] = JSON.parse(data);
-	this.label[dataSetNumber] = label;
-	chart.data.datasets[dataSetNumber].data = this.data[dataSetNumber];
-	chart.data.datasets[dataSetNumber].label = this.label[dataSetNumber];
+		this.data[dataSetNumber] = JSON.parse(data);
+		this.label[dataSetNumber] = label;
+		chart.data.datasets[dataSetNumber].data = this.data[dataSetNumber];
+		chart.data.datasets[dataSetNumber].label = this.label[dataSetNumber];
 	}
 	chart.data.labels = [];
 	chart.update();
