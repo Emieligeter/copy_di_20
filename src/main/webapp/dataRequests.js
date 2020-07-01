@@ -238,7 +238,7 @@ function getSummaryStatistics() {
 	openXhrGETRequest(xhr, url, true);
 	xhr.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			handleOptionListResponse(this.responseText, listType);
+			handleSummaryStatisticsResponse(this.responseText);
 		}
 		else if (this.readyState == 4 && this.status == 401) {
 			location.href ="loginPage.html";
