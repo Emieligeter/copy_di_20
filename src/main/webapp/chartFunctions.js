@@ -67,7 +67,6 @@ function updateChart() {
 				label: label[0],
 				data: data[0],
 				fill: false,
-				backgroundColor: chartColours(data[0].length)
 			}]
 			},
 		options : options[chartType]
@@ -101,14 +100,15 @@ function changeChartData(data, labels, label) {
 	this.label[0] = label;
 	chart.data.datasets[0].label = this.label[0];
 	chart.data.labels = JSON.parse(labels);
+	chart.data.datasets[0].backgroundColor = chartColours(this.data[0].length);
 	chart.update();
 }
 
-function chartColours(size){
-    var colourSet = ['#1D3354', '#70CAD1', '#F25F5C', '#F17F29', '#F17F29', '#FFE066', '#4E937A', '#CBBAED', '#3C3744', '#666666', '#FFF7F8'];
+function chartColours(size) {
+    var colourSet = ['#F25F5C', '#F17F29', '#FFE066', '#4E937A', '#70CAD1', '#CBBAED', '#1D3354', '#3C3744', '#666666', '#A1A1A1'];
     var coloursToBeUsed = [];
     for(var i = 0; i < size; i++) {
-      coloursToBeUsed.push(colourSet[i%colourSet.length]);
+    	coloursToBeUsed.push(colourSet[i%colourSet.length]);
     }
     return coloursToBeUsed;
   }
