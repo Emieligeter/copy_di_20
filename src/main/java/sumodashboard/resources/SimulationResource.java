@@ -379,7 +379,7 @@ public class SimulationResource {
 		
 		String paramID = uriInfo.getQueryParameters().getFirst("timestamp");
 		try {
-			Map<String, Integer> dataPoints = SimulationDao.instance.getRunningVsArrivedVehicles(ID, paramID);
+			Map<String, Integer> dataPoints = SimulationDao.getRunningVsArrivedVehicles(ID, paramID);
 			return Response.status(200).entity(dataPoints).build();
 
 		} catch (IDNotFound i) {
@@ -467,7 +467,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTimestampList() {
 		return getList(() -> {
-			return SimulationDao.instance.getTimestampList(ID);
+			return SimulationDao.getTimestampList(ID);
 		});
 	}
 	

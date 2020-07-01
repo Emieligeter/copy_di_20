@@ -382,7 +382,7 @@ public class SimulationDao {
 	 * @throws SQLException database not reachable
 	 * @throws IDNotFound simulation id does not exist
 	 */
-	public Map<String, Integer> getRunningVsArrivedVehicles(int simulation_id, String timestamp) throws SQLException, IDNotFound {
+	public static Map<String, Integer> getRunningVsArrivedVehicles(int simulation_id, String timestamp) throws SQLException, IDNotFound {
 		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
 		double numericTimestamp;
 		try {
@@ -390,10 +390,10 @@ public class SimulationDao {
 		} catch (NumberFormatException e) {
 			throw new IDNotFound("Timestamp: " + timestamp + " is not a number!");
 		}
-		ResultSet rs = doQuery(() -> {
-			sqlQueries.runningVsArrivedVehiclesQuery.setInt(1, simulation_id);
-			sqlQueries.runningVsArrivedVehiclesQuery.setDouble(2, numericTimestamp);
-			return sqlQueries.runningVsArrivedVehiclesQuery.executeQuery();
+		ResultSet rs = db.doQuery(() -> {
+			db.getSqlQueries().runningVsArrivedVehiclesQuery.setInt(1, simulation_id);
+			db.getSqlQueries().runningVsArrivedVehiclesQuery.setDouble(2, numericTimestamp);
+			return db.getSqlQueries().runningVsArrivedVehiclesQuery.executeQuery();
 		});
 		Map<String, Integer> dataPoints = new HashMap<>();
 		int numRunning = rs.getInt("numberOfRunningVehicles");
@@ -468,8 +468,8 @@ public class SimulationDao {
 	 * @throws IDNotFound simulation id does not exist
 	 * @throws SQLException database not reachable
 	 */
-	public List<String> getTimestampList(int simulation_id) throws IDNotFound, SQLException {
-		return getList(simulation_id, "timestamp", sqlQueries.timestampListQuery);
+	public static List<String> getTimestampList(int simulation_id) throws IDNotFound, SQLException {
+		return getList(simulation_id, "timestamp", db.getSqlQueries().timestampListQuery);
 	}
 	
 	/**
