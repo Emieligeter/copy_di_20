@@ -49,11 +49,11 @@ function fileClick(id) {
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',
   	    success : function(data){
-  	    	$("#newTitle").attr("value", data.name);
-  			$("#newDate").attr("value", data.date);
+  	    	document.getElementById('newTitle').value = data.name;
+  	    	document.getElementById('newDate').value = data.date;
   			var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
-  			$("#newResearcher").attr("value", researcher);
-  			$("#newDescription").html(data.description);
+  			document.getElementById('newResearcher').value = researcher;
+  			document.getElementById('newDescription').innerHtml = data.description;
   			processTags(data.tags);
   			$("#updateResults").html("");
   	    },
