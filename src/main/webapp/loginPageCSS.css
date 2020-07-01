@@ -28,4 +28,17 @@
   transition: all .1s ease-in-out;
 }
 
+/*Top border in general*/
+.jumbotron {
+    padding: 2rem 2rem;
+    margin-bottom: 1rem;
+    background-color: #e9ecef;
+    border-radius: .3rem;
+    position: relative;
+}
 
+#newUserBackButton {
+	position: absolute;
+	left: 5px;
+	bottom: 5px;
+}
