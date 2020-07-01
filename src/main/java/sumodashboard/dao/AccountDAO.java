@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class  AccountDAO {
+public class AccountDAO {
 	private Connection connection;
 	private SQLQueries sqlQueries;
 	

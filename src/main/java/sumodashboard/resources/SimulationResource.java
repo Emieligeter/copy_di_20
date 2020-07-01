@@ -50,7 +50,7 @@ public class SimulationResource {
 	public Response getSimulation() {	
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
-			Simulation simulation = SimulationDao.instance.getSimulation(ID);
+			Simulation simulation = SimulationDao.getSimulation(ID);
 			Response response;
 			
 			if (simulation == null) {
@@ -79,7 +79,7 @@ public class SimulationResource {
 	public Response updateSimulationMetadata(Simulation simulation) {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
-			SimulationDao.instance.updateMetadata(ID, simulation);
+			SimulationDao.updateMetadata(ID, simulation);
 			return Response.status(200).build();
 
 		} catch (IDNotFound i) {
@@ -99,7 +99,7 @@ public class SimulationResource {
 	public Response deleteSimulation() {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		try {
-			SimulationDao.instance.removeSimulation(ID);
+			SimulationDao.removeSimulation(ID);
 			return Response.status(200).build();
 			
 		} catch (IDNotFound i) {
@@ -149,7 +149,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgRouteLength() {
 		return getStats(() -> {
-			return SimulationDao.instance.getAvgRouteLength(ID);
+			return SimulationDao.getAvgRouteLength(ID);
 		});
 	}
 	
@@ -162,7 +162,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeed() {
 		return getStats(() -> {
-			return SimulationDao.instance.getAverageSpeed(ID);
+			return SimulationDao.getAverageSpeed(ID);
 		});
 	}
 	
@@ -175,7 +175,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvgSpeedFactor() {
 		return getStats(() -> {
-			return SimulationDao.instance.getAverageSpeedFactor(ID);
+			return SimulationDao.getAverageSpeedFactor(ID);
 		});
 	}
 	
@@ -188,7 +188,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getArrivedVehicles() {
 		return getStats(() -> {
-			return SimulationDao.instance.getCumNumArrivedVehicles(ID);
+			return SimulationDao.getCumNumArrivedVehicles(ID);
 		});
 	}
 	
@@ -201,7 +201,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTransferredVehicles() {
 		return getStats(() -> {
-			return SimulationDao.instance.getNumTransferredVehicles(ID);
+			return SimulationDao.getNumTransferredVehicles(ID);
 		});
 	}
 	
@@ -214,7 +214,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getRunningVehicles() {
 		return getStats(() -> {
-			return SimulationDao.instance.getNumRunningVehicles(ID);
+			return SimulationDao.getNumRunningVehicles(ID);
 		});
 	}
 	
@@ -253,7 +253,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeFrequency() {
 		ParameterizedStatsRequest requestFunction = (paramID) -> {
-			return SimulationDao.instance.getEdgeAppearenceFrequency(ID, paramID);
+			return SimulationDao.getEdgeAppearenceFrequency(ID, paramID);
 		};
 		return getStatsWithParam("edge", requestFunction);
 	}
@@ -267,7 +267,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneTransitingVehicles() {
 		ParameterizedStatsRequest requestFunction = (paramID) -> {
-			return SimulationDao.instance.getLaneTransitingVehicles(ID, paramID);
+			return SimulationDao.getLaneTransitingVehicles(ID, paramID);
 		};
 		return getStatsWithParam("lane", requestFunction);	
 	}
@@ -281,7 +281,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleRouteLength() {
 		ParameterizedStatsRequest requestFunction = (paramID) -> {
-			return SimulationDao.instance.getVehicleRouteLength(ID, paramID);
+			return SimulationDao.getVehicleRouteLength(ID, paramID);
 		};
 		return getStatsWithParam("vehicle", requestFunction);
 	}
@@ -295,7 +295,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeed() {
 		ParameterizedStatsRequest requestFunction = (paramID) -> {
-			return SimulationDao.instance.getVehicleSpeed(ID, paramID);
+			return SimulationDao.getVehicleSpeed(ID, paramID);
 		};
 		return getStatsWithParam("vehicle", requestFunction);
 	}
@@ -309,7 +309,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleSpeedFactor() {
 		ParameterizedStatsRequest requestFunction = (paramID) -> {
-			return SimulationDao.instance.getVehicleSpeedFactor(ID, paramID);
+			return SimulationDao.getVehicleSpeedFactor(ID, paramID);
 		};
 		return getStatsWithParam("vehicle", requestFunction);
 	}
@@ -351,7 +351,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeAppearanceFrequencyInitialRoute() {
 		return getLabeledStats(() -> {
-			return SimulationDao.instance.getEdgeAppearanceFrequencyInitialRoute(ID);
+			return SimulationDao.getEdgeAppearanceFrequencyInitialRoute(ID);
 		});
 	}
 	
@@ -364,7 +364,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInitRouteLengthPerVehicle() {
 		return getLabeledStats(() -> {
-			return SimulationDao.instance.getInitRouteLengthVehicle(ID);
+			return SimulationDao.getInitRouteLengthVehicle(ID);
 		});
 	}
 	
@@ -405,7 +405,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEdgeList() {
 		return getList(() -> {
-			return SimulationDao.instance.getEdgeList(ID);
+			return SimulationDao.getEdgeList(ID);
 		});
 	}
 	
@@ -418,7 +418,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLaneList() {
 		return getList(() -> {
-			return SimulationDao.instance.getLaneList(ID);
+			return SimulationDao.getLaneList(ID);
 		});
 	}
 	
@@ -431,7 +431,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getVehicleList() {
 		return getList(() -> {
-			return SimulationDao.instance.getVehicleList(ID);
+			return SimulationDao.getVehicleList(ID);
 		});
 	}
 	
@@ -444,7 +444,7 @@ public class SimulationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSummaryStatistics() {
 		return getLabeledStats(() -> {
-			return SimulationDao.instance.getSummaryStatistics(ID);
+			return SimulationDao.getSummaryStatistics(ID);
 		});
 	}
 }
