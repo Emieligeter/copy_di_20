@@ -35,13 +35,14 @@
 	</div>
 	<div class="container-fluid">
 		<div class="row" id="mainRow">
+			<!-- File list -->
 			<div id="fileSelect" class="col-2">
 				<input type="text" id="fileSearch" onkeyup="getFilteredFiles()" placeholder="Search for files...">
 				<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 			</div>
 
 			<div class="col-10">
-				
+				<!-- Buttons to choose element type -->)
 				<div id="elementButtons" class="row">
 					<button id="LineGraph" class="btn btn-outline-primary" onclick="setChartType('line')">Line Graph</button> 
 					<button id="ScatterPlot" class="btn btn-outline-primary" onclick="setChartType('scatter')">Scatter Plot</button> 
@@ -59,6 +60,7 @@
 					<div id="chart" class="row">
 						<canvas id="reportElement" class="col-9"></canvas>
 						<div id="paramSelect" class="col-3">	
+							<!-- Card for choosing plot -->
 							<div id="varSelect" class="col card">	
 								<label for="first-choice" class="row">Choose a plot:</label>	
 								<div id="fstChoice" class="row">
@@ -70,7 +72,7 @@
 								<div id="optionalSecChoice" class="row">
 								</div>
 							</div>
-							
+							<!-- Edit chart card -->
 							<div id="editChartStyle" class="col card">
 								<label class="row"  for="editChart">Edit chart:</label>
 								<form class="row" name="editChart" id="editChart" data-toggle="buttons">
@@ -124,7 +126,7 @@
 			</div>
 		</div>
 
-		
+		<!-- Report section -->
 		<div id="exportSection" class="row justify-content-start">
 			<h3 class="col-2">Preliminary report</h3>
 			<button id="printReport" class="btn btn-success col-1" onClick="printDiv('report')"> Print report </button>	
