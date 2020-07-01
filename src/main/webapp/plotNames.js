@@ -1,6 +1,6 @@
 //All plot names saved as a string, with a variable name. 
 
-var edgeFrequency = "Edge appearence frequency";
+var edgeFrequency = "Edge appearance frequency";
 var laneTransitingVehicles = "Number of lane transiting vehicles";
 var vehicleRouteLength = "Vehicle route length";
 var vehicleSpeed = "Vehicle speed";

@@ -56,7 +56,6 @@ function dataSndSwitch(paramID) {
 		getDataWithParam(dataType, "vehiclespeedfactor", "vehicle", paramID);
 		break;
 	case runningVsArrived:
-		console.log("Get runningVsArrived");
 		getDataWithParam(dataType, "arrivedvsrunning", "timestamp", paramID)
 		break;
 	}
