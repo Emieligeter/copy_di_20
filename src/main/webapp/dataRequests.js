@@ -248,6 +248,7 @@ function getSummaryStatistics() {
 	xhr.send();
 }
 
+//Show summary statistics
 function handleSummaryStatisticsResponse(JSONresponse) {
 	var response = JSON.parse(JSONresponse);
 	var result = "<p id=\"sumStats\"><strong>Summary Statistics</strong><br>";
@@ -258,17 +259,3 @@ function handleSummaryStatisticsResponse(JSONresponse) {
 	viewSummaryStatistics(result);
 }
 
-//Logs the user out by calling logout endpoint, then redirects to the home page
-$('#LogOut').click(function() {
-	$.ajax({
-		url: 'rest/auth/logout',
-		type: 'POST',
-		success: function(response) {
-			location.href = "loginPage.html";
-		},
-		error: function(response){
-			$("#uploadResults").html("Error occured, code: " + response.status); 
-  	    	console.error("Upload files response:\n" + JSON.stringify(response));
-		}
-	});
-});
