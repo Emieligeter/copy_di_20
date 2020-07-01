@@ -5,16 +5,8 @@ $("#modifyMetadata").submit(function(event) {
 	event.preventDefault();
     var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
     var newMetadata = document.getElementById("modifyMetadata");
-    //Retrieve all tags that have a checked checkbox
-    var tags = "";
-    $('input:checkbox:checked').each(function () {
-    	//First tag in the list should not have a comma at the start
-    	if (tags === "") {
-    		tags += $(this).attr('id')
-    	} else {
-    		tags += ", " + $(this).attr('id');
-    	}
-    });
+    
+    var tags = getTagsAsString();
     
     //Name input should not be empty
     if (newMetadata.elements[0].value === "") {
@@ -36,8 +28,14 @@ $("#modifyMetadata").submit(function(event) {
   	    	"Content-Type": "application/json"
 		},
   	    success: function(response){
-  	    	$("#updateResults").html("Updated metadata successfully!"); 
-  	    },
+  	    	$("#updateResults").html("Updated metadata successfully!");
+  	    	updateListElement(getSelectedID());
+  	    	//var id = getSelectedID();
+	  	  	//$('#sumoFiles').empty();
+	  	  	//loadFiles();
+	  	  	//document.getElementById(id).childNodes.click();
+	  	  //$("ul li[id='" + getSelectedID() + "']").children().click();
+	  	},
   		error: function(response){
   			if (response.status == 401) {
   				location.href = "loginPage.html";
@@ -134,6 +132,20 @@ function createTag() {
 	  	    }
 	    });
 	}
+}
+
+//Retrieves all tags that have a checked checkbox and puts them into a string
+function getTagsAsString() {
+	var tags = "";
+    $('input:checkbox:checked').each(function () {
+    	//First tag in the list should not have a comma at the start
+    	if (tags === "") {
+    		tags += $(this).attr('id')
+    	} else {
+    		tags += ", " + $(this).attr('id');
+    	}
+    });
+    return tags;
 }
 
 //Resets the values of the metadata form

@@ -37,6 +37,8 @@ public class AuthenticationResource {
     private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
     
     private static final String MASTER_PASSWORD = "Meesterlijkwachtwoord";
+    
+    private static final int SECONDS_UNTIL_AUTOMATIC_SIGNOUT = 2*60*60; //2 hours
 
 	/**
 	 * Login endpoint. A username and password are received as a json and serialized as {@link Credentials}.
@@ -56,7 +58,7 @@ public class AuthenticationResource {
 		try {
 			authenticate(username, password);	
 			String token = createToken(username);
-			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, 300, false, true);
+			NewCookie cookie = new NewCookie("session-id",token , "/", null, null, SECONDS_UNTIL_AUTOMATIC_SIGNOUT, false, true);
 			System.out.println("Token created: " + token);
 			return Response.ok("login successful").cookie(cookie).build();
 		} catch(AuthenticationException e) {
@@ -76,7 +78,8 @@ public class AuthenticationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response userLogout() {
 		try {
-			NewCookie cookie = new NewCookie("session-id","" , "/", null, null, 300, true, true);
+			NewCookie cookie = new NewCookie("session-id","" , "/", null, null, SECONDS_UNTIL_AUTOMATIC_SIGNOUT, true, true);
+			System.out.println(SECONDS_UNTIL_AUTOMATIC_SIGNOUT);
 			return Response.ok("logout successful").cookie(cookie).build();
 		}catch(Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
@@ -106,7 +109,7 @@ public class AuthenticationResource {
 	private static String createToken(String username ) {
 		try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-            Date expirationDate = Date.from(ZonedDateTime.now().plusHours(24).toInstant());
+            Date expirationDate = Date.from(ZonedDateTime.now().plusSeconds(SECONDS_UNTIL_AUTOMATIC_SIGNOUT).toInstant());
             Date issuedAt = Date.from(ZonedDateTime.now().toInstant());
             return JWT.create()
                     .withIssuedAt(issuedAt) 
@@ -127,24 +130,24 @@ public class AuthenticationResource {
 	 */
 	private static boolean validateToken(String token) {
 		try {
-		if(token != null) {
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("sumoDashboard")
-                    .build(); //Reusable verifier instance
-            DecodedJWT jwt = verifier.verify(token);
-            //Get the userId from token claim.
-            String username = jwt.getClaim("username").asString();
-            AccountDao.getUserByName(username);
-            
-            return true;
-        }
-    } catch (JWTVerificationException e){
-        e.printStackTrace();
-    } catch (SQLException e) {
-		e.printStackTrace();
-	}
-    return false;
+			if (token != null) {
+	            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+	            JWTVerifier verifier = JWT.require(algorithm)
+	                    .withIssuer("sumoDashboard")
+	                    .build(); //Reusable verifier instance
+	            DecodedJWT jwt = verifier.verify(token);
+	            //Get the userId from token claim.
+	            String username = jwt.getClaim("username").asString();
+	            AccountDao.getUserByName(username);
+	            
+	            return true;
+			}
+	    } catch (JWTVerificationException e){
+	        e.printStackTrace();
+	    } catch (SQLException e) {
+			e.printStackTrace();
+		}
+	    return false;
 	}
 	
 	/**

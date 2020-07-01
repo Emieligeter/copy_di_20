@@ -105,7 +105,7 @@ function changeChartData(data, labels, label) {
 }
 
 function chartColours(size) {
-    var colourSet = ['#F25F5C', '#F17F29', '#FFE066', '#4E937A', '#70CAD1', '#CBBAED', '#1D3354', '#3C3744', '#666666', '#A1A1A1'];
+    var colourSet = ['#6C8EAD', '#F25F5C', '#F17F29', '#FFE066', '#4E937A', '#70CAD1', '#CBBAED', '#1D3354', '#34313B', '#919191'];
     var coloursToBeUsed = [];
     for(var i = 0; i < size; i++) {
     	coloursToBeUsed.push(colourSet[i%colourSet.length]);

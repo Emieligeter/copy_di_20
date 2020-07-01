@@ -76,14 +76,6 @@ function loadTags() {
     });
 }
 
-// Reloads the list of files, so the updated metadata is shown
-$("#closeSubmitData").click(function() {
-	var id = getSelectedID();
-	$('#sumoFiles').empty();
-	loadFiles();
-	$("ul li[id='" + id + "']").children().click();
-})
-
 //Shows input to create a new tag when new tag button is clicked
 //Hides input when create is clicked
 $("#newTagButton").click(function() {
