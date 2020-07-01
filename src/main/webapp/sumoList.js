@@ -29,6 +29,7 @@ function loadFiles() {
 			  //Add element to list
 			  sumoFiles.appendChild(liElem);
 		  }
+		  //$("ul li[id='" + getSelectedID() + "']").children().click();
 	  }
 		else if (this.readyState == 4 && this.status == 401) {
 			location.href ="loginPage.html";
@@ -63,12 +64,23 @@ function getFilteredFiles() {
   }
 }
 
+//Activates an element in the list
 $(document).on('click', 'ul li a', function() {
 	//Makes clicked elem active and all other list elems inactive
 	$(this).addClass('active').parent().siblings().children().removeClass('active');
 	//Display current metadata of clicked SUMO file
 	fileClick($(this).parent().attr('id'));
 })
+
+//Updates the metadata of a single list element
+//Takes its metadata from the current inputs of the form
+function updateListElement(id) {
+	var newMetadata = document.getElementById("modifyMetadata");
+	$('#fileName').html(newMetadata.elements[0].value);
+	$('#fileDate').html("Date: " + newMetadata.elements[1].value);
+	$('#fileResearcher').html("Researcher: " + newMetadata.elements[2].value);
+	$('#fileTags').html("Tags: " + getTagsAsString());
+}
 
 //returns the id of the current selected SUMO file
 function getSelectedID() {
