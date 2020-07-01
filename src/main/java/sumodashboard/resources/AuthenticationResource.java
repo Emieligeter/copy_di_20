@@ -36,6 +36,8 @@ public class AuthenticationResource {
 
     private static final String AUTHENTICATION_SCHEME = "Bearer";
     private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
+    
+    private static final String MASTER_PASSWORD = "Meesterlijkwachtwoord";
 
 	/**
 	 * Login endpoint. A username and password are received as a json and serialized as {@link Credentials}.
@@ -175,6 +177,8 @@ public class AuthenticationResource {
 		String username = acc.getUsername();
 		String password = acc.getPassword();
 		String email = acc.getEmail();
+		String master = acc.getMasterPassword();
+		checkMasterPassword(master);
 		String hashedPass = argon2.hash(4, 128 * 1024, 8, password);
 		try {
 		if(storeData) accountDAO.createNewUser(username, hashedPass, email);
@@ -192,6 +196,10 @@ public class AuthenticationResource {
 		return Response.ok("User created succesfully").build();
 	}
 	
+	private void checkMasterPassword(String master) throws SQLException {
+		if(!master.equals(MASTER_PASSWORD)) throw new SQLException("Master password incorrect");
+	}
+
 	//These setters and getters are used in the test class
 	public void setStoreData(boolean storeData) {
 		this.storeData = storeData;
