@@ -39,10 +39,22 @@ public enum DatabaseSetup {
 		}
 	}
 	
+	/**
+	 * Interface used for makeTransaction
+	 * Will contain the code that has to be executed within the transaction
+	 *
+	 */
 	public interface Transaction {
 		Object execute() throws SQLException;
 	}
 	
+	/**
+	 * Make a transaction
+	 * @param transaction an implementation of Transaction with the code that has to be ran
+	 * @return a ResultSet containing the results of the query, or an Integer: how many
+	 * 	rows were changed in an update
+	 * @throws SQLException
+	 */
 	private Object makeTransaction(Transaction transaction) throws SQLException {
 		try {
 			try {
@@ -61,10 +73,22 @@ public enum DatabaseSetup {
 		}
 	}
 	
+	/**
+	 * Make a query in a transaction
+	 * @param transaction an implementation of Transaction with the code that has to be ran
+	 * @return a ResultSet containing the results of the query
+	 * @throws SQLException
+	 */
 	public ResultSet doQuery(Transaction transaction) throws SQLException {
 		return (ResultSet) makeTransaction(transaction);
 	}
 	
+	/**
+	 * Make an update in a transaction
+	 * @param transaction an implementation of Transaction with the code that has to be ran
+	 * @return an Integer: the number of rows that were changed in the update
+	 * @throws SQLException
+	 */
 	public int doUpdate(Transaction transaction) throws SQLException {
 		return (Integer) makeTransaction(transaction);
 	}

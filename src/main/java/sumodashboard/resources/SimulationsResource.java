@@ -146,6 +146,10 @@ public class SimulationsResource {
 		return new SimulationResource(uriInfo, request, requestContext, id);
 	}
 	
+	/**
+	 * Disable / enable storing of data during methods. Used for testing purposes.
+	 * @param storeData
+	 */
 	public void setStoreData(boolean storeData) {
 		this.storeData = storeData;
 	}

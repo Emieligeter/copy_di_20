@@ -78,6 +78,7 @@ public class SQLQueries {
     public PreparedStatement createNewUser;
     /**Account queries: get hashed password*/
     public PreparedStatement getHashedPass;
+    /**Account queries: get a username if it exists*/
     public PreparedStatement getUserByName;
 
     public SQLQueries(Connection connection) {
