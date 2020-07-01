@@ -1,4 +1,0 @@
-Name: irregular-grid-periodic-step-10
-Date: September 27, 2019
-Tags: q-routing; irregular-grid; periodic-step
-Description: Simulation of the Q-Routing algorithm on the irregular grid road network where vehicles request updated routes periodically every 10 simulation steps.

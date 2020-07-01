@@ -181,9 +181,7 @@ public class AuthenticationResource {
 	@POST
 	@Path("/createUser")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createNewUser(Account acc) throws SQLException {
-		//if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
-		
+	public Response createNewUser(Account acc) throws SQLException {		
 		String username = acc.getUsername();
 		String password = acc.getPassword();
 		String email = acc.getEmail();
