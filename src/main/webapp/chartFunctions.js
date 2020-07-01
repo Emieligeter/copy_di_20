@@ -66,7 +66,8 @@ function updateChart() {
 			datasets: [{
 				label: label[0],
 				data: data[0],
-				fill: false
+				fill: false,
+				backgroundColor: chartColours(data[0].length)
 			}]
 			},
 		options : options[chartType]
@@ -102,3 +103,12 @@ function changeChartData(data, labels, label) {
 	chart.data.labels = JSON.parse(labels);
 	chart.update();
 }
+
+function chartColours(size){
+    var colourSet = ['#1D3354', '#70CAD1', '#F25F5C', '#F17F29', '#F17F29', '#FFE066', '#4E937A', '#CBBAED', '#3C3744', '#666666', '#FFF7F8'];
+    var coloursToBeUsed = [];
+    for(var i = 0; i < size; i++) {
+      coloursToBeUsed.push(colourSet[i%colourSet.length]);
+    }
+    return coloursToBeUsed;
+  }
