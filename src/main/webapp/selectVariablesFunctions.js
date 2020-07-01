@@ -13,7 +13,6 @@ function editChartStyle(type){
 		}
 		break;
 	case 'y-axis':
-		if (chartType !== 'bar' && chartType !== 'pie') {
 			if (type === "remove") {
 				chart.options.scales.yAxes[0].scaleLabel.display = false;
 			} else if (type === "change"){
@@ -21,10 +20,8 @@ function editChartStyle(type){
 				chart.options.scales.yAxes[0].scaleLabel.labelString = newTitle;
 				chart.options.scales.yAxes[0].scaleLabel.display = true;
 			}
-		}
 		break;
 	case 'x-axis':
-		if (chartType !== 'bar' && chartType !== 'pie') {
 			if (type === "remove") {
 				chart.options.scales.xAxes[0].scaleLabel.display = false;
 			} else if (type === "change"){
@@ -32,7 +29,6 @@ function editChartStyle(type){
 				chart.options.scales.xAxes[0].scaleLabel.labelString = newTitle;
 				chart.options.scales.xAxes[0].scaleLabel.display = true;
 			}
-		}
 		break;
 	case 'color':
 		if (type === "change"){
