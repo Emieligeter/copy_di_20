@@ -22,15 +22,12 @@ function addDataSet() {
 
 //function that is called for the "reset" button
 function resetChart() {
-	//console.log(chartType);
 	if (this.chart !== undefined && this.chartType !== 'sumStats' && this.chartType !== 'textElement') {
-	//console.log(chartType);
 	data = [];
 	label = [];
 	chart.data.datasets=[{label: label[0], data: data[0], fill: false}];
 	chart.data.labels = [];
 	dataSetNumber = 0;
-	//console.log(chartType);
 	//reset all data, but leave title and axis labels
 	chart.update();
 	}
@@ -45,6 +42,11 @@ function viewSummaryStatistics(sumStatsString) {
 function setChartType(type) {
 	resetChart();
 	chartType = type;
+	if (chartType === 'line' || chartType === 'scatter') {
+		document.getElementById("addDataSetButton").style.display = "block";
+	} else {
+		document.getElementById("addDataSetButton").style.display = "none";
+	}
 	//edit the drop down menu options
 	changeFirstChoice(type);
 	updateChart();
