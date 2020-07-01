@@ -40,7 +40,7 @@
 				<ul id="sumoFiles" class="list-unstyled list-group"></ul>
 				<button type="button" class="stdForm btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload file
 				</button>
-				<button type="button" class="stdForm btn btn-danger" data-toggle="modal" data-target="#deletionModal">Delete
+				<button id="deleteSimButton" type="button" class="stdForm btn btn-danger" data-toggle="modal" data-target="#deletionModal" disabled>Delete
 					selected file</button>
 				<!-- Deletion modal -->
 				<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="deletionModalLabel" aria-hidden="true">
@@ -57,7 +57,7 @@
 								<p>Are you sure you want to delete the selected file?</p>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-danger" data-dismiss="modal" id="deleteSimButton">Delete</button>
+								<button id="deleteSimButton" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 							</div>
 						</div>
@@ -136,7 +136,8 @@
 							<span id="createTagSpan"></span>
 						</div>
 					</div>
-					<button type="submit" class="btn btn-success" id="submitMetadata">Submit</button>
+					<button id="submitMetadata" type="submit" class="btn btn-success" disabled>Submit</button>
+					<button id="resetMetadataForm" type="button" class="btn btn-danger" disabled>Cancel</button>
 					<span id="updateResults"></span>
 				</form>
 			</div>

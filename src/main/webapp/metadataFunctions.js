@@ -45,6 +45,9 @@ $("#modifyMetadata").submit(function(event) {
 
 //When a file is clicked, its metadata will be displayed on the page
 function fileClick(id) {
+	$('#deleteSimButton').attr('disabled', false);
+	$('#submitMetadata').attr('disabled', false);
+	$('#resetMetadataForm').attr('disabled', false);
 	$.ajax({
   		url : '/sumo-dashboard/rest/simulations/id/' + id,
   		type: 'GET',
@@ -53,7 +56,8 @@ function fileClick(id) {
   	    	document.getElementById('newDate').value = data.date;
   			var researcher = (data.researcher === undefined) ? "undefined" : data.researcher;
   			document.getElementById('newResearcher').value = researcher;
-  			document.getElementById('newDescription').innerHtml = data.description;
+  			$('#newDescription').empty();
+  			document.getElementById('newDescription').innerHTML = data.description;
   			processTags(data.tags);
   			$("#updateResults").html("");
   	    },
@@ -108,6 +112,7 @@ function createTag() {
 			},
 	  	    success : function(response){
 	  	    	loadTags();
+	  	    	//Hide input box for creating a tag
 	  	    	$("#newTag").toggle();
 	  			$("#newTagButton").html("+ New tag");
 	  	    },
