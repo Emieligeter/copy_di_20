@@ -396,6 +396,7 @@ public class SimulationDao {
 			return db.getSqlQueries().runningVsArrivedVehiclesQuery.executeQuery();
 		});
 		Map<String, Integer> dataPoints = new HashMap<>();
+		rs.next();
 		int numRunning = rs.getInt("numberOfRunningVehicles");
 		int numArrived = rs.getInt("cumulativeNumberOfArrivedVehicles");
 		dataPoints.put("numberOfRunningVehicles", numRunning);

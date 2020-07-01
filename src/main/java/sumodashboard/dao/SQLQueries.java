@@ -607,7 +607,7 @@ public class SQLQueries {
         try {
             timestampListQuery = connection.prepareStatement("" +
             		"SELECT timestamp " +
-            		"FROM " + schemaName + ".simulations " +
+            		"FROM " + schemaName + ".states " +
             		"WHERE simid = ? " +
             		"ORDER BY timestamp ASC"
             		);
