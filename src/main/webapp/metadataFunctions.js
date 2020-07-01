@@ -154,7 +154,7 @@ $("#resetMetadataForm").click(function() {
 })
 
 //Deletes the currently selected simulation file from the database
-$("#deleteSimButton").click(function() {
+$("#finalDeleteSimButton").click(function() {
 	event.preventDefault(); // prevent default action
 	var url = "/sumo-dashboard/rest/simulations/id/" + getSelectedID();
 	$.ajax({
@@ -163,7 +163,7 @@ $("#deleteSimButton").click(function() {
 		success: function(){
 			location.reload();
 		},
-  		error : function(response){
+  		error: function(response){
   			if (response.status == 401) {
   				location.href = "loginPage.html";
   			}
