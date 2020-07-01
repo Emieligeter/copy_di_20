@@ -18,7 +18,7 @@ var time = new Date().getHours();
 if (time >= 4 && time < 12) {
 	$('#topBorder h1').html("Good morning!");
 }
-else if (time >= 12 && time < 19) {
+else if (time >= 12 && time < 18) {
 	$('#topBorder h1').html("Good afternoon!");
 }
 else {
