@@ -13,28 +13,34 @@ function editChartStyle(type){
 		}
 		break;
 	case 'y-axis':
-		if (type === "remove") {
-			chart.options.scales.yAxes[0].scaleLabel.display = false;
-		} else if (type === "change"){
-		var newTitle = document.getElementById("setTitleInput").value;
-		chart.options.scales.yAxes[0].scaleLabel.labelString = newTitle;
-		chart.options.scales.yAxes[0].scaleLabel.display = true;
+		if (chartType !== 'bar' && chartType !== 'pie') {
+			if (type === "remove") {
+				chart.options.scales.yAxes[0].scaleLabel.display = false;
+			} else if (type === "change"){
+				var newTitle = document.getElementById("setTitleInput").value;
+				chart.options.scales.yAxes[0].scaleLabel.labelString = newTitle;
+				chart.options.scales.yAxes[0].scaleLabel.display = true;
+			}
 		}
 		break;
 	case 'x-axis':
-		if (type === "remove") {
-			chart.options.scales.xAxes[0].scaleLabel.display = false;
-		} else if (type === "change"){
-		var newTitle = document.getElementById("setTitleInput").value;
-		chart.options.scales.xAxes[0].scaleLabel.labelString = newTitle;
-		chart.options.scales.xAxes[0].scaleLabel.display = true;
+		if (chartType !== 'bar' && chartType !== 'pie') {
+			if (type === "remove") {
+				chart.options.scales.xAxes[0].scaleLabel.display = false;
+			} else if (type === "change"){
+				var newTitle = document.getElementById("setTitleInput").value;
+				chart.options.scales.xAxes[0].scaleLabel.labelString = newTitle;
+				chart.options.scales.xAxes[0].scaleLabel.display = true;
+			}
 		}
 		break;
 	case 'color':
 		if (type === "change"){
-		var newColor = document.getElementById("setTitleInput").value;
-		chart.data.datasets[dataSetNumber].borderColor = newColor;
-		chart.data.datasets[dataSetNumber].backgroundColor = newColor;
+			var newColor = document.getElementById("setTitleInput").value;
+			if (chartType !== 'pie') {
+				chart.data.datasets[dataSetNumber].borderColor = newColor;
+			}
+			chart.data.datasets[dataSetNumber].backgroundColor = newColor;
 		}
 		break;
 	case 'legend':
