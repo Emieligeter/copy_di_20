@@ -125,6 +125,8 @@ public class TestSimulationResource {
 		checkResponse(edgeListResponse, IdExists);
 		Response laneListResponse = simulationResource.getLaneList();
 		checkResponse(laneListResponse, IdExists);
+		Response timestampListResponse = simulationResource.getTimestampList();
+		checkResponse(timestampListResponse, IdExists);
 		
 		if (IdExists) {
 			//Generate correct query parameters
@@ -132,9 +134,11 @@ public class TestSimulationResource {
 			String firstVehicleId = ((ArrayList<String>) vehicleListResponse.getEntity()).get(0);
 			String firstEdgeId = ((ArrayList<String>) edgeListResponse.getEntity()).get(0);
 			String firstLaneId = ((ArrayList<String>) laneListResponse.getEntity()).get(0);
+			String firstTimestamp = ((ArrayList<String>) timestampListResponse.getEntity()).get(0);
 			correctQueryParam.put("vehicle", Arrays.asList(firstVehicleId));
 			correctQueryParam.put("edge", Arrays.asList(firstEdgeId));
 			correctQueryParam.put("lane", Arrays.asList(firstLaneId));
+			correctQueryParam.put("timestamp", Arrays.asList(firstTimestamp));
 			Mockito.when(uriInfo.getQueryParameters()).thenReturn(correctQueryParam);	
 		}
 		else {
@@ -147,6 +151,7 @@ public class TestSimulationResource {
 		checkResponse(simulationResource.getVehicleRouteLength(), IdExists);
 		checkResponse(simulationResource.getVehicleSpeed(), IdExists);
 		checkResponse(simulationResource.getVehicleSpeedFactor(), IdExists);
+		checkResponse(simulationResource.getRunningVsArrivedVehicles(), IdExists);
 	}
 	
 	@Test
@@ -170,5 +175,6 @@ public class TestSimulationResource {
 		checkResponse(simulationResource.getVehicleRouteLength(), false);
 		checkResponse(simulationResource.getVehicleSpeed(), false);
 		checkResponse(simulationResource.getVehicleSpeedFactor(), false);
+		checkResponse(simulationResource.getRunningVsArrivedVehicles(), false);
 	}
 }
