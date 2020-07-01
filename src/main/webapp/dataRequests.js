@@ -119,7 +119,7 @@ function openXhrGETRequest(xhr, url, wait) {
 //Send a datarequest with a parameter
 function getDataWithParam(dataType, path, paramName, paramID) {
 	var simID = getSelectedID();
-	if (simID === null) {
+	if (simID === null || simID === undefined) {
 		alert("Please select a simulation first.");
 		return;
 	}
@@ -149,7 +149,7 @@ function getDataWithParam(dataType, path, paramName, paramID) {
 //send a datarequest without a parameter
 function getData(dataType, path) {
 	var simid = getSelectedID();
-	if (simid === null) {
+	if (simid === null || simid === undefined) {
 		alert("Please select a simulation first.");
 		return;
 	}
@@ -180,7 +180,7 @@ function getData(dataType, path) {
 //send a request to get the lanelist, vehiclelist or edgelist or timestamplist
 function getOptionList(listType, path) {
 	var simid = getSelectedID();
-	if (simid == null) {
+	if (simid === null || simid === undefined) {
 		alert("Please select a simulation first.");
 		return;
 	}
@@ -227,7 +227,7 @@ function handleOptionListResponse(JSONResponse, listType) {
 //request the summary statistics
 function getSummaryStatistics() {
 	var simid = getSelectedID();
-	if (simid == null) {
+	if (simid === null || simid === undefined) {
 		alert("Please select a simulation first.");
 		return;
 	}
