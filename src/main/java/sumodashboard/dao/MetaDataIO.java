@@ -24,7 +24,7 @@ public class MetaDataIO {
 	 * @throws FileNotFoundException file is not found
 	 */
     public static MetaData parseMetadata(File file) throws FileNotFoundException {
-		Scanner reader =  new Scanner(file);	
+		Scanner reader = new Scanner(file);	
 		MetaData meta = new MetaData();
 		while (reader.hasNextLine()) {
 	        String line = reader.nextLine();
@@ -80,21 +80,19 @@ public class MetaDataIO {
 	 * @param tags tags (String)
 	 * @throws SQLException database not reachable
 	 */
-	public static void addTagsToSimulation(int simId, String tags) throws SQLException {
-		SimulationDao simDao = SimulationDao.instance;
-		
+	public static void addTagsToSimulation(int simId, String tags) throws SQLException {		
 		for (String tag : tags.split(MetaData.TAGDELIMITER)) {
 			tag = tag.replace(" ", "");
 			if (tag.equals("")) continue;
 			
-			Integer tagId = simDao.getTagId(tag);
+			Integer tagId = SimulationDao.getTagId(tag);
 			
 			if (tagId == null) {
-				simDao.createTag(tag);
-				tagId = simDao.getTagId(tag);
+				SimulationDao.createTag(tag);
+				tagId = SimulationDao.getTagId(tag);
 			} 
 			
-			simDao.storeSimTag(tagId, simId);
+			SimulationDao.storeSimTag(tagId, simId);
 		}
 	}
 }

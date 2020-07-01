@@ -67,7 +67,7 @@ public class SimulationsResource {
 		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		try {			
-			List<MetaData> simulations = SimulationDao.instance.getSimulations();
+			List<MetaData> simulations = SimulationDao.getSimulations();
 			
 			Response response = Response.status(200).entity(simulations).build();
 			return response;
@@ -101,16 +101,15 @@ public class SimulationsResource {
 		HashMap<String, File> files = dto.getFiles();
 		TreeMap<Integer, File> stateFiles = dto.getStateFiles();
 		MetaData meta = MetaDataIO.parseMetadata(files.get("metadata.txt")); //parse metadata into object
-		SimulationDao simDao = SimulationDao.instance;
 		
 		//Generate a random id, if it exists generate a new one
 		int simId = 0;
 		do {
 			simId = MetaDataIO.generateId(5);
-		} while(simDao.doesSimIdExist(simId)) ;
+		} while(SimulationDao.doesSimIdExist(simId)) ;
 		 
 		//Store a simulation in 'simulation' table
-		simDao.storeSimulation(
+		SimulationDao.storeSimulation(
 				simId, meta.getName(), 
 				meta.getDescription(), 
 				meta.getDate(),
@@ -123,7 +122,7 @@ public class SimulationsResource {
 		for (Map.Entry<Integer, File> sf : stateFiles.entrySet()) {
 			Integer timeStamp = sf.getKey();
 			File file = sf.getValue();
-			if(storeData)simDao.storeState(simId, timeStamp, file, storeData);
+			if(storeData)SimulationDao.storeState(simId, timeStamp, file, storeData);
 		}
 		
 		//Check if tags exists, if not, create new one. Then add it to 'simulation_tag' table
@@ -147,6 +146,10 @@ public class SimulationsResource {
 		return new SimulationResource(uriInfo, request, requestContext, id);
 	}
 	
+	/**
+	 * Disable / enable storing of data during methods. Used for testing purposes.
+	 * @param storeData
+	 */
 	public void setStoreData(boolean storeData) {
 		this.storeData = storeData;
 	}

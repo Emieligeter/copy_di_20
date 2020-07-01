@@ -40,17 +40,6 @@ public class SQLQueries {
     public PreparedStatement summaryStatistics;
     
 
-    /**Get the edge appearance frequency of a specified edge over time*/
-    public PreparedStatement edgeAppearanceFrequencyQuery;
-    /**Get the number of lane transiting vehicles of a specified lane over time*/
-    public PreparedStatement numberOfLaneTransitingVehiclesQuery;
-    /**Get the route length of a specified vehicle over time*/
-    public PreparedStatement vehicleRouteLengthQuery;
-    /**Get the speed of a specified vehicle over time*/
-    public PreparedStatement vehicleSpeedQuery;
-    /**Get the speed factor of specified vehicle over time*/
-    public PreparedStatement vehicleSpeedFactorQuery;
-    /**Get the average route length of all vehicles over time*/
     public PreparedStatement avgRouteLengthQuery;
     /**Get the average speed of all vehicles over time*/
     public PreparedStatement avgSpeedQuery;
@@ -62,10 +51,23 @@ public class SQLQueries {
     public PreparedStatement numberOfTransferredVehiclesQuery;
     /**Get the number of running vehicles over time*/
     public PreparedStatement numberOfRunningVehiclesQuery;
+    /**Get the edge appearance frequency of a specified edge over time*/
+    public PreparedStatement edgeAppearanceFrequencyQuery;
+    /**Get the number of lane transiting vehicles of a specified lane over time*/
+    public PreparedStatement numberOfLaneTransitingVehiclesQuery;
+    /**Get the route length of a specified vehicle over time*/
+    public PreparedStatement vehicleRouteLengthQuery;
+    /**Get the speed of a specified vehicle over time*/
+    public PreparedStatement vehicleSpeedQuery;
+    /**Get the speed factor of specified vehicle over time*/
+    public PreparedStatement vehicleSpeedFactorQuery;
+    /**Get the average route length of all vehicles over time*/
     /**Get the edge appearance frequency per edge in all initial routes in a simulation (for pie and bar chart)*/
     public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
     /**Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)*/
     public PreparedStatement initialRouteLengthPerVehicleQuery;
+    /**Get the amount of running and arrived vehicles for specific timestamp (for pie and bar chart)*/
+    public PreparedStatement runningVsArrivedVehiclesQuery;
     
     /**Get a list of all vehicles in a specified simulation*/
     public PreparedStatement vehicleListQuery;
@@ -73,11 +75,14 @@ public class SQLQueries {
     public PreparedStatement edgeListQuery;
     /**Get a list of all lanes in a specified simulation*/
     public PreparedStatement laneListQuery;
+    /**Get a list of all timestamps in a specified simulation*/
+    public PreparedStatement timestampListQuery;
 
     /**Account queries: create new user*/
     public PreparedStatement createNewUser;
     /**Account queries: get hashed password*/
     public PreparedStatement getHashedPass;
+    /**Account queries: get a username if it exists*/
     public PreparedStatement getUserByName;
 
     public SQLQueries(Connection connection) {
@@ -270,6 +275,131 @@ public class SQLQueries {
         }
         
         try {
+            avgRouteLengthQuery = connection.prepareStatement("" +
+                    "SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,' ','')) +1) AS avgCount " +
+                    "FROM  " +
+                    "	( " +
+                    "	SELECT simid, timestamp, state -> 'snapshot' -> 'route' ->> 'edges' AS route " +
+                    "	FROM " + schemaName + ".states " +
+                    "	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'object' " +
+                    "UNION " +
+                    "	SELECT simid, timestamp, json_array_elements(state -> 'snapshot' -> 'route') ->> 'edges' AS route " +
+                    "	FROM " + schemaName + ".states " +
+                    "	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'array' " +
+                    "        ) thing " +
+                    "WHERE simid = ? " +
+                    "GROUP BY timestamp " +
+                    "ORDER BY timestamp ASC "
+                    );
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            avgSpeedQuery = connection.prepareStatement("" +
+                    "SELECT timestamp, avgSpeed " +
+                    "FROM " +
+                    "	( " +
+                    "		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " +
+                    "		FROM " + schemaName + ".states	 " +
+                    "		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
+                    "	UNION " +
+                    "		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " +
+                    "		FROM " +
+                    "			( " +
+                    "			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " +
+                    "			FROM " + schemaName + ".states " +
+                    "			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
+                    "			GROUP BY simid, timestamp " +
+                    "                        ) q1 " +
+                    "                GROUP BY simid, timestamp " +
+                    "	) avgSpeeds " +
+                    "WHERE simid = ? " +
+                    "ORDER BY timestamp ASC"
+                    );
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            avgSpeedFactorQuery = connection.prepareStatement("" +
+            		"SELECT timestamp, avgSpeedFactor " +
+            		"FROM " +
+            		"	(" +
+            		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as avgSpeedFactor " +
+            		"		FROM " + schemaName + ".states " +
+            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
+            		"	UNION " +
+            		"		SELECT simid, timestamp, avg(vehicleSpeedFactor) AS avgSpeedFactor " +
+            		"		FROM " +
+            		"			(" +
+            		"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speedFactor')::float AS vehiclespeedFactor " + 
+            		"			FROM " + schemaName + ".states " +
+            		"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
+            		"			GROUP BY simid, timestamp " +
+            		"                       ) vehicleSpeedFactors " +
+            		"                GROUP BY simid, timestamp " +
+            		"	) avgspeedFactors " +
+            		"WHERE simid = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            cumulativeNumberOfArrivedVehiclesQuery = connection.prepareStatement("" +
+            		"SELECT timestamp, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
+            		"FROM " + schemaName + ".states " +
+            		"WHERE simid = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            numberOfTransferredVehiclesQuery = connection.prepareStatement("" +
+            		"SELECT timestamp, numberOfTransferredVehicles " +
+            		"FROM " +
+            		"	(" +
+            		"	SELECT simid, timestamp, json_array_length(state -> 'snapshot' -> 'vehicleTransfer') AS numberOfTransferredVehicles " +
+            		"	FROM " + schemaName + ".states " +
+            		"	WHERE json_typeof(state -> 'snapshot' -> 'vehicleTransfer') = 'array' " +
+            		"UNION " +
+            		"	SELECT simid, timestamp, 1 AS numberOfTransferredVehicles " +
+            		"	FROM " + schemaName + ".states " +
+            		"	WHERE json_typeof(state -> 'snapshot' -> 'vehicleTransfer') = 'object' " +
+            		"UNION " +
+            		"	SELECT simid, timestamp, 0 AS numberOfTransferredVehicles " +
+            		"	FROM " + schemaName + ".states " +
+            		"	WHERE (state -> 'snapshot' ->> 'vehicleTransfer') IS NULL " +
+            		") numbersOfTransferredVehicles " +
+            		"WHERE simid = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            numberOfRunningVehiclesQuery = connection.prepareStatement("" +
+            		"SELECT timestamp, (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles " +
+            		"FROM " + schemaName + ".states " +
+            		"WHERE simid = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
             edgeAppearanceFrequencyQuery = connection.prepareStatement("" +
             		"SELECT timestamp, array_length(string_to_array(concat(string_agg(edgeRoute, ' '), ' ~'), ? ), 1) - 1 AS edgeFrequency " +
             		"FROM	( " +
@@ -399,143 +529,6 @@ public class SQLQueries {
         }
         
         try {
-            avgRouteLengthQuery = connection.prepareStatement("" +
-                    "SELECT timestamp, AVG(LENGTH(route)-LENGTH(REPLACE(route,' ','')) +1) AS avgCount " +
-                    "FROM  " +
-                    "	( " +
-                    "	SELECT simid, timestamp, state -> 'snapshot' -> 'route' ->> 'edges' AS route " +
-                    "	FROM " + schemaName + ".states " +
-                    "	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'object' " +
-                    "UNION " +
-                    "	SELECT simid, timestamp, json_array_elements(state -> 'snapshot' -> 'route') ->> 'edges' AS route " +
-                    "	FROM " + schemaName + ".states " +
-                    "	WHERE json_typeof(state -> 'snapshot' -> 'route') = 'array' " +
-                    "        ) thing " +
-                    "WHERE simid = ? " +
-                    "GROUP BY timestamp " +
-                    "ORDER BY timestamp ASC "
-                    );
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
-            avgSpeedQuery = connection.prepareStatement("" +
-                    "SELECT timestamp, avgSpeed " +
-                    "FROM " +
-                    "	( " +
-                    "		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speed')::float as avgSpeed " +
-                    "		FROM " + schemaName + ".states	 " +
-                    "		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
-                    "	UNION " +
-                    "		SELECT simid, timestamp, avg(vehicleSpeed) AS avgSpeed " +
-                    "		FROM " +
-                    "			( " +
-                    "			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speed')::float as vehicleSpeed " +
-                    "			FROM " + schemaName + ".states " +
-                    "			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
-                    "			GROUP BY simid, timestamp " +
-                    "                        ) q1 " +
-                    "                GROUP BY simid, timestamp " +
-                    "	) avgSpeeds " +
-                    "WHERE simid = ? " +
-                    "ORDER BY timestamp ASC"
-                    );
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
-            avgSpeedFactorQuery = connection.prepareStatement("" +
-            		"SELECT timestamp, avgSpeedFactor " +
-            		"FROM " +
-            		"	(" +
-            		"		SELECT simid, timestamp, (state -> 'snapshot' -> 'vehicle' ->> 'speedFactor')::float as avgSpeedFactor " +
-            		"		FROM " + schemaName + ".states " +
-            		"		WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'object' " +
-            		"	UNION " +
-            		"		SELECT simid, timestamp, avg(vehicleSpeedFactor) AS avgSpeedFactor " +
-            		"		FROM " +
-            		"			(" +
-            		"			SELECT simid, timestamp, (json_array_elements(state -> 'snapshot' -> 'vehicle') ->> 'speedFactor')::float AS vehiclespeedFactor " + 
-            		"			FROM " + schemaName + ".states " +
-            		"			WHERE json_typeof(state -> 'snapshot' -> 'vehicle') = 'array' " +
-            		"			GROUP BY simid, timestamp " +
-            		"                       ) vehicleSpeedFactors " +
-            		"                GROUP BY simid, timestamp " +
-            		"	) avgspeedFactors " +
-            		"WHERE simid = ? " +
-            		"ORDER BY timestamp ASC"
-            		);
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
-            cumulativeNumberOfArrivedVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT timestamp, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
-            		"FROM " + schemaName + ".states " +
-            		"WHERE simid = ? " +
-            		"ORDER BY timestamp ASC"
-            		);
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
-            numberOfTransferredVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT timestamp, numberOfTransferredVehicles " +
-            		"FROM " +
-            		"	(" +
-            		"	SELECT simid, timestamp, json_array_length(state -> 'snapshot' -> 'vehicleTransfer') AS numberOfTransferredVehicles " +
-            		"	FROM " + schemaName + ".states " +
-            		"	WHERE json_typeof(state -> 'snapshot' -> 'vehicleTransfer') = 'array' " +
-            		"UNION " +
-            		"	SELECT simid, timestamp, 1 AS numberOfTransferredVehicles " +
-            		"	FROM " + schemaName + ".states " +
-            		"	WHERE json_typeof(state -> 'snapshot' -> 'vehicleTransfer') = 'object' " +
-            		"UNION " +
-            		"	SELECT simid, timestamp, 0 AS numberOfTransferredVehicles " +
-            		"	FROM " + schemaName + ".states " +
-            		"	WHERE (state -> 'snapshot' ->> 'vehicleTransfer') IS NULL " +
-            		") numbersOfTransferredVehicles " +
-            		"WHERE simid = ? " +
-            		"ORDER BY timestamp ASC"
-            		);
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
-            numberOfRunningVehiclesQuery = connection.prepareStatement("" +
-            		"SELECT timestamp, (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles " +
-            		"FROM " + schemaName + ".states " +
-            		"WHERE simid = ? " +
-            		"ORDER BY timestamp ASC"
-            		);
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
-            edgeListQuery = connection.prepareStatement("" +
-            		"SELECT DISTINCT unnest(string_to_array(json_array_elements(routes -> 'routes' -> 'vehicle') -> 'route' ->> 'edges', ' ')) AS edge " +
-            		"FROM " + schemaName + ".simulations " +
-            		"WHERE simid = ? " +
-            		"ORDER BY edge"
-                    );
-        } catch (SQLException e) {
-            System.err.println("Couldn't prepare statement: ");
-            e.printStackTrace();
-        }
-        
-        try {
         	edgeAppearanceFrequencyInitialRouteQuery = connection.prepareStatement("" +
         			"SELECT edge, LENGTH(concat(string_agg(edges, ' '), ' ~'))-LENGTH(REPLACE(concat(string_agg(edges, ' '), ' ~'),' ','')) AS edgeFrequency " + 
         			"FROM ( " + 
@@ -566,6 +559,30 @@ public class SQLQueries {
         }
         
         try {
+        	runningVsArrivedVehiclesQuery = connection.prepareStatement("" +
+        			"SELECT (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
+        			"FROM " + schemaName + ".states " +
+        			"WHERE simid = ? " +
+        			"AND timestamp = ? "
+        			);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
+            edgeListQuery = connection.prepareStatement("" +
+            		"SELECT DISTINCT unnest(string_to_array(json_array_elements(routes -> 'routes' -> 'vehicle') -> 'route' ->> 'edges', ' ')) AS edge " +
+            		"FROM " + schemaName + ".simulations " +
+            		"WHERE simid = ? " +
+            		"ORDER BY edge"
+                    );
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
             laneListQuery = connection.prepareStatement("" +
             		"SELECT json_array_elements(net -> 'net' -> 'edge') -> 'lane' ->> 'id' AS lane_id " +
             		"FROM " + schemaName + ".simulations " +
@@ -586,7 +603,19 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
-        			
+        
+        try {
+            timestampListQuery = connection.prepareStatement("" +
+            		"SELECT timestamp " +
+            		"FROM " + schemaName + ".states " +
+            		"WHERE simid = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
 		try {
         	getHashedPass = connection.prepareStatement("" 
         			+ "SELECT password " 
@@ -615,4 +644,18 @@ public class SQLQueries {
             e.printStackTrace();  
         }
 	}
+    
+    public static void main(String args[]) {
+    	System.out.println("SELECT simid, timestamp, coalesce(array_length(string_to_array(vehicles, ' '), 1), 0) AS vehicleCount " +
+            		"FROM ( " +
+            		"	SELECT simid, timestamp, lane ->> 'id' AS lane_id, lane -> 'vehicles' ->> 'value' AS vehicles " +
+            		"	FROM ( " +
+            		"		SELECT simid, timestamp, json_array_elements(state -> 'snapshot' -> 'lane') AS lane " +
+            		"		FROM " + "project" + ".states " +
+            		"		WHERE simid = ? " +
+            		"		) lanes " +
+            		") vehicles " +
+            		"WHERE lane_id = ? " +
+            		"ORDER BY timestamp ASC");
+    }
 }
