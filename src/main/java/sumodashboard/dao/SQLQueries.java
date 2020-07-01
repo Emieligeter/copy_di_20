@@ -66,6 +66,8 @@ public class SQLQueries {
     public PreparedStatement edgeAppearanceFrequencyInitialRouteQuery;
     /**Get the route length per vehicle for all initial routes in a simulation (for pie and bar chart)*/
     public PreparedStatement initialRouteLengthPerVehicleQuery;
+    /**Get the amount of running and arrived vehicles for specific timestamp (for pie and bar chart)*/
+    public PreparedStatement runningVsArrivedVehiclesQuery;
     
     /**Get a list of all vehicles in a specified simulation*/
     public PreparedStatement vehicleListQuery;
@@ -73,6 +75,8 @@ public class SQLQueries {
     public PreparedStatement edgeListQuery;
     /**Get a list of all lanes in a specified simulation*/
     public PreparedStatement laneListQuery;
+    /**Get a list of all timestamps in a specified simulation*/
+    public PreparedStatement timestampListQuery;
 
     /**Account queries: create new user*/
     public PreparedStatement createNewUser;
@@ -554,6 +558,18 @@ public class SQLQueries {
         }
         
         try {
+        	runningVsArrivedVehiclesQuery = connection.prepareStatement("" +
+        			"SELECT (state -> 'snapshot' -> 'delay' ->> 'number') AS numberOfRunningVehicles, (state -> 'snapshot' -> 'delay' ->> 'end') AS cumulativeNumberOfArrivedVehicles " +
+        			"FROM " + schemaName + ".states " +
+        			"WHERE simid = ? " +
+        			"AND timestamp = ? "
+        			);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
+        try {
             edgeListQuery = connection.prepareStatement("" +
             		"SELECT DISTINCT unnest(string_to_array(json_array_elements(routes -> 'routes' -> 'vehicle') -> 'route' ->> 'edges', ' ')) AS edge " +
             		"FROM " + schemaName + ".simulations " +
@@ -586,7 +602,19 @@ public class SQLQueries {
             System.err.println("Couldn't prepare statement: ");
             e.printStackTrace();
         }
-        			
+        
+        try {
+            timestampListQuery = connection.prepareStatement("" +
+            		"SELECT timestamp " +
+            		"FROM " + schemaName + ".simulations " +
+            		"WHERE simid = ? " +
+            		"ORDER BY timestamp ASC"
+            		);
+        } catch (SQLException e) {
+            System.err.println("Couldn't prepare statement: ");
+            e.printStackTrace();
+        }
+        
 		try {
         	getHashedPass = connection.prepareStatement("" 
         			+ "SELECT password " 

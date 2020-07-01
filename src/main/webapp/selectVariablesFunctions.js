@@ -53,8 +53,8 @@ var fstDropDownOptions = {};
 var secDropDownOptions = {};
 fstDropDownOptions['line'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
 fstDropDownOptions['scatter'] = [edgeFrequency, laneTransitingVehicles, vehicleRouteLength, vehicleSpeed, vehicleSpeedFactor, avgRouteLength, avgSpeed, avgSpeedFactor, arrivedVehicles, transferredVehicles, runningVehicles];
-fstDropDownOptions['pie'] = [edgeFrequencyInitial];
-fstDropDownOptions['bar'] = [edgeFrequencyInitial];
+fstDropDownOptions['pie'] = [edgeFrequencyInitial, runningVsArrived];
+fstDropDownOptions['bar'] = [edgeFrequencyInitial, runningVsArrived];
 
 //change the first drop down menu to a new set of options, corresponding to the graphtype
 function changeFirstChoice() {

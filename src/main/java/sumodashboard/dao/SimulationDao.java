@@ -442,6 +442,35 @@ public enum SimulationDao {
 	}	
 	
 	/**
+	 * Get information about all timestamps: number of running and arrived vehicles
+	 * @param simulation_id simulation id (int)
+	 * @param timestamp timestamp (double)
+	 * @return Map<String vehicle_id, Integer routeLength>
+	 * @throws SQLException database not reachable
+	 * @throws IDNotFound simulation id does not exist
+	 */
+	public Map<String, Integer> getRunningVsArrivedVehicles(int simulation_id, String timestamp) throws SQLException, IDNotFound {
+		if (!doesSimIdExist(simulation_id)) throw new IDNotFound("Simulation ID: " + simulation_id + " not found");
+		double numericTimestamp;
+		try {
+			numericTimestamp = Double.parseDouble(timestamp);
+		} catch (NumberFormatException e) {
+			throw new IDNotFound("Timestamp: " + timestamp + " is not a number!");
+		}
+		ResultSet rs = doQuery(() -> {
+			sqlQueries.runningVsArrivedVehiclesQuery.setInt(1, simulation_id);
+			sqlQueries.runningVsArrivedVehiclesQuery.setDouble(2, numericTimestamp);
+			return sqlQueries.runningVsArrivedVehiclesQuery.executeQuery();
+		});
+		Map<String, Integer> dataPoints = new HashMap<>();
+		int numRunning = rs.getInt("numberOfRunningVehicles");
+		int numArrived = rs.getInt("cumulativeNumberOfArrivedVehicles");
+		dataPoints.put("numberOfRunningVehicles", numRunning);
+		dataPoints.put("cumulativeNumberOfArrivedVehicles", numArrived);
+		return dataPoints; 
+	}	
+	
+	/**
 	 * Get a list of strings. For a specified simulation id.
 	 * @param simulation_id simulation id (int)
 	 * @param listName the name of the values column as returned by the sql query
@@ -497,6 +526,17 @@ public enum SimulationDao {
 	 */
 	public List<String> getVehicleList(int simulation_id) throws IDNotFound, SQLException {
 		return getList(simulation_id, "vehicleid", sqlQueries.vehicleListQuery);
+	}
+	
+	/**
+	 * Get a list of all timestamps for a specified simulation.
+	 * @param simulation_id simulation id (int)
+	 * @return List<String timestamp>
+	 * @throws IDNotFound simulation id does not exist
+	 * @throws SQLException database not reachable
+	 */
+	public List<String> getTimestampList(int simulation_id) throws IDNotFound, SQLException {
+		return getList(simulation_id, "timestamp", sqlQueries.timestampListQuery);
 	}
 	
 	/**

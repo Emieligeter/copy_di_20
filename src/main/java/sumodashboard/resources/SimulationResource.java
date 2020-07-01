@@ -369,6 +369,30 @@ public class SimulationResource {
 	}
 	
 	/**
+	 * Get the number of arrived vehicles and running vehicles for a timestamp
+	 * @return response
+	 */
+	@GET
+	@Path("/arrivedvsrunning")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRunningVsArrivedVehicles() {
+		if (!AuthenticationResource.isAuthorized(requestContext)) return Response.status(Response.Status.UNAUTHORIZED).build();
+		
+		String paramID = uriInfo.getQueryParameters().getFirst("timestamp");
+		try {
+			Map<String, Integer> dataPoints = SimulationDao.instance.getRunningVsArrivedVehicles(ID, paramID);
+			return Response.status(200).entity(dataPoints).build();
+
+		} catch (IDNotFound i) {
+			return Response.status(400).entity(i.getMessage()).build();
+			
+		} catch (SQLException e) {
+			String errorMsg = "SQL Exception:\n" + e.getLocalizedMessage();
+			return Response.status(500).entity(errorMsg).build();
+		}
+	}
+	
+	/**
 	 * Interface used for passing a method as an argument to getStats()
 	 */
 	private interface ListRequest {
@@ -432,6 +456,19 @@ public class SimulationResource {
 	public Response getVehicleList() {
 		return getList(() -> {
 			return SimulationDao.instance.getVehicleList(ID);
+		});
+	}
+	
+	/**
+	 * Get a list of all timestamps that appear in a simulation
+	 * @return response
+	 */
+	@GET
+	@Path("/timestamplist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTimestampList() {
+		return getList(() -> {
+			return SimulationDao.instance.getTimestampList(ID);
 		});
 	}
 	
