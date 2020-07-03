@@ -36,7 +36,7 @@ public class AuthenticationResource {
     private static final String AUTHENTICATION_SCHEME = "Bearer";
     private static final String API_TOKEN = "ZVXTyfmKXb7FxngTEAq2DHVmXZCxecJWTQLDsDnEce3dzhVK";
     
-    private static final String MASTER_PASSWORD = "Meesterlijkwachtwoord";
+    private static final String MASTER_PASSWORD = "ZhXg36#8!";
     
     private static final int SECONDS_UNTIL_AUTOMATIC_SIGNOUT = 2*60*60; //2 hours
 
