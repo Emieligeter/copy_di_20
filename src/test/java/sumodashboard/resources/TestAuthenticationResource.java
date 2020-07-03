@@ -94,7 +94,7 @@ public class TestAuthenticationResource {
 		acc.setUsername(testUsername);
 		acc.setPassword(testPassword);
 		acc.setEmail(testEmail);
-		acc.setMasterPassword("Meesterlijkwachtwoord");
+		acc.setMasterPassword("ZhXg36#8!");
 		auth.setStoreData(false);
 		Response res = auth.createNewUser(acc);
 		Assertions.assertEquals(res.getStatus(), 200);
